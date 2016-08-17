@@ -3,33 +3,39 @@ using System.Collections;
 
 public class PlayerMovement : MonoBehaviour {
 
-	// Make sure the player object can move when the camera has stopped rotating
-	bool bCanMove;
+    private Rigidbody body;
 
-	Rigidbody body;
+    // Use this for initialization
+    void Awake()
+    {
 
-	// Use this for initialization
-	void Awake () {
+        body = GetComponent<Rigidbody>();
 
-		body = GetComponent<Rigidbody>();
-
-	}
+    }
 	
-	// Update is called once per frame
-	void Update () {
-		
-		bCanMove = MapController.bCanRotateCamera;
+    // Update is called once per frame
+    void Update()
+    {
 
-		if (!bCanMove) {
+        // Freeze the object's rotation and position whenever the camera is moving
+        if (!MapController.canRotateCamera)
+        {
+			body.isKinematic = true;
 
-			body.constraints = RigidbodyConstraints.FreezeAll | RigidbodyConstraints.FreezePosition;
+        }
+		// Remove every constrain except for the X position and rotation
+		else
+        {
+			
+			body.isKinematic = false;
+			// Round the position vector
+            transform.position = new Vector3((float)System.Math.Round(transform.position.x, 1), (float)System.Math.Round(transform.position.y, 1), (float)System.Math.Round(transform.position.z, 1));
 
-		}
-		else {
 
-			body.constraints = RigidbodyConstraints.None | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezeRotationX;
+        }
 
-		}
+        // TODO: add a constrain that allows the camera to rotate ONLY if the player isn't moving
+        
 	
-	}
+    }
 }
