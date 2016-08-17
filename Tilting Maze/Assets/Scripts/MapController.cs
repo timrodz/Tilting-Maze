@@ -41,12 +41,12 @@ public class MapController : MonoBehaviour {
 	// @param byAngles : the amount of angles to rotate (will be converted to radians)
 	// @param inTime : the length of the rotation
 	
-	IEnumerator RotateCamera (Vector3 byAngles, float inTime) {
+	public IEnumerator RotateCamera (Vector3 byAngles, float inTime) {
 
 		canRotateCamera = false;
 
-		var fromAngle = transform.rotation; // Get the transform's current rotation coordinates
-		var toAngle = Quaternion.Euler(transform.eulerAngles + byAngles); // Convert byAngles to radians
+		Quaternion fromAngle = transform.rotation; // Get the transform's current rotation coordinates
+		Quaternion toAngle = Quaternion.Euler(transform.eulerAngles + byAngles); // Convert byAngles to radians
 
 		// Process a loop that lasts for the prompted time
 		for (float t = 0f; t < 1; t += Time.deltaTime / inTime) {
