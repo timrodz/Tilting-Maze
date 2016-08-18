@@ -15,7 +15,7 @@ public class MapController : MonoBehaviour {
 
 			if (Input.GetAxisRaw("Horizontal") < 0) {
 
-				// canRotateCamera = false;
+				LevelLoader.turns++;
 				var valToAdd = 90.0f;
 				if (transform.rotation.x > 0.7f)
 					valToAdd *= -1;
@@ -25,7 +25,7 @@ public class MapController : MonoBehaviour {
 			}
 			else if (Input.GetAxisRaw("Horizontal") > 0) {
 
-				// canRotateCamera = false;
+				LevelLoader.turns++;
 				var valToAdd = 90.0f;
 				if (transform.rotation.x > 0.7f)
 					valToAdd *= -1;
