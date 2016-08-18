@@ -78,14 +78,14 @@ public class PlayerMovement : MonoBehaviour {
 			float scaleFactor = 0.0225f;
 
 			// Make the camera fade out and move the player toward's the center
-			camera.Translate(new Vector3(0, 0, -scaleFactor * 2));
+			camera.Translate(new Vector3(0, 0, -scaleFactor * 4));
 			transform.position = Vector3.MoveTowards(transform.position, new Vector3(0.5f, 0, 0), t / 1.5f);
 
 			// Rotate around itself
-			transform.Rotate(new Vector3(10 + t, 0.0f, 0.0f));
+			transform.Rotate(new Vector3(3.25f + t, 0.0f, 0.0f));
 
 			// Scale it in the y and z planes
-			scaleFactor *= (12 + t);
+			scaleFactor *= (16 + t);
 			transform.localScale += new Vector3(0.1f, scaleFactor, scaleFactor);
 
 			yield return null;
