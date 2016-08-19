@@ -2,74 +2,52 @@
 using System.Collections;
 using System.Collections.Generic;
 
-
 public class ButtonActivator : MonoBehaviour {
 
-    public enum vectorDirections {
-        Forward = 0,
-        Back = 1,
-        Up = 2,
-        Down = 3
-	};
+	public VectorDirection.directions vectorDirection;
 
-    public vectorDirections vectorDirection;
+	public Transform barrier;
 
-    public float duration = 0.99f;
+	private float fDuration = 0.99f;
 
-    public Transform barrier;
+	Vector3 vectorToTranslate, target;
 
-    Vector3 vectorToTranslate, target;
+	// Use this for initialization
+	void Start() {
 
-    // Use this for initialization
-    void Start() {
+		vectorToTranslate = VectorDirection.DetermineDirection(vectorDirection);
 
-        switch (vectorDirection) {
-            case vectorDirections.Forward:
-                vectorToTranslate = Vector3.forward;
-                break;
-            case vectorDirections.Back:
-                vectorToTranslate = Vector3.back;
-                break;
-            case vectorDirections.Up:
-                vectorToTranslate = Vector3.up;
-                break;
-            case vectorDirections.Down:
-            default:
-                vectorToTranslate = Vector3.down;
-                break;
-        }
+	}
 
-    }
+	void OnTriggerEnter(Collider other) {
 
-    void OnTriggerEnter(Collider other) {
+		target = barrier.position + vectorToTranslate;
+		//MapController.canRotateCamera = false;
+		StartCoroutine(TranslateTo(barrier, vectorToTranslate));
 
-        target = barrier.position + vectorToTranslate;
-        MapController.canRotateCamera = false;
-        StartCoroutine(TranslateTo(barrier, vectorToTranslate));
+	}
 
-    }
+	// Function TranslateTo
+	// param _transform : the selected object's transform
+	// param _position : the position to translate to
 
-    // Function TranslateTo
-	// @param _transform : the selected object's transform
-	// @param _position : the position to translate to
-	// 
-	// FIX:
-	// Whenever the player touches the button.
-	
-    IEnumerator TranslateTo(Transform _transform, Vector3 _position) {
+	IEnumerator TranslateTo(Transform _transform, Vector3 _position) {
 
-        for (float t = 0.0f; t < 1.0f; t += (Time.deltaTime / duration)) {
+		yield return new WaitForSeconds(0.0f);
+		MapController.canRotateCamera = false;
 
-            _transform.Translate(_position.normalized * Time.deltaTime, Space.World);
-            yield return null;
+		for (float t = 0.0f; t < 1.0f; t += (Time.deltaTime / fDuration)) {
 
-        }
+			_transform.Translate(_position.normalized * Time.deltaTime, Space.World);
+			yield return null;
 
-        // Destroy the button after the translation has finished
-        _transform.position = target;
-        MapController.canRotateCamera = true;
-        Destroy(gameObject);
+		}
 
-    }
+		// Destroy the button after the translation has finished
+		_transform.position = target;
+		MapController.canRotateCamera = true;
+		Destroy(gameObject);
+
+	}
 
 }
