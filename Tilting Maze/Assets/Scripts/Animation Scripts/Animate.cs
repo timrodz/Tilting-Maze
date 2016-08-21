@@ -33,7 +33,7 @@ public class Animate : MonoBehaviour {
 	}
 
 	// Use this for initialization
-	void Start() {
+	void OnEnable() {
 
 		if (objectToAnimate == null)
 			objectToAnimate = transform;

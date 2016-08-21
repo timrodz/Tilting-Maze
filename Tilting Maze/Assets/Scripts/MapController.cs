@@ -26,7 +26,8 @@ public class MapController : MonoBehaviour {
 	void Update () {
 
 		// Don't do anything if the game's curently paused
-		if (gm.IsPaused()) {
+		if (gm.IsPaused() || player == null) {
+			player = GameObject.Find("PLAYER");
 			return;
 		}
 
@@ -40,8 +41,7 @@ public class MapController : MonoBehaviour {
 		if ((canRotateCamera) && (!bIsPlayerMoving) && (!bHasPlayerFinishedTheLevel)) { 
 
 			if (Input.GetAxisRaw("Horizontal") < 0) {
-
-				GameManager.turns++;
+				
 				var valToAdd = 90.0f;
 				if (transform.rotation.x > 0.7f)
 					valToAdd *= -1;
@@ -49,8 +49,7 @@ public class MapController : MonoBehaviour {
 
 			}
 			else if (Input.GetAxisRaw("Horizontal") > 0) {
-
-				GameManager.turns++;
+				
 				var valToAdd = 90.0f;
 				if (transform.rotation.x > 0.7f)
 					valToAdd *= -1;
@@ -62,7 +61,7 @@ public class MapController : MonoBehaviour {
 
 	}
 
-	// Function RotateCamera
+	/// Function RotateCamera
 	// @param byAngles : the amount of angles to rotate (will be converted to radians)
 	// @param inTime : the length of the rotation
 	
@@ -85,6 +84,9 @@ public class MapController : MonoBehaviour {
 		// Round the rotation at the end
 		transform.rotation = toAngle; 
 		canRotateCamera = true;
+
+		// Update the current move count
+		GameManager.moveCount++;
 
 	}
 

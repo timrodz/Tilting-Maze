@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// TODO: Use CharacterController for movement instead of direct RigidBody gravity
+
 public class PlayerMovement : MonoBehaviour {
 
 	private float fWinPullDuration = 2.0f;
@@ -48,16 +50,6 @@ public class PlayerMovement : MonoBehaviour {
 
 			}
 
-			// TODO: add a constrain that allows the camera to rotate ONLY if the player isn't moving
-			// Quick fix to disallow the player
-			// to stop rotating while falling
-			if (Mathf.Abs(body.velocity.magnitude) > 0.2f) {
-				//MapController.canRotateCamera = false;
-			}
-			else {
-				//MapController.canRotateCamera = true;
-			}
-
 		}
 		else {
 
@@ -66,6 +58,9 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 	}
+
+	/// Function OnTriggerEnter
+	// Check if the player has found the finish
 
 	void OnTriggerEnter(Collider other) {
 
@@ -108,7 +103,7 @@ public class PlayerMovement : MonoBehaviour {
 			// Show the winning screen before the rotation finishes
 			// Reason: it makes the UX feel smoother
 			if ((t > 0.6f) && (canShowWinScreen)) {
-				
+
 				canShowWinScreen = false;
 				gm.CompleteLevel();
 
