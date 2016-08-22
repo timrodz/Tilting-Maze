@@ -17,11 +17,27 @@ public class PlayerMovement : MonoBehaviour {
 	// For accessing the paused state of the game
 	GameManager gm;
 
+	// The material to access
+	MeshRenderer thisMeshRenderer;
+	MeshRenderer goalMeshRenderer;
+
 	// Use this for initialization
 	void Awake() {
 
 		gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
 		body = GetComponent<Rigidbody>();
+		thisMeshRenderer = GetComponent<MeshRenderer>();
+		goalMeshRenderer = GameObject.Find("GOAL").GetComponent<MeshRenderer>();
+
+	}
+
+	// Change the color of the material
+
+	void Start() {
+
+		Color color = RandomColor();
+		thisMeshRenderer.material.color = color;
+		goalMeshRenderer.material.color = color;
 
 	}
 
@@ -68,6 +84,7 @@ public class PlayerMovement : MonoBehaviour {
 		if (other.tag == "Finish" && !bHasFinishedLevel) {
 
 			bHasFinishedLevel = true;
+			gm.bCanPause = false;
 			StartCoroutine(AnimationWin());
 
 		}
@@ -114,6 +131,19 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		GameObject.Find("Background").GetComponent<MeshRenderer>().material.color = transform.GetComponent<MeshRenderer>().material.color;
+
+	}
+
+	Color RandomColor() {
+
+		// Start with a basic random color
+
+		float goldenRatio = (1 + Mathf.Sqrt(5)) / 2;
+		float randomValue = Random.Range(0, 1);
+		randomValue += goldenRatio;
+		randomValue %= 1;
+
+		return Random.ColorHSV(1/6f, 5/6f, 1f, 1f, 1f, 1f);
 
 	}
 
