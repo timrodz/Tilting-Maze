@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour {
 	[HideInInspector]
 	public static int moveCount;
 
+	[HideInInspector]
+	public bool bCanPause;
 	private bool bIsPaused = false;
 
 	public Transform pauseImage;
@@ -21,7 +23,10 @@ public class GameManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 
-		if (bIsPaused) {
+		//if (!bCanPause)
+			//return;
+
+		if (bIsPaused && bCanPause) {
 
 			if (!pauseImage.gameObject.activeInHierarchy) {
 				pauseImage.gameObject.SetActive(true);
