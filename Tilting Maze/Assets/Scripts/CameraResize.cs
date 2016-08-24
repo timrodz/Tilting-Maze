@@ -3,8 +3,7 @@ using System.Collections;
 
 public class CameraResize : MonoBehaviour {
 
-	// Use this for initialization
-	void Start() {
+	private void Start() {
 
 		// set the desired aspect ratio (the values in this example are
 		// hard-coded for 16:9, but you could make them into public

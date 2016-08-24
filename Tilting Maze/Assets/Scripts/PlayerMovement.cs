@@ -7,8 +7,6 @@ public class PlayerMovement : MonoBehaviour {
 
 	private float fWinPullDuration = 2.0f;
 
-	private Rigidbody body;
-
 	[HideInInspector]
 	public bool bHasFinishedLevel = false;
 
@@ -18,16 +16,21 @@ public class PlayerMovement : MonoBehaviour {
 	GameManager gm;
 
 	// The material to access
-	MeshRenderer thisMeshRenderer;
-	MeshRenderer goalMeshRenderer;
+	MeshRenderer playerMR;
+	MeshRenderer goalMR;
+
+	// CHARACTER CONTROLLER //
+	private CharacterController controller;
+	private float speed = 6.0f;
+	private float gravity = 20.0f;
+	private Vector3 moveDirection = Vector3.zero;
 
 	// Use this for initialization
 	void Awake() {
 
 		gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
-		body = GetComponent<Rigidbody>();
-		thisMeshRenderer = GetComponent<MeshRenderer>();
-		goalMeshRenderer = GameObject.Find("GOAL").GetComponent<MeshRenderer>();
+		controller = GetComponent<CharacterController>();
+
 
 	}
 
@@ -35,29 +38,34 @@ public class PlayerMovement : MonoBehaviour {
 
 	void Start() {
 
-		Color color = RandomColor();
-		thisMeshRenderer.material.color = color;
-		goalMeshRenderer.material.color = color;
+		StartCoroutine(UpdateColors(1 / 6f, 1 / 2f));
 
 	}
 
 	// Update is called once per frame
 	void Update() {
 
+		// Only process the player's movement if the goal hasn't been reached
 		if (!bHasFinishedLevel) {
+			
+			// Apply movement when the camera isn't rotating or the game's not paused
+			if (!(!MapController.canRotateCamera || gm.IsPaused())) {
 
-			// Freeze the object's rotation and position whenever the camera is moving
-			if (!MapController.canRotateCamera || gm.IsPaused()) {
+				if (controller.isGrounded) {
 
-				body.isKinematic = true;
+					// Reset the moveDirection vector everytime the player is grounded
+					// Otherwise the gravity'll add too much force
+					moveDirection = new Vector3(0, 0, 0);
+					moveDirection = transform.TransformDirection(moveDirection);
+					moveDirection *= speed;
 
-			}
-			// Remove every constrain except for the X position and rotation
-			else {
+				}
 
-				body.isKinematic = false;
+				moveDirection.y -= gravity * Time.deltaTime;
+				controller.Move(moveDirection * Time.deltaTime);
 
-				// Round the position vector for more accurate physics
+				// Round the position vector's positions to 1 decimal
+				// Aims to reduce many wall-sticking glitches
 				transform.position = new Vector3(
 					(float) System.Math.Round(transform.position.x, 1),
 					(float) System.Math.Round(transform.position.y, 1),
@@ -67,22 +75,19 @@ public class PlayerMovement : MonoBehaviour {
 			}
 
 		}
-		else {
-
-			body.isKinematic = true;
-
-		}
 
 	}
 
-	/// Function OnTriggerEnter
-	// Check if the player has found the finish
-
+	/// <summary>
+	/// Raises the trigger enter event.
+	/// </summary>
+	/// <param name="other">Other.</param>
 	void OnTriggerEnter(Collider other) {
 
 		// Has reached the goal of the level
 		if (other.tag == "Finish" && !bHasFinishedLevel) {
 
+			print(">>>> Reached GOAL");
 			bHasFinishedLevel = true;
 			gm.bCanPause = false;
 			StartCoroutine(AnimationWin());
@@ -91,12 +96,10 @@ public class PlayerMovement : MonoBehaviour {
 
 	}
 
-	/// Function AnimationWin
-	// Center the camera on the player
-	// Translate the player's x-axis positively
-	// Rotate around itself
-	// Scale it in the y and z planes
-
+	/// <summary>
+	/// Executes animation whenever the player reaches the goal.
+	/// </summary>
+	/// <returns>nil.</returns>
 	IEnumerator AnimationWin() {
 
 		GameManager gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
@@ -134,16 +137,36 @@ public class PlayerMovement : MonoBehaviour {
 
 	}
 
-	Color RandomColor() {
+	/// Function Update color
+	/// Change the colors of the player and the goal
+	/// param _lOffset: The minimum hue value for the hue
+	/// param _rOffset: The maximum value for the hue
+	/// return : nil
 
-		// Start with a basic random color
+	private IEnumerator UpdateColors(float _lOffset, float _rOffset) {
 
-		float goldenRatio = (1 + Mathf.Sqrt(5)) / 2;
-		float randomValue = Random.Range(0, 1);
-		randomValue += goldenRatio;
-		randomValue %= 1;
+		yield return new WaitForSeconds(0.0f);
 
-		return Random.ColorHSV(1/6f, 5/6f, 1f, 1f, 1f, 1f);
+		Color color = RandomColor(_lOffset, _rOffset);
+
+		playerMR = GetComponent<MeshRenderer>();
+
+		goalMR = GameObject.Find("GOAL").GetComponent<MeshRenderer>();
+
+		playerMR.material.color = color;
+		goalMR.material.color = color;
+
+	}
+
+	/// <summary>
+	/// Randoms the color.
+	/// </summary>
+	/// <returns>The color.</returns>
+	/// <param name="_lOffset">L offset.</param>
+	/// <param name="_rOffset">R offset.</param>
+	private Color RandomColor(float _lOffset, float _rOffset) {
+
+		return Random.ColorHSV(_lOffset, _rOffset, 1f, 1f, 1f, 1f);
 
 	}
 

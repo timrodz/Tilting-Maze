@@ -23,7 +23,7 @@ public class MapController : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () {
+	void Update() {
 
 		// Don't do anything if the game's curently paused
 		if (gm.IsPaused() || player == null) {
@@ -32,7 +32,7 @@ public class MapController : MonoBehaviour {
 		}
 
 		// Check whether or not the player is moving by tracking its magnitude velocity vector
-		bool bIsPlayerMoving = (int) Mathf.Abs(player.GetComponent<Rigidbody>().velocity.magnitude) > 0;
+		bool bIsPlayerMoving = (int)Mathf.Abs(player.GetComponent<CharacterController>().velocity.magnitude) > 0;
 
 		// Check whether or not the player has reached the goal
 		bool bHasPlayerFinishedTheLevel = player.GetComponent<PlayerMovement>().bHasFinishedLevel;
@@ -65,7 +65,7 @@ public class MapController : MonoBehaviour {
 	// @param byAngles : the amount of angles to rotate (will be converted to radians)
 	// @param inTime : the length of the rotation
 	
-	public IEnumerator RotateCamera (Vector3 byAngles, float inTime) {
+	public IEnumerator RotateCamera(Vector3 byAngles, float inTime) {
 
 		canRotateCamera = false;
 

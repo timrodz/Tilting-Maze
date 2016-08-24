@@ -8,8 +8,9 @@ public class Animate : MonoBehaviour {
 		FadeOut,
 		ZoomIn,
 		ZoomOut,
-		FadeZoomIn
-	};
+		FadeZoomIn}
+
+	;
 
 	public Transform objectToAnimate;
 
@@ -17,11 +18,9 @@ public class Animate : MonoBehaviour {
 
 	public VectorDirection.directions directionToAnimateFrom;
 
+	public float animationDuration = 1.0f;
+
 	public float animationScale = 1.0f;
-
-	public float zoomScale = 2.0f;
-
-	private float animationDuration = 0.3f;
 
 	private Vector3 targetPosition;
 

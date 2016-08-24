@@ -6,11 +6,12 @@ public class ButtonActivator : MonoBehaviour {
 
 	public VectorDirection.directions vectorDirection;
 
-	public Transform barrier;
+	public Transform[] barriers;
 
 	private float fDuration = 0.99f;
 
-	Vector3 vectorToTranslate, target;
+	Vector3 vectorToTranslate;
+//	Vector3 target;
 
 	// Use this for initialization
 	void Start() {
@@ -21,9 +22,11 @@ public class ButtonActivator : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other) {
 
-		target = barrier.position + vectorToTranslate;
-		//MapController.canRotateCamera = false;
-		StartCoroutine(TranslateTo(barrier, vectorToTranslate));
+		foreach (Transform barrier in barriers) {
+
+			StartCoroutine(TranslateTo(barrier, vectorToTranslate));
+			
+		}
 
 	}
 
@@ -32,6 +35,8 @@ public class ButtonActivator : MonoBehaviour {
 	// param _position : the position to translate to
 
 	IEnumerator TranslateTo(Transform _transform, Vector3 _position) {
+
+		Vector3 target = _transform.position + vectorToTranslate;
 
 		yield return new WaitForSeconds(0.0f);
 		MapController.canRotateCamera = false;

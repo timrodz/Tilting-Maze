@@ -14,45 +14,56 @@ public class GameManager : MonoBehaviour {
 	[HideInInspector]
 	public static int moveCount;
 
-	[HideInInspector]
+	//	[HideInInspector]
 	public bool bCanPause;
-	private bool bIsPaused = false;
+
+	private bool bIsPaused;
 
 	public Transform pauseImage;
 
+	void Start() {
+
+		bCanPause = true;
+		bIsPaused = false;
+
+	}
+
 	// Update is called once per frame
-	void Update() {
+	private void Update() {
 
-		//if (!bCanPause)
-			//return;
+		if (bCanPause) {
 
-		if (bIsPaused && bCanPause) {
-
-			if (!pauseImage.gameObject.activeInHierarchy) {
+			if (bIsPaused) {
+				
 				pauseImage.gameObject.SetActive(true);
+
 			}
-
-		}
-		else {
-
-			if (pauseImage.gameObject.activeInHierarchy) {
+			else {
+				
 				pauseImage.gameObject.SetActive(false);
+
 			}
 
 		}
 
 	}
-	
+
 	/// Function PauseGame
 	// This will enable the paused state for the game
 
+	/// <summary>
+	/// Pauses the game.
+	/// </summary>
 	public void PauseGame() {
+		
 		bIsPaused = !bIsPaused;
+
 	}
 
-	/// Function IsPaused
-	// Return whether or not the game's currently paused
-
+	/// <summary>
+	/// Determines whether this instance is paused.
+	/// </summary>
+	/// <returns><c>true</c> if this instance is paused; otherwise, <c>false</c>.</returns>
 	public bool IsPaused() {
 		return (bIsPaused == true);
 	}
@@ -62,6 +73,9 @@ public class GameManager : MonoBehaviour {
 	// Show the moves it took to complete
 	// And the prompt for loading the next level
 
+	/// <summary>
+	/// Completes the level.
+	/// </summary>
 	public void CompleteLevel() {
 
 		scoreText.text += moveCount;
@@ -70,9 +84,9 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	/// Function LoadNextLevel
-	// Happens whenever the player presses the winning button
-
+	/// <summary>
+	/// Loads the next level.
+	/// </summary>
 	public void LoadNextLevel() {
 
 		// Remove the appended movecount string from the winning text
@@ -122,10 +136,12 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	/// Function TrimString
-	// param _stringToTrim : the string that's going to be trimmed
-	// param _containsNumber : whether or not it has a number that must be changed
-
+	/// <summary>
+	/// Trims the string.
+	/// </summary>
+	/// <returns>The string.</returns>
+	/// <param name="_stringToTrim">String to trim.</param>
+	/// <param name="_containsNumber">If set to <c>true</c> contains number.</param>
 	string TrimString(string _stringToTrim, bool _containsNumber) {
 
 		int length = _stringToTrim.Length - 1;
@@ -149,6 +165,8 @@ public class GameManager : MonoBehaviour {
 
 			// parse the number from the string and add 1 to it
 			int num = int.Parse(number) + 1;
+
+			// TODO: Count the amount of digits that the number has
 
 			// Remove the number at the top
 			_stringToTrim = _stringToTrim.Remove(length);
