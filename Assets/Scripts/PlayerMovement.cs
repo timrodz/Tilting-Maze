@@ -3,9 +3,11 @@ using System.Collections;
 
 public class PlayerMovement : MonoBehaviour {
 
+	// PUBLIC
 	[HideInInspector]
 	public bool bHasFinishedLevel = false;
 
+	// PRIVATE
 	private float fWinPullDuration = 2.0f;
 
 	private bool canShowWinScreen = true;
@@ -22,7 +24,7 @@ public class PlayerMovement : MonoBehaviour {
 	private float gravity = 20.0f;
 	private Vector3 moveDirection = Vector3.zero;
 
-
+	// METHODS
 	private void Awake() {
 
 		gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
@@ -32,7 +34,7 @@ public class PlayerMovement : MonoBehaviour {
 
 	private void Start() {
 
-		StartCoroutine(UpdateColors(1 / 6f, 1 / 2f));
+		UpdateColors(1f / 6f, 1f / 2f);
 
 	}
 
@@ -41,13 +43,14 @@ public class PlayerMovement : MonoBehaviour {
 		// Only process the player's movement if the goal hasn't been reached
 		if (!bHasFinishedLevel) {
 			
-			// Apply movement when the camera isn't rotating or the game's not paused
+			// Apply movement when either the camera isn't rotating or the game's not paused
 			if (!(!MapController.canRotateCamera || gm.IsPaused())) {
-
+				
+				// move the body whenever it's grounded
 				if (controller.isGrounded) {
 
 					// Reset the moveDirection vector everytime the player is grounded
-					// Otherwise the gravity'll add too much force
+					// Otherwise the gravity will accumulate too much force
 					moveDirection = new Vector3(0, 0, 0);
 					moveDirection = transform.TransformDirection(moveDirection);
 					moveDirection *= speed;
@@ -77,9 +80,9 @@ public class PlayerMovement : MonoBehaviour {
 		if ((other.tag == "Finish") && (!bHasFinishedLevel)) {
 
 			print(">>>> Reached GOAL");
-			bHasFinishedLevel = true;
-			gm.bCanPause = false;
-			StartCoroutine(AnimationWin());
+			bHasFinishedLevel = true; 		// Set the state of the level to finished
+			gm.bCanPause = false;			// Disable the ability to pause
+			StartCoroutine(AnimationWin());	// Start the winning animation coroutine
 
 		}
 
@@ -126,21 +129,16 @@ public class PlayerMovement : MonoBehaviour {
 		GameObject.Find("Background").GetComponent<MeshRenderer>().material.color = transform.GetComponent<MeshRenderer>().material.color;
 
 	}
-
-	/// Change the colors of the player and the goal
-	/// param _lOffset : The minimum value for the hue
-	/// param _rOffset : The maximum value for the hue
-	//
-
+	
 	/// <summary>
-	/// Updates the colors.
+	/// Updates the colors for the player and the goal objects.
 	/// </summary>
-	/// <returns>The colors.</returns>
-	/// <param name="_lOffset">L offset.</param>
-	/// <param name="_rOffset">R offset.</param>
-	private IEnumerator UpdateColors(float _lOffset, float _rOffset) {
+	/// <param name="_lOffset">The minimum value for the hue</param>
+	/// <param name="_rOffset">The maximum value for the hue</param>
+	/// <returns>void</returns>
+	private void UpdateColors(float _lOffset, float _rOffset) {
 
-		yield return new WaitForSeconds(0.0f);
+		// yield return new WaitForSeconds(0.0f);
 
 		Color color = RandomColor(_lOffset, _rOffset);
 
@@ -152,16 +150,13 @@ public class PlayerMovement : MonoBehaviour {
 		goalMR.material.color = color;
 
 	}
-
-	/// Return a random bright color between two hue values
-	/// param _lOffset : The minimum value for the hue
-	/// param _rOffset : The maximum value for the hue
-	/// 
-	//
-
+	
 	/// <summary>
-	/// Randoms the color.
-	/// </summary>
+    /// Generates a random HSV color
+    /// </summary>
+    /// <param name="_lOffset">The minimum value for the hue</param>
+    /// <param name="_rOffset">The maximum value for the hue</param>
+    /// <returns>Color</returns>
 	private Color RandomColor(float _lOffset, float _rOffset) {
 
 		return Random.ColorHSV(_lOffset, _rOffset, 1f, 1f, 1f, 1f);
