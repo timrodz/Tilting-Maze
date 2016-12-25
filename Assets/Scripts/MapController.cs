@@ -22,7 +22,6 @@ public class MapController : MonoBehaviour {
 
 	}
 
-
 	void Update() {
 
 		// Don't do anything if the game's curently paused

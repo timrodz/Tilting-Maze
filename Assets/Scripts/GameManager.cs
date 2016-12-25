@@ -48,16 +48,11 @@ public class GameManager : MonoBehaviour {
 
 	}
 
-	/// Function PauseGame
-	// This will enable the paused state for the game
-
 	/// <summary>
 	/// Pauses the game.
 	/// </summary>
-	public void PauseGame() {
-		
+	public void TogglePause() {
 		bIsPaused = !bIsPaused;
-
 	}
 
 	/// <summary>
