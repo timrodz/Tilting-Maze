@@ -16,13 +16,13 @@ GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Component:
-  - 4: {fileID: 4000014244280180}
-  - 33: {fileID: 33000010294996850}
-  - 23: {fileID: 23000011748959430}
-  - 114: {fileID: 114000010161217720}
-  - 143: {fileID: 143000011432730682}
+  - component: {fileID: 4000014244280180}
+  - component: {fileID: 33000010294996850}
+  - component: {fileID: 23000011748959430}
+  - component: {fileID: 143000011432730682}
+  - component: {fileID: 114000010161217720}
   m_Layer: 0
   m_Name: PLAYER
   m_TagString: Untagged
@@ -37,12 +37,12 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012990872578}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: -4.5, z: -4.5}
+  m_LocalPosition: {x: 0, y: -4.5, z: -4.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &23000011748959430
 MeshRenderer:
   m_ObjectHideFlags: 1
@@ -57,7 +57,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: ab6e3bffa58ba1949b1583c6b6ae4ae9, type: 2}
-  m_SubsetIndices: 
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
@@ -65,7 +67,7 @@ MeshRenderer:
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_SelectedWireframeHidden: 0
+  m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -97,12 +99,12 @@ CharacterController:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000012990872578}
-  m_Material: {fileID: 13400000, guid: 2b9dc09a20ea7423a93e8141c3d136a6, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Height: 1
-  m_Radius: 0.62
+  m_Radius: 0.615
   m_SlopeLimit: 45
   m_StepOffset: 0
   m_SkinWidth: 0.0001

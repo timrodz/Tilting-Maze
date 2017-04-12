@@ -2,10 +2,11 @@
 using System.Collections;
 
 public class PlayerMovement : MonoBehaviour {
+	
+	private GameManager gm;
 
 	// PUBLIC
-	[HideInInspector]
-	public bool bHasFinishedLevel = false;
+	[HideInInspector] public bool hasFinishedLevel = false;
 
 	// PRIVATE
 	private float fWinPullDuration = 2.0f;
@@ -13,7 +14,7 @@ public class PlayerMovement : MonoBehaviour {
 	private bool canShowWinScreen = true;
 
 	// For accessing the paused state of the game
-	private GameManager gm;
+	
 
 	// The material to access
 	private MeshRenderer playerMR, goalMR;
@@ -27,7 +28,7 @@ public class PlayerMovement : MonoBehaviour {
 	// METHODS
 	private void Awake() {
 
-		gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
+		gm = FindObjectOfType<GameManager>();
 		controller = GetComponent<CharacterController>();
 
 	}
@@ -41,10 +42,10 @@ public class PlayerMovement : MonoBehaviour {
 	private void Update() {
 
 		// Only process the player's movement if the goal hasn't been reached
-		if (!bHasFinishedLevel) {
+		if (!hasFinishedLevel) {
 			
 			// Apply movement when either the camera isn't rotating or the game's not paused
-			if (!(!MapController.canRotateCamera || gm.IsPaused())) {
+			if (!(!MapController.canRotateCamera || gm.isPaused)) {
 				
 				// move the body whenever it's grounded
 				if (controller.isGrounded) {
@@ -77,11 +78,11 @@ public class PlayerMovement : MonoBehaviour {
 	private void OnTriggerEnter(Collider other) {
 
 		// Has reached the goal of the level
-		if ((other.tag == "Finish") && (!bHasFinishedLevel)) {
+		if ((other.tag == "Finish") && (!hasFinishedLevel)) {
 
 			print(">>>> Reached GOAL");
-			bHasFinishedLevel = true; 		// Set the state of the level to finished
-			gm.bCanPause = false;			// Disable the ability to pause
+			hasFinishedLevel = true; 		// Set the state of the level to finished
+			gm.canPause = false;			// Disable the ability to pause
 			StartCoroutine(AnimationWin());	// Start the winning animation coroutine
 
 		}

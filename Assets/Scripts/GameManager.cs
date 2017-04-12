@@ -1,179 +1,163 @@
 ﻿#define MORELEVELS
-
-using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Text.RegularExpressions;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
+using DG.Tweening;
 
 public class GameManager : MonoBehaviour {
+	
+	[HeaderAttribute("UI Elements")]
+    public TextMeshProUGUI totalMovesText;
+    public Button nextLevelButton;
+	public Image pausePanel;
 
-	public Text scoreText;
-	public Button nextLevelButton;
+    [HideInInspector] public static int moveCount;
+    [HideInInspector] public bool canPause = true;
+    [HideInInspector] public bool isPaused = false;
 
-	[HideInInspector]
-	public static int moveCount;
+    void Start() {
 
-	//	[HideInInspector]
-	public bool bCanPause;
+    }
 
-	private bool bIsPaused;
+    // Update is called once per frame
+    void Update() {
 
-	public Transform pauseImage;
+    }
 
-	void Start() {
+    /// <summary>
+    /// Pauses the game.
+    /// </summary>
+    public void TogglePause() {
 
-		bCanPause = true;
-		bIsPaused = false;
+        isPaused = !isPaused;
+        Debug.Log("Pause state: " + isPaused);
+        if (canPause) {
 
-	}
-
-	// Update is called once per frame
-	private void Update() {
-
-		if (bCanPause) {
-
-			if (bIsPaused) {
+            if (isPaused) {
 				
-				pauseImage.gameObject.SetActive(true);
+				pausePanel.gameObject.SetActive(true);
 
-			}
-			else {
-				
-				pauseImage.gameObject.SetActive(false);
+            } else {
 
-			}
+                pausePanel.gameObject.SetActive(false);
 
-		}
+            }
 
-	}
+        }
 
-	/// <summary>
-	/// Pauses the game.
-	/// </summary>
-	public void TogglePause() {
-		bIsPaused = !bIsPaused;
-	}
+    }
 
-	/// <summary>
-	/// Determines whether this instance is paused.
-	/// </summary>
-	/// <returns><c>true</c> if this instance is paused; otherwise, <c>false</c>.</returns>
-	public bool IsPaused() {
-		return (bIsPaused == true);
-	}
+    /// <summary>
+    /// Finish the current level
+    /// Show the moves it took to complete
+    /// And the prompt for loading the next level
+    /// </summary>
+    public void CompleteLevel() {
 
-	/// Function CompleteLevel
-	// Finish the current level
-	// Show the moves it took to complete
-	// And the prompt for loading the next level
+        totalMovesText.text += moveCount;
+        totalMovesText.gameObject.SetActive(true);
+        nextLevelButton.gameObject.SetActive(true);
 
-	/// <summary>
-	/// Completes the level.
-	/// </summary>
-	public void CompleteLevel() {
+    }
 
-		scoreText.text += moveCount;
-		scoreText.gameObject.SetActive(true);
-		nextLevelButton.gameObject.SetActive(true);
+    /// <summary>
+    /// Loads the next level.
+    /// </summary>
+    public void LoadNextLevel() {
 
-	}
+        // Remove the appended movecount string from the winning text
+        totalMovesText.text = totalMovesText.text.Remove(totalMovesText.text.IndexOf(' ') + 1, totalMovesText.text.Length - totalMovesText.text.IndexOf(' ') - 1);
 
-	/// <summary>
-	/// Loads the next level.
-	/// </summary>
-	public void LoadNextLevel() {
+        // Disable the score text and the next level buttons
+        totalMovesText.gameObject.SetActive(false);
+        nextLevelButton.gameObject.SetActive(false);
 
-		// Remove the appended movecount string from the winning text
-		scoreText.text = scoreText.text.Remove(scoreText.text.IndexOf(' ') + 1, scoreText.text.Length - scoreText.text.IndexOf(' ') - 1);
+        // Reset the move count back to 0
+        moveCount = 0;
 
-		// Disable the score text and the next level buttons
-		scoreText.gameObject.SetActive(false);
-		nextLevelButton.gameObject.SetActive(false);
+        // Load the next level //
 
-		// Reset the move count back to 0
-		moveCount = 0;
+        Transform level = GameObject.Find("PLAYER").GetComponent<Transform> ().parent;
 
-		// Load the next level //
+        // Get the current level's string and load the next level based on hierarchy
+        string str = TrimString(level.ToString(), true);
 
-		Transform level = GameObject.Find("PLAYER").GetComponent<Transform>().parent;
+        // Destroy the current level
+        Destroy(level.gameObject);
 
-		// Get the current level's string and load the next level based on hierarchy
-		string str = TrimString(level.ToString(), true);
+        // Find the level prefab by loading the resources directly
+        Object nextLevel = Resources.Load(str);
 
-		// Destroy the current level
-		Destroy(level.gameObject);
+        // Reset the camera's position
+        Camera camera = GameObject.Find("Main Camera").GetComponent<Camera> ();
+        camera.transform.position = new Vector3(0, 0, -10);
 
-		// Find the level prefab by loading the resources directly
-		Object nextLevel = Resources.Load(str);
+        // If there's a next level, create it
+        if (nextLevel) {
 
-		// Reset the camera's position
-		Camera camera = GameObject.Find("Main Camera").GetComponent<Camera>();
-		camera.transform.position = new Vector3(0, 0, -10);
+            // Instantiate the next level
+            // The quaternion uses 1 on the y-axis because it needs to be rotated 90 degrees around it
+            GameObject levelToInstantiate = Instantiate(nextLevel, Vector3.zero, new Quaternion(0, 1, 0, 1)) as GameObject;
 
-		// If there's a next level, create it
-		if (nextLevel) {
+            // Get rid of the "(CLONE)" text
+            levelToInstantiate.name = TrimString(nextLevel.ToString(), false);
 
-			// Instantiate the next level
-			// The quaternion uses 1 on the y-axis because it needs to be rotated 90 degrees around it
-			GameObject levelToInstantiate = Instantiate(nextLevel, Vector3.zero, new Quaternion(0, 1, 0, 1)) as GameObject;
+        }
+        // Otherwise, go back to the menu
+        else {
 
-			// Get rid of the "(CLONE)" text
-			levelToInstantiate.name = TrimString(nextLevel.ToString(), false);
+            SceneManager.LoadScene("Level Selection");
 
-		}
-		// Otherwise, go back to the menu
-		else {
+        }
 
-			SceneManager.LoadScene("Level Selection");
+    }
 
-		}
+    /// <summary>
+    /// Trims the string.
+    /// </summary>
+    /// <returns>The string.</returns>
+    /// <param name="_stringToTrim">String to trim.</param>
+    /// <param name="_containsNumber">If set to <c>true</c> contains number.</param>
+    private string TrimString(string _stringToTrim, bool _containsNumber) {
 
-	}
+        int length = _stringToTrim.Length - 1;
 
-	/// <summary>
-	/// Trims the string.
-	/// </summary>
-	/// <returns>The string.</returns>
-	/// <param name="_stringToTrim">String to trim.</param>
-	/// <param name="_containsNumber">If set to <c>true</c> contains number.</param>
-	string TrimString(string _stringToTrim, bool _containsNumber) {
-
-		int length = _stringToTrim.Length - 1;
-
-		// Find the first parentheses and delete everything
-		// that follows after it
-		int index = _stringToTrim.IndexOf('(');
-		_stringToTrim = _stringToTrim.Remove(index - 1, length - index + 2);
+        // Find the first parentheses and delete everything
+        // that follows after it
+        int index = _stringToTrim.IndexOf('(');
+        _stringToTrim = _stringToTrim.Remove(index - 1, length - index + 2);
 
 #if (MORELEVELS)
 
-		// TODO: Modify this section so it takes numbers higher than 9
+        // TODO: Modify this section so it takes numbers higher than 9
 
-		if (_containsNumber) {
+        if (_containsNumber) {
 
-			// Recalculate the new length
-			length = _stringToTrim.Length - 1;
+            // Recalculate the new length
+            length = _stringToTrim.Length - 1;
 
-			// store the number it has and remove it
-			string number = Regex.Match(_stringToTrim, @"\d+").Value;
+            // store the number it has and remove it
+            string number = Regex.Match(_stringToTrim, @"\d+").Value;
 
-			// parse the number from the string and add 1 to it
-			int num = int.Parse(number) + 1;
+            // parse the number from the string and add 1 to it
+            int num = int.Parse(number) + 1;
 
-			// TODO: Count the amount of digits that the number has
+            // TODO: Count the amount of digits that the number has
 
-			// Remove the number at the top
-			_stringToTrim = _stringToTrim.Remove(length);
+            // Remove the number at the top
+            _stringToTrim = _stringToTrim.Remove(length);
 
-			_stringToTrim += (num);
+            _stringToTrim += (num);
 
-		}
+        }
 
 #endif
 
-		return _stringToTrim;
+        return _stringToTrim;
 
-	}
+    }
 
 }
