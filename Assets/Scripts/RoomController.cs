@@ -3,7 +3,7 @@ using DG.Tweening;
 using UnityEngine;
 using XboxCtrlrInput;
 
-public class MapController : MonoBehaviour {
+public class RoomController : MonoBehaviour {
 
     [HideInInspector] public static bool canRotateCamera = true;
 
@@ -12,8 +12,10 @@ public class MapController : MonoBehaviour {
     [RangeAttribute(0.3f, 1.0f)]
     public float rotationLength = 0.5f;
 
+    [HeaderAttribute("Player")]
     // For referencing the player's current speed and finished level state
-    public Transform player;
+    public GameObject playerObject;
+    private PlayerMovementController playerMovementController;
 
     // For accessing the paused state of the game
     GameManager gm;
@@ -21,31 +23,29 @@ public class MapController : MonoBehaviour {
     void Awake() {
 
         gm = FindObjectOfType<GameManager> ();
+        playerMovementController = playerObject.GetComponent<PlayerMovementController> ();
 
     }
 
     void Update() {
 
         // Don't do anything if the game's curently paused
-        if (gm.isPaused || !player) {
+        if (gm.currentState == GameState.Paused || !playerObject) {
             return;
         }
 
         // Check whether or not the player is moving by tracking its magnitude velocity vector
-        bool bIsPlayerMoving = (int) Mathf.Abs(player.GetComponent<CharacterController> ().velocity.magnitude) > 0;
-
-        // Check whether or not the player has reached the goal
-        bool bHasPlayerFinishedTheLevel = player.GetComponent<PlayerMovement> ().hasFinishedLevel;
+        bool isPlayerMoving = (int) Mathf.Abs(playerMovementController.GetVelocity()) > 0;
 
         // Allow for camera rotation ONLY if the player meets the following criteria
-        if ((canRotateCamera) && (!bIsPlayerMoving) && (!bHasPlayerFinishedTheLevel)) {
+        if ((canRotateCamera) && (!isPlayerMoving) && (!gm.isLevelComplete)) {
 
-			if (XCI.GetAxisRaw(XboxAxis.LeftStickX) > 0 || Input.GetKey(KeyCode.D)) {
-                
+            if (XCI.GetAxisRaw(XboxAxis.LeftStickX) > 0 || Input.GetKey(KeyCode.D)) {
+
                 StartCoroutine(RotateCamera(true));
 
-			} else if (XCI.GetAxisRaw(XboxAxis.LeftStickX) < 0 || Input.GetKey(KeyCode.A)) {
-				
+            } else if (XCI.GetAxisRaw(XboxAxis.LeftStickX) < 0 || Input.GetKey(KeyCode.A)) {
+
                 StartCoroutine(RotateCamera(false));
 
             }
@@ -59,7 +59,6 @@ public class MapController : MonoBehaviour {
     /// </summary>
     public IEnumerator RotateCamera(bool shouldRotateRight) {
 
-        
         canRotateCamera = false;
 
         // Quaternion fromAngle = transform.rotation; // Get the transform's current rotation coordinates
@@ -85,10 +84,10 @@ public class MapController : MonoBehaviour {
             eulerRotation.z += 90;
         }
 
-        transform.DORotate(eulerRotation, rotationLength);
+        transform.DORotate(eulerRotation, rotationLength).SetEase(rotationEaseType);
 
         yield return new WaitForSeconds(rotationLength);
-        
+
         canRotateCamera = true;
 
         // Update the current move count

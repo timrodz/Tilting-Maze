@@ -34,14 +34,14 @@ public class ButtonActivator : MonoBehaviour {
 	/// Translates to the desired position
 	private IEnumerator TranslateTo(Transform objectTransform) {
 
-		MapController.canRotateCamera = false;
+		RoomController.canRotateCamera = false;
 		
 		Vector3 target = objectTransform.position + (distanceScale * translationVector);
 		
 		iTween.MoveTo(objectTransform.gameObject, iTween.Hash("position", target, "easetype", easeType, "time", fDuration));
 
 		yield return new WaitForSeconds(fDuration);
-		MapController.canRotateCamera = true;
+		RoomController.canRotateCamera = true;
 		Destroy(gameObject);
 
 	}

@@ -408,7 +408,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &210080797
 RectTransform:
   m_ObjectHideFlags: 0
@@ -639,7 +639,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationEaseType: 6
   rotationLength: 0.5
-  player: {fileID: 1588966923}
+  playerObject: {fileID: 1294186196}
 --- !u!1001 &261850675
 Prefab:
   m_ObjectHideFlags: 0
@@ -1538,7 +1538,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationEaseType: 6
   rotationLength: 0.5
-  player: {fileID: 0}
+  playerObject: {fileID: 0}
 --- !u!4 &835656744
 Transform:
   m_ObjectHideFlags: 0
@@ -1961,6 +1961,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e217725711724616afc1d0e5049a887, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1294186196 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1000012990872578, guid: 6f9324002d9544f0fa2158d254ce335d,
+    type: 2}
+  m_PrefabInternal: {fileID: 1758842174}
 --- !u!1001 &1338985449
 Prefab:
   m_ObjectHideFlags: 0
@@ -2043,8 +2048,12 @@ MonoBehaviour:
   totalMovesText: {fileID: 1922842885}
   nextLevelButton: {fileID: 1785769498}
   pausePanel: {fileID: 1000344314}
+  currentState: 1
+  previousState: 0
   canPause: 1
   isPaused: 0
+  isLevelComplete: 0
+  canShowWinScreen: 0
 --- !u!4 &1354218853
 Transform:
   m_ObjectHideFlags: 0
@@ -2906,11 +2915,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:

@@ -441,6 +441,7 @@ PlayerSettings:
   webGLUseWasm: 0
   webGLCompressionFormat: 1
   scriptingDefineSymbols:
+    1: TMP_PRESENT
     14: TMP_PRESENT
   platformArchitecture:
     iOS: 2

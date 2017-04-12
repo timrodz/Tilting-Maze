@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerMovement : MonoBehaviour {
+public class PlayerMovementController : MonoBehaviour {
 	
 	private GameManager gm;
 
@@ -13,9 +13,6 @@ public class PlayerMovement : MonoBehaviour {
 
 	private bool canShowWinScreen = true;
 
-	// For accessing the paused state of the game
-	
-
 	// The material to access
 	private MeshRenderer playerMR, goalMR;
 
@@ -23,7 +20,9 @@ public class PlayerMovement : MonoBehaviour {
 	private CharacterController controller;
 	private float speed = 6.0f;
 	private float gravity = 20.0f;
-	private Vector3 moveDirection = Vector3.zero;
+	private Vector3 moveDirection;
+	
+	[HideInInspector] public bool isMoving;
 
 	// METHODS
 	private void Awake() {
@@ -42,17 +41,16 @@ public class PlayerMovement : MonoBehaviour {
 	private void Update() {
 
 		// Only process the player's movement if the goal hasn't been reached
-		if (!hasFinishedLevel) {
+		if (!gm.isLevelComplete) {
 			
 			// Apply movement when either the camera isn't rotating or the game's not paused
-			if (!(!MapController.canRotateCamera || gm.isPaused)) {
+			if (!(!RoomController.canRotateCamera || gm.currentState == GameState.Paused)) {
 				
 				// move the body whenever it's grounded
 				if (controller.isGrounded) {
 
 					// Reset the moveDirection vector everytime the player is grounded
 					// Otherwise the gravity will accumulate too much force
-					moveDirection = new Vector3(0, 0, 0);
 					moveDirection = transform.TransformDirection(moveDirection);
 					moveDirection *= speed;
 
@@ -162,6 +160,12 @@ public class PlayerMovement : MonoBehaviour {
 
 		return Random.ColorHSV(_lOffset, _rOffset, 1f, 1f, 1f, 1f);
 
+	}
+	
+	public float GetVelocity() {
+		
+		return (controller.velocity.magnitude);
+		
 	}
 
 }

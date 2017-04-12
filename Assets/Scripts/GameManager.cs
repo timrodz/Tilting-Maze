@@ -1,22 +1,50 @@
 ﻿#define MORELEVELS
 using System.Collections;
 using System.Text.RegularExpressions;
+using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
-using DG.Tweening;
 
 public class GameManager : MonoBehaviour {
-	
-	[HeaderAttribute("UI Elements")]
+
+    private Transform mainCameraTransform;
+    private RoomController roomController;
+
+    [HeaderAttribute("UI Elements")]
     public TextMeshProUGUI totalMovesText;
     public Button nextLevelButton;
-	public Image pausePanel;
+    public Image pausePanel;
 
+    [HeaderAttribute("Winning animation")]
+    public Ease winningAnimationEaseType;
+    public Vector3 winningAnimationCameraPosition;
+    public Vector3 winningAnimationPlayerPosition;
+    public float winningAnimationDuration;
+
+    // Game state
     [HideInInspector] public static int moveCount;
+    [HideInInspector] public GameState currentState = GameState.Playing;
+    [HideInInspector] public GameState previousState = GameState.Playing;
+
+    // Pause states
     [HideInInspector] public bool canPause = true;
     [HideInInspector] public bool isPaused = false;
+
+    // Level ending
+    [HideInInspector] public bool isLevelComplete = false;
+    [HideInInspector] public bool canShowWinScreen = false;
+
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
+    void Awake() {
+
+        mainCameraTransform = Camera.main.transform;
+        roomController = FindObjectOfType<RoomController> ();
+
+    }
 
     void Start() {
 
@@ -32,19 +60,19 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     public void TogglePause() {
 
-        isPaused = !isPaused;
-        Debug.Log("Pause state: " + isPaused);
-        if (canPause) {
+        // Pause the game if it's not
+        if (currentState != GameState.Paused) {
 
-            if (isPaused) {
-				
-				pausePanel.gameObject.SetActive(true);
+            previousState = currentState;
+            currentState = GameState.Paused;
+            pausePanel.gameObject.SetActive(true);
 
-            } else {
+        }
+        // Unpause the game
+        else {
 
-                pausePanel.gameObject.SetActive(false);
-
-            }
+            currentState = previousState;
+            pausePanel.gameObject.SetActive(false);
 
         }
 
@@ -57,9 +85,22 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     public void CompleteLevel() {
 
-        totalMovesText.text += moveCount;
+        totalMovesText.text += moveCount.ToString();
+
         totalMovesText.gameObject.SetActive(true);
         nextLevelButton.gameObject.SetActive(true);
+
+        StartCoroutine(AnimateLevelCompletion());
+
+    }
+
+    private IEnumerator AnimateLevelCompletion() {
+
+        mainCameraTransform.DOMove(winningAnimationCameraPosition, winningAnimationDuration).SetEase(winningAnimationEaseType);
+
+        roomController.playerObject.transform.DOMove(winningAnimationPlayerPosition, winningAnimationDuration).SetEase(winningAnimationEaseType);
+
+        yield return new WaitForSeconds(winningAnimationDuration);
 
     }
 
