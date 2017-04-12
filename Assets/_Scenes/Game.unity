@@ -2253,7 +2253,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4000014244280180, guid: 6f9324002d9544f0fa2158d254ce335d, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4000014244280180, guid: 6f9324002d9544f0fa2158d254ce335d, type: 2}
       propertyPath: m_LocalRotation.x
@@ -2303,7 +2303,6 @@ GameObject:
   - component: {fileID: 1785769500}
   - component: {fileID: 1785769499}
   - component: {fileID: 1785769498}
-  - component: {fileID: 1785769501}
   m_Layer: 5
   m_Name: Next Level Button
   m_TagString: Untagged
@@ -2415,23 +2414,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1785769496}
---- !u!114 &1785769501
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1785769496}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ae7aed9186aaca40901238b08637708, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectToAnimate: {fileID: 0}
-  typeOfAnimation: 0
-  directionToAnimateFrom: 1
-  animationDuration: 1
-  animationScale: 4
-  targetPosition: {x: 0, y: 0, z: 0}
 --- !u!1001 &1845602400
 Prefab:
   m_ObjectHideFlags: 0
