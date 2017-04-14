@@ -35,6 +35,8 @@ public class GameManager : MonoBehaviour {
     // Level ending
     [HideInInspector] public bool isLevelComplete = false;
     [HideInInspector] public bool canShowWinScreen = false;
+    
+    // -------------------------------------------------------------------------------------------
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.

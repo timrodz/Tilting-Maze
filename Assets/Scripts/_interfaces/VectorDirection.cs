@@ -3,7 +3,7 @@ using System.Collections;
 
 public class VectorDirection {
 
-	public enum directions {
+	public enum Direction {
 		Up,
 		Down,
 		Right,
@@ -14,30 +14,30 @@ public class VectorDirection {
 		None
 	};
 
-	public static Vector3 DetermineDirection(directions dir) {
+	public static Vector3 DetermineDirection(Direction dir) {
 
 		Vector3 resultingVector = Vector3.zero;
 
 		switch (dir) {
-			case VectorDirection.directions.Up:
+			case VectorDirection.Direction.Up:
 				resultingVector = Vector3.up;
 				break;
-			case VectorDirection.directions.Down:
+			case VectorDirection.Direction.Down:
 				resultingVector = Vector3.down;
 				break;
-			case VectorDirection.directions.Right:
+			case VectorDirection.Direction.Right:
 				resultingVector = Vector3.right;
 				break;
-			case VectorDirection.directions.Left:
+			case VectorDirection.Direction.Left:
 				resultingVector = Vector3.left;
 				break;
-			case VectorDirection.directions.Forward:
+			case VectorDirection.Direction.Forward:
 				resultingVector = Vector3.back;
 				break;
-			case VectorDirection.directions.Back:
+			case VectorDirection.Direction.Back:
 				resultingVector = Vector3.forward;
 				break;
-			case VectorDirection.directions.Equally:
+			case VectorDirection.Direction.Equally:
 				resultingVector = Vector3.one;
 				break;
 		}

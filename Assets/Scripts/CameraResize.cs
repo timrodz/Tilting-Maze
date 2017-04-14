@@ -2,6 +2,8 @@
 using System.Collections;
 
 public class CameraResize : MonoBehaviour {
+	
+	// -------------------------------------------------------------------------------------------
 
 	private void Start() {
 

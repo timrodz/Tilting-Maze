@@ -1,171 +1,167 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using UnityEngine;
 
 public class PlayerMovementController : MonoBehaviour {
-	
-	private GameManager gm;
 
-	// PUBLIC
-	[HideInInspector] public bool hasFinishedLevel = false;
+    private GameManager gm;
 
-	// PRIVATE
-	private float fWinPullDuration = 2.0f;
+    // PUBLIC
+    [HideInInspector] public bool hasFinishedLevel = false;
 
-	private bool canShowWinScreen = true;
+    // PRIVATE
+    private float fWinPullDuration = 2.0f;
 
-	// The material to access
-	private MeshRenderer playerMR, goalMR;
+    private bool canShowWinScreen = true;
 
-	// CHARACTER CONTROLLER //
-	private CharacterController controller;
-	private float speed = 6.0f;
-	private float gravity = 20.0f;
-	private Vector3 moveDirection;
-	
-	[HideInInspector] public bool isMoving;
+    // The material to access
+    private MeshRenderer playerMR, goalMR;
 
-	// METHODS
-	private void Awake() {
+    // CHARACTER CONTROLLER //
+    [HideInInspector] public CharacterController controller;
+    private float speed = 6.0f;
+    private float gravity = 20.0f;
+    private Vector3 moveDirection = Vector3.zero;
 
-		gm = FindObjectOfType<GameManager>();
-		controller = GetComponent<CharacterController>();
+    [HideInInspector] public bool isMoving;
 
-	}
+    // -------------------------------------------------------------------------------------------
 
-	private void Start() {
+    private void Awake() {
 
-		UpdateColors(1f / 6f, 1f / 2f);
+        gm = FindObjectOfType<GameManager> ();
+        controller = GetComponent<CharacterController> ();
 
-	}
+    }
 
-	private void Update() {
+    private void Start() {
 
-		// Only process the player's movement if the goal hasn't been reached
-		if (!gm.isLevelComplete) {
-			
-			// Apply movement when either the camera isn't rotating or the game's not paused
-			if (!(!RoomController.canRotateCamera || gm.currentState == GameState.Paused)) {
-				
-				// move the body whenever it's grounded
-				if (controller.isGrounded) {
+        UpdateColors(1f / 6f, 1f / 2f);
 
-					// Reset the moveDirection vector everytime the player is grounded
-					// Otherwise the gravity will accumulate too much force
-					moveDirection = transform.TransformDirection(moveDirection);
-					moveDirection *= speed;
+    }
 
-				}
+    private void Update() {
 
-				moveDirection.y -= gravity * Time.deltaTime;
-				controller.Move(moveDirection * Time.deltaTime);
+        // Only process the player's movement if the goal hasn't been reached
+        if (!gm.isLevelComplete) {
 
-				// Round the position vector's positions to 1 decimal
-				// Aims to reduce many wall-sticking glitches
-				transform.position = new Vector3(
-					(float)System.Math.Round(transform.position.x, 1),
-					(float)System.Math.Round(transform.position.y, 1),
-					(float)System.Math.Round(transform.position.z, 1)
-				);
+            // Apply movement when either the camera isn't rotating or the game's not paused
+            if (!(!RoomController.canRotateCamera || gm.currentState == GameState.Paused)) {
 
-			}
+                // move the body whenever it's grounded
+                if (controller.isGrounded) {
 
-		}
+                    // Reset the moveDirection vector everytime the player is grounded
+                    // Otherwise the gravity will accumulate too much force
+                    moveDirection = new Vector3(0, 0, 0);
+                    moveDirection = transform.TransformDirection(moveDirection);
+                    moveDirection *= speed;
 
-	}
+                }
 
-	private void OnTriggerEnter(Collider other) {
+                moveDirection.y -= gravity * Time.deltaTime;
+                controller.Move(moveDirection * Time.deltaTime);
 
-		// Has reached the goal of the level
-		if ((other.tag == "Finish") && (!hasFinishedLevel)) {
+                // Round the position vector's positions to 1 decimal
+                // Aims to reduce many wall-sticking glitches
+                transform.position = new Vector3(
+                    (float) System.Math.Round(transform.position.x, 1),
+                    (float) System.Math.Round(transform.position.y, 1),
+                    (float) System.Math.Round(transform.position.z, 1)
+                );
 
-			print(">>>> Reached GOAL");
-			hasFinishedLevel = true; 		// Set the state of the level to finished
-			gm.canPause = false;			// Disable the ability to pause
-			StartCoroutine(AnimationWin());	// Start the winning animation coroutine
+            }
 
-		}
+        }
 
-	}
+    }
 
-	/// <summary>
-	/// Executes the winning animation whenever the player reaches the goal.
-	/// </summary>
-	/// <returns>nil.</returns>
-	private IEnumerator AnimationWin() {
+    private void OnTriggerEnter(Collider other) {
 
-		GameManager gm = GameObject.Find("Game Manager").GetComponent<GameManager>();
-		Transform camera = GameObject.Find("Main Camera").GetComponent<Transform>();
+        // Has reached the goal of the level
+        if ((other.tag == "Finish") && (!hasFinishedLevel)) {
 
-		for (float t = 0.0f; t < 1.0f; t += (Time.deltaTime / fWinPullDuration)) {
+            print(">>>> Reached GOAL");
+            hasFinishedLevel = true; // Set the state of the level to finished
+            gm.canPause = false; // Disable the ability to pause
+            StartCoroutine(AnimationWin()); // Start the winning animation coroutine
 
-			float scaleFactor = 0.0225f;
+        }
 
-			// Make the camera fade out and move the player toward's the center
-			camera.Translate(new Vector3(0.0f, 0.0f, -scaleFactor * 4.0f));
-			transform.position = Vector3.MoveTowards(transform.position, new Vector3(0.5f, 0.0f, 0.0f), t / 1.5f);
+    }
 
-			// Rotate around itself
-			transform.Rotate(new Vector3(3.25f + t, 0.0f, 0.0f));
+    /// <summary>
+    /// Executes the winning animation whenever the player reaches the goal.
+    /// </summary>
+    /// <returns>nil.</returns>
+    private IEnumerator AnimationWin() {
 
-			// Scale it in the y and z planes
-			scaleFactor *= (22.0f + t);
-			transform.localScale += new Vector3(0.01f, scaleFactor, scaleFactor);
+        GameManager gm = GameObject.Find("Game Manager").GetComponent<GameManager> ();
+        Transform camera = GameObject.Find("Main Camera").GetComponent<Transform> ();
 
-			// Show the winning screen before the rotation finishes
-			// Reason: it makes the UX feel smoother
-			if ((t > 0.6f) && (canShowWinScreen)) {
+        for (float t = 0.0f; t < 1.0f; t += (Time.deltaTime / fWinPullDuration)) {
 
-				canShowWinScreen = false;
-				gm.CompleteLevel();
+            float scaleFactor = 0.0225f;
 
-			}
+            // Make the camera fade out and move the player toward's the center
+            camera.Translate(new Vector3(0.0f, 0.0f, -scaleFactor * 4.0f));
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(0.5f, 0.0f, 0.0f), t / 1.5f);
 
-			yield return null;
+            // Rotate around itself
+            transform.Rotate(new Vector3(3.25f + t, 0.0f, 0.0f));
 
-		}
+            // Scale it in the y and z planes
+            scaleFactor *= (22.0f + t);
+            transform.localScale += new Vector3(0.01f, scaleFactor, scaleFactor);
 
-		// Change the color of the background to the player's material color
-		GameObject.Find("Background").GetComponent<MeshRenderer>().material.color = transform.GetComponent<MeshRenderer>().material.color;
+            // Show the winning screen before the rotation finishes
+            // Reason: it makes the UX feel smoother
+            if ((t > 0.6f) && (canShowWinScreen)) {
 
-	}
-	
-	/// <summary>
-	/// Updates the colors for the player and the goal objects.
-	/// </summary>
-	/// <param name="_lOffset">The minimum value for the hue</param>
-	/// <param name="_rOffset">The maximum value for the hue</param>
-	/// <returns>void</returns>
-	private void UpdateColors(float _lOffset, float _rOffset) {
+                canShowWinScreen = false;
+                gm.CompleteLevel();
 
-		// yield return new WaitForSeconds(0.0f);
+            }
 
-		Color color = RandomColor(_lOffset, _rOffset);
+            yield return null;
 
-		playerMR = GetComponent<MeshRenderer>();
+        }
 
-		goalMR = GameObject.Find("GOAL").GetComponent<MeshRenderer>();
+        // Change the color of the background to the player's material color
+        GameObject.Find("Background").GetComponent<MeshRenderer> ().material.color = transform.GetComponent<MeshRenderer> ().material.color;
 
-		playerMR.material.color = color;
-		goalMR.material.color = color;
+    }
 
-	}
-	
-	/// <summary>
+    /// <summary>
+    /// Updates the colors for the player and the goal objects.
+    /// </summary>
+    /// <param name="_lOffset">The minimum value for the hue</param>
+    /// <param name="_rOffset">The maximum value for the hue</param>
+    /// <returns>void</returns>
+    private void UpdateColors(float _lOffset, float _rOffset) {
+
+        // yield return new WaitForSeconds(0.0f);
+
+        Color color = RandomColor(_lOffset, _rOffset);
+
+        playerMR = GetComponent<MeshRenderer> ();
+
+        goalMR = GameObject.Find("GOAL").GetComponent<MeshRenderer> ();
+
+        playerMR.material.color = color;
+        goalMR.material.color = color;
+
+    }
+
+    /// <summary>
     /// Generates a random HSV color
     /// </summary>
     /// <param name="_lOffset">The minimum value for the hue</param>
     /// <param name="_rOffset">The maximum value for the hue</param>
     /// <returns>Color</returns>
-	private Color RandomColor(float _lOffset, float _rOffset) {
+    private Color RandomColor(float _lOffset, float _rOffset) {
 
-		return Random.ColorHSV(_lOffset, _rOffset, 1f, 1f, 1f, 1f);
+        return Random.ColorHSV(_lOffset, _rOffset, 1f, 1f, 1f, 1f);
 
-	}
-	
-	public float GetVelocity() {
-		
-		return (controller.velocity.magnitude);
-		
-	}
+    }
 
 }

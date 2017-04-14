@@ -5,6 +5,8 @@ using XboxCtrlrInput;
 
 public class RoomController : MonoBehaviour {
 
+    private GameManager gm;
+
     [HideInInspector] public static bool canRotateCamera = true;
 
     [HeaderAttribute("Rotation")]
@@ -17,8 +19,7 @@ public class RoomController : MonoBehaviour {
     public GameObject playerObject;
     private PlayerMovementController playerMovementController;
 
-    // For accessing the paused state of the game
-    GameManager gm;
+    // -------------------------------------------------------------------------------------------
 
     void Awake() {
 
@@ -35,7 +36,7 @@ public class RoomController : MonoBehaviour {
         }
 
         // Check whether or not the player is moving by tracking its magnitude velocity vector
-        bool isPlayerMoving = (int) Mathf.Abs(playerMovementController.GetVelocity()) > 0;
+        bool isPlayerMoving = (int) Mathf.Abs(playerMovementController.controller.velocity.magnitude) > 0;
 
         // Allow for camera rotation ONLY if the player meets the following criteria
         if ((canRotateCamera) && (!isPlayerMoving) && (!gm.isLevelComplete)) {

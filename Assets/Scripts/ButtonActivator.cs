@@ -7,13 +7,15 @@ public class ButtonActivator : MonoBehaviour {
 	
 	public iTween.EaseType easeType;
 
-	public VectorDirection.directions vectorDirection;
+	public VectorDirection.Direction vectorDirection;
 
 	public int distanceScale = 1;
 
 	private float fDuration = 0.99f;
 
 	Vector3 translationVector;
+	
+	// -------------------------------------------------------------------------------------------
 
 	private void Start() {
 
