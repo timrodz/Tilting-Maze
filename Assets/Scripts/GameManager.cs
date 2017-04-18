@@ -9,13 +9,21 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
-    private Transform mainCameraTransform;
-    private RoomController roomController;
+    // References
+    [HideInInspector] public CameraController cameraController;
+    [HideInInspector] public RoomController roomController;
+    [HideInInspector] public PlayerController playerController;
+
+    // UI
 
     [HeaderAttribute("UI Elements")]
     public TextMeshProUGUI totalMovesText;
     public Button nextLevelButton;
     public Image pausePanel;
+    private CanvasGroup nextLevelCG;
+    private CanvasGroup pausePanelCG;
+
+    // Winning state
 
     [HeaderAttribute("Winning animation")]
     public Ease winningAnimationEaseType;
@@ -34,27 +42,44 @@ public class GameManager : MonoBehaviour {
 
     // Level ending
     [HideInInspector] public bool isLevelComplete = false;
-    [HideInInspector] public bool canShowWinScreen = false;
-    
+
     // -------------------------------------------------------------------------------------------
 
     /// <summary>
-    /// Awake is called when the script instance is being loaded.
+    /// Start is called on the frame when a script is enabled just before
+    /// any of the Update methods is called the first time.
     /// </summary>
-    void Awake() {
-
-        mainCameraTransform = Camera.main.transform;
-        roomController = FindObjectOfType<RoomController> ();
-
-    }
-
     void Start() {
 
+        StartLevel();
+
     }
 
-    // Update is called once per frame
-    void Update() {
+    public void StartLevel() {
 
+        moveCount = 0;
+        isLevelComplete = false;
+        canPause = true;
+        isPaused = false;
+        
+        cameraController = FindObjectOfType<CameraController>();
+        roomController = FindObjectOfType<RoomController>();
+        playerController = FindObjectOfType<PlayerController>();
+        nextLevelCG = nextLevelButton.GetComponent<CanvasGroup>();
+        
+        Fade(nextLevelCG, false, 0);
+        
+        totalMovesText.text = "Moves: " + moveCount.ToString();
+        
+        
+
+    }
+    
+    public void SetState(GameState state) {
+        
+        previousState = currentState;
+        currentState = state;
+        
     }
 
     /// <summary>
@@ -87,22 +112,41 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     public void CompleteLevel() {
 
-        totalMovesText.text += moveCount.ToString();
-
-        totalMovesText.gameObject.SetActive(true);
-        nextLevelButton.gameObject.SetActive(true);
-
         StartCoroutine(AnimateLevelCompletion());
 
     }
-
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator AnimateLevelCompletion() {
+        
+        SetState(GameState.LoadingLevel);
+        
+        canPause = false;
+        isLevelComplete = true;
+        
+        playerController.collisionParticles.Play();
+        cameraController.Shake();
+        
+        yield return new WaitForSeconds(cameraController.shakeDuration);
 
-        mainCameraTransform.DOMove(winningAnimationCameraPosition, winningAnimationDuration).SetEase(winningAnimationEaseType);
+        cameraController.transform.DOMove(winningAnimationCameraPosition, winningAnimationDuration).SetEase(winningAnimationEaseType);
 
-        roomController.playerObject.transform.DOMove(winningAnimationPlayerPosition, winningAnimationDuration).SetEase(winningAnimationEaseType);
+        Transform player = playerController.transform;
+
+        player.DOMove(winningAnimationPlayerPosition, winningAnimationDuration).SetEase(winningAnimationEaseType);
+        player.DOScale(new Vector3(25, 25, 1), winningAnimationDuration).SetEase(winningAnimationEaseType);
+
+        Vector3 euler = player.eulerAngles;
+        euler.z -= 360;
+
+        player.DORotate(euler, winningAnimationDuration, RotateMode.FastBeyond360).SetEase(winningAnimationEaseType);
 
         yield return new WaitForSeconds(winningAnimationDuration);
+
+        Fade(nextLevelCG, true, 1);
 
     }
 
@@ -111,42 +155,25 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     public void LoadNextLevel() {
 
-        // Remove the appended movecount string from the winning text
-        totalMovesText.text = totalMovesText.text.Remove(totalMovesText.text.IndexOf(' ') + 1, totalMovesText.text.Length - totalMovesText.text.IndexOf(' ') - 1);
+        cameraController.ResetPosition();
 
-        // Disable the score text and the next level buttons
-        totalMovesText.gameObject.SetActive(false);
-        nextLevelButton.gameObject.SetActive(false);
-
-        // Reset the move count back to 0
-        moveCount = 0;
-
-        // Load the next level //
-
-        Transform level = GameObject.Find("PLAYER").GetComponent<Transform> ().parent;
+        GameObject currentLevel = roomController.gameObject;
 
         // Get the current level's string and load the next level based on hierarchy
-        string str = TrimString(level.ToString(), true);
+        string nextLevelName = TrimString(currentLevel.name, true);
 
         // Destroy the current level
-        Destroy(level.gameObject);
+        Destroy(currentLevel);
 
         // Find the level prefab by loading the resources directly
-        Object nextLevel = Resources.Load(str);
-
-        // Reset the camera's position
-        Camera camera = GameObject.Find("Main Camera").GetComponent<Camera> ();
-        camera.transform.position = new Vector3(0, 0, -10);
+        Object nextLevelPrefab = Resources.Load(nextLevelName);
 
         // If there's a next level, create it
-        if (nextLevel) {
-
-            // Instantiate the next level
-            // The quaternion uses 1 on the y-axis because it needs to be rotated 90 degrees around it
-            GameObject levelToInstantiate = Instantiate(nextLevel, Vector3.zero, new Quaternion(0, 1, 0, 1)) as GameObject;
-
-            // Get rid of the "(CLONE)" text
-            levelToInstantiate.name = TrimString(nextLevel.ToString(), false);
+        if (nextLevelPrefab) {
+            
+            GameObject levelToInstantiate = (GameObject) Instantiate(nextLevelPrefab, Vector3.zero, Quaternion.identity);
+            levelToInstantiate.name = nextLevelName;
+            StartLevel();
 
         }
         // Otherwise, go back to the menu
@@ -157,49 +184,78 @@ public class GameManager : MonoBehaviour {
         }
 
     }
-
+    
     /// <summary>
-    /// Trims the string.
+    /// 
     /// </summary>
-    /// <returns>The string.</returns>
-    /// <param name="_stringToTrim">String to trim.</param>
-    /// <param name="_containsNumber">If set to <c>true</c> contains number.</param>
-    private string TrimString(string _stringToTrim, bool _containsNumber) {
+    /// <param name="canvasGroup"></param>
+    /// <param name="fadeIn"></param>
+    /// <param name="duration"></param>
+    private void Fade(CanvasGroup canvasGroup, bool fadeIn, float duration) {
 
-        int length = _stringToTrim.Length - 1;
+        if (fadeIn) {
+
+            canvasGroup.DOFade(1, duration);
+            canvasGroup.blocksRaycasts = true;
+
+        } else {
+
+            canvasGroup.DOFade(0, duration);
+            canvasGroup.blocksRaycasts = false;
+
+        }
+
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    public void IncrementMoveCount() {
+        
+        moveCount++;
+        totalMovesText.text = "Moves: " + moveCount.ToString();
+        
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="str"></param>
+    /// <param name="hasNumber"></param>
+    /// <returns></returns>
+    private string TrimString(string str, bool hasNumber) {
+
+        int length = str.Length - 1;
 
         // Find the first parentheses and delete everything
         // that follows after it
-        int index = _stringToTrim.IndexOf('(');
-        _stringToTrim = _stringToTrim.Remove(index - 1, length - index + 2);
+        int index = str.IndexOf('-');
 
 #if (MORELEVELS)
 
-        // TODO: Modify this section so it takes numbers higher than 9
-
-        if (_containsNumber) {
+        if (hasNumber) {
 
             // Recalculate the new length
-            length = _stringToTrim.Length - 1;
+            length = str.Length - 1;
 
             // store the number it has and remove it
-            string number = Regex.Match(_stringToTrim, @"\d+").Value;
+            string number = Regex.Match(str, @"\d+").Value;
 
             // parse the number from the string and add 1 to it
             int num = int.Parse(number) + 1;
 
-            // TODO: Count the amount of digits that the number has
-
             // Remove the number at the top
-            _stringToTrim = _stringToTrim.Remove(length);
+            str = str.Remove(index + 1);
 
-            _stringToTrim += (num);
+            str += (num);
 
         }
 
 #endif
-
-        return _stringToTrim;
+    
+        Debug.Log("Function TrimString returned: " + str);
+        
+        return str;
 
     }
 

@@ -5,9 +5,12 @@ using XboxCtrlrInput;
 
 public class RoomController : MonoBehaviour {
 
-    private GameManager gm;
+    private GameManager gameManager;
+    private ParticleController particleController;
 
     [HideInInspector] public static bool canRotateCamera = true;
+
+    [HideInInspector] public static bool canReceiveInput = true;
 
     [HeaderAttribute("Rotation")]
     public Ease rotationEaseType = Ease.OutQuad;
@@ -15,31 +18,31 @@ public class RoomController : MonoBehaviour {
     public float rotationLength = 0.5f;
 
     [HeaderAttribute("Player")]
-    // For referencing the player's current speed and finished level state
     public GameObject playerObject;
-    private PlayerMovementController playerMovementController;
+    private PlayerController playerController;
+
+    private bool isPlayerMoving = false;
 
     // -------------------------------------------------------------------------------------------
 
     void Awake() {
 
-        gm = FindObjectOfType<GameManager> ();
-        playerMovementController = playerObject.GetComponent<PlayerMovementController> ();
+        particleController = GetComponent<ParticleController>();
+        playerController = playerObject.GetComponent<PlayerController>();
+
+        gameManager = FindObjectOfType<GameManager>();
 
     }
 
     void Update() {
 
         // Don't do anything if the game's curently paused
-        if (gm.currentState == GameState.Paused || !playerObject) {
+        if (gameManager.currentState != GameState.Playing || !playerObject || !canReceiveInput) {
             return;
         }
 
-        // Check whether or not the player is moving by tracking its magnitude velocity vector
-        bool isPlayerMoving = (int) Mathf.Abs(playerMovementController.controller.velocity.magnitude) > 0;
-
         // Allow for camera rotation ONLY if the player meets the following criteria
-        if ((canRotateCamera) && (!isPlayerMoving) && (!gm.isLevelComplete)) {
+        if ((canRotateCamera) && (!playerController.isMoving) && (!gameManager.isLevelComplete)) {
 
             if (XCI.GetAxisRaw(XboxAxis.LeftStickX) > 0 || Input.GetKey(KeyCode.D)) {
 
@@ -59,23 +62,12 @@ public class RoomController : MonoBehaviour {
     /// Rotates the camera.
     /// </summary>
     public IEnumerator RotateCamera(bool shouldRotateRight) {
+        
+        gameManager.IncrementMoveCount();
+        
+        playerController.movementParticles.transform.DOScale(0, 0);
 
         canRotateCamera = false;
-
-        // Quaternion fromAngle = transform.rotation; // Get the transform's current rotation coordinates
-        // Quaternion toAngle = Quaternion.Euler(transform.eulerAngles + anglesInDegrees); // Convert byAngles to radians
-
-        // // Process a loop that lasts for the prompted time
-        // for (float t = 0.0f; t < 1.0f; t += (Time.deltaTime / rotationDuration)) {
-
-        //     // Make a slerp from the current rotation's coordinates to the desired rotation
-        //     transform.rotation = Quaternion.Slerp(fromAngle, toAngle, t);
-        //     yield return null;
-
-        // }
-
-        // // Round the rotation at the end
-        // transform.rotation = toAngle;
 
         Vector3 eulerRotation = transform.eulerAngles;
 
@@ -87,12 +79,17 @@ public class RoomController : MonoBehaviour {
 
         transform.DORotate(eulerRotation, rotationLength).SetEase(rotationEaseType);
 
-        yield return new WaitForSeconds(rotationLength);
+        float wait = rotationLength * 0.2f;
+
+        yield return new WaitForSeconds(wait);
+
+        particleController.Play();
+
+        yield return new WaitForSeconds(rotationLength - wait);
 
         canRotateCamera = true;
 
-        // Update the current move count
-        GameManager.moveCount++;
+        particleController.Stop();
 
     }
 

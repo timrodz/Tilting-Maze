@@ -1,51 +1,64 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using DG.Tweening;
+using UnityEngine;
+
 
 public class ButtonActivator : MonoBehaviour {
-	
-	public Transform[] barriers;
-	
-	public iTween.EaseType easeType;
 
-	public VectorDirection.Direction vectorDirection;
+    public Ease easeType = Ease.OutSine;
 
-	public int distanceScale = 1;
+    public float duration = 1;
 
-	private float fDuration = 0.99f;
+    public List<Barrier> barrierList = new List<Barrier>(1);
 
-	Vector3 translationVector;
-	
-	// -------------------------------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------
 
-	private void Start() {
+    private void OnTriggerEnter(Collider other) {
 
-		translationVector = VectorDirection.DetermineDirection(vectorDirection);
+        Debug.Log("Activating " + this.name);
 
-	}
+        foreach(Barrier barrier in barrierList) {
 
-	private void OnTriggerEnter(Collider other) {
+            if (barrier.gameObject != null) {
+                StartCoroutine(MoveBarrier(barrier));
+            }
 
-		foreach (Transform barrier in barriers) {
+        }
 
-			StartCoroutine(TranslateTo(barrier));
-			
-		}
+    }
 
-	}
+    private IEnumerator MoveBarrier(Barrier barrier) {
+		
+		// Disable input
+        RoomController.canReceiveInput = false;
 
-	/// Translates to the desired position
-	private IEnumerator TranslateTo(Transform objectTransform) {
+        GameObject obj = barrier.gameObject;
 
+        Vector3 movementDirection = VectorDirection.DetermineDirection(barrier.movementDirection);
+
+        float scale = barrier.movementDistance;
+
+        Vector3 finalPosition = obj.transform.localPosition + (movementDirection * scale);
+
+        obj.transform.DOLocalMove(finalPosition, duration).SetEase(easeType);
+		
+		// Wait for a small amount of time and disable camera movement
+		// Prevents the player from moving
+		yield return new WaitForSeconds(0.1f);
+		
 		RoomController.canRotateCamera = false;
-		
-		Vector3 target = objectTransform.position + (distanceScale * translationVector);
-		
-		iTween.MoveTo(objectTransform.gameObject, iTween.Hash("position", target, "easetype", easeType, "time", fDuration));
 
-		yield return new WaitForSeconds(fDuration);
+		// Give a bit of delay in case of any glitches
+        yield return new WaitForSeconds(duration);
+
+        RoomController.canReceiveInput = true;
+		
 		RoomController.canRotateCamera = true;
-		Destroy(gameObject);
+		
+		// Destroy the trigger button once the animations have finished
+        Destroy(this.gameObject);
 
-	}
+    }
 
 }
