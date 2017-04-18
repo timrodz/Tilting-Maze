@@ -83,7 +83,7 @@ public class RoomController : MonoBehaviour {
 
         yield return new WaitForSeconds(wait);
 
-        particleController.Play();
+        // particleController.Play();
 
         yield return new WaitForSeconds(rotationLength - wait);
 

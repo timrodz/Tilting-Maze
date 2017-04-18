@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour {
     public Button nextLevelButton;
     public Image pausePanel;
     private CanvasGroup nextLevelCG;
-    private CanvasGroup pausePanelCG;
+    private CanvasGroup movesCG;
 
     // Winning state
 
@@ -61,25 +61,25 @@ public class GameManager : MonoBehaviour {
         isLevelComplete = false;
         canPause = true;
         isPaused = false;
-        
+
         cameraController = FindObjectOfType<CameraController>();
         roomController = FindObjectOfType<RoomController>();
         playerController = FindObjectOfType<PlayerController>();
         nextLevelCG = nextLevelButton.GetComponent<CanvasGroup>();
-        
+        movesCG = totalMovesText.GetComponentInParent<CanvasGroup>();
+
         Fade(nextLevelCG, false, 0);
-        
+        Fade(movesCG, false, 0);
+
         totalMovesText.text = "Moves: " + moveCount.ToString();
-        
-        
 
     }
-    
+
     public void SetState(GameState state) {
-        
+
         previousState = currentState;
         currentState = state;
-        
+
     }
 
     /// <summary>
@@ -115,21 +115,21 @@ public class GameManager : MonoBehaviour {
         StartCoroutine(AnimateLevelCompletion());
 
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
     /// <returns></returns>
     private IEnumerator AnimateLevelCompletion() {
-        
+
         SetState(GameState.LoadingLevel);
-        
+
         canPause = false;
         isLevelComplete = true;
-        
+
         playerController.collisionParticles.Play();
         cameraController.Shake();
-        
+
         yield return new WaitForSeconds(cameraController.shakeDuration);
 
         cameraController.transform.DOMove(winningAnimationCameraPosition, winningAnimationDuration).SetEase(winningAnimationEaseType);
@@ -146,6 +146,7 @@ public class GameManager : MonoBehaviour {
 
         yield return new WaitForSeconds(winningAnimationDuration);
 
+        totalMovesText.rectTransform.DOLocalMove(Vector3.zero, 1);
         Fade(nextLevelCG, true, 1);
 
     }
@@ -154,8 +155,6 @@ public class GameManager : MonoBehaviour {
     /// Loads the next level.
     /// </summary>
     public void LoadNextLevel() {
-
-        cameraController.ResetPosition();
 
         GameObject currentLevel = roomController.gameObject;
 
@@ -170,7 +169,9 @@ public class GameManager : MonoBehaviour {
 
         // If there's a next level, create it
         if (nextLevelPrefab) {
-            
+
+            cameraController.ResetPosition();
+            totalMovesText.rectTransform.localPosition = new Vector3(-306, 200, 0);
             GameObject levelToInstantiate = (GameObject) Instantiate(nextLevelPrefab, Vector3.zero, Quaternion.identity);
             levelToInstantiate.name = nextLevelName;
             StartLevel();
@@ -184,7 +185,7 @@ public class GameManager : MonoBehaviour {
         }
 
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -206,17 +207,23 @@ public class GameManager : MonoBehaviour {
         }
 
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
     public void IncrementMoveCount() {
-        
+
         moveCount++;
         totalMovesText.text = "Moves: " + moveCount.ToString();
-        
+
+        if (moveCount == 1) {
+            
+            Fade(movesCG, true, 1);
+            
+        }
+
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -252,9 +259,9 @@ public class GameManager : MonoBehaviour {
         }
 
 #endif
-    
+
         Debug.Log("Function TrimString returned: " + str);
-        
+
         return str;
 
     }
