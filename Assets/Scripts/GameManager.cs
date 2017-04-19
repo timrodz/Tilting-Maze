@@ -10,7 +10,8 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour {
 
     // References
-    [HideInInspector] public CameraController cameraController;
+    public CameraController cameraController;
+    public SoundManager soundManager;
     [HideInInspector] public RoomController roomController;
     [HideInInspector] public PlayerController playerController;
 
@@ -62,9 +63,9 @@ public class GameManager : MonoBehaviour {
         canPause = true;
         isPaused = false;
 
-        cameraController = FindObjectOfType<CameraController>();
         roomController = FindObjectOfType<RoomController>();
         playerController = FindObjectOfType<PlayerController>();
+        
         nextLevelCG = nextLevelButton.GetComponent<CanvasGroup>();
         movesCG = totalMovesText.GetComponentInParent<CanvasGroup>();
 

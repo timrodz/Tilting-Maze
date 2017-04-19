@@ -72,8 +72,10 @@ public class RoomController : MonoBehaviour {
         Vector3 eulerRotation = transform.eulerAngles;
 
         if (shouldRotateRight) {
+            gameManager.soundManager.Play(Clip.moveRight);
             eulerRotation.z -= 90;
         } else {
+            gameManager.soundManager.Play(Clip.moveLeft);
             eulerRotation.z += 90;
         }
 

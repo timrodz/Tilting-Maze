@@ -9,13 +9,34 @@ public class SoundManager : MonoBehaviour {
 	[HeaderAttribute("Sound effects")]
 	public AudioClip moveLeft;
 	public AudioClip moveRight;
-	public AudioClip movement;
+	public AudioClip slide;
 	public AudioClip hit;
 	public AudioClip triggerButton;
 	public AudioClip pause;
 
-	public void Play(AudioClip clip) {
-		sfx.PlayOneShot(clip);
+	public void Play(Clip clip) {
+		switch (clip) {
+			case Clip.moveLeft:
+				sfx.PlayOneShot(moveLeft);
+			break;
+			case Clip.moveRight:
+				sfx.PlayOneShot(moveRight);
+			break;
+			case Clip.slide:
+				sfx.PlayOneShot(slide);
+			break;
+			case Clip.hit:
+				sfx.PlayOneShot(hit);
+			break;
+			case Clip.triggerButton:
+				sfx.PlayOneShot(triggerButton);
+			break;
+			case Clip.pause:
+				sfx.PlayOneShot(pause);
+			break;
+			
+		}
+		
 	}
 	
 	public void StopMusic() {

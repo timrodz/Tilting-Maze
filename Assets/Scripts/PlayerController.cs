@@ -105,6 +105,7 @@ public class PlayerController : MonoBehaviour {
     private void OnControllerColliderHit(ControllerColliderHit hit) {
         
         if (isMoving) {
+            gameManager.soundManager.Play(Clip.hit);
             collisionParticles.Play();
             gameManager.cameraController.Shake();
             isMoving = false;

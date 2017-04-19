@@ -5383,7 +5383,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01d844abf0ae84bb4afe99f4f885a3e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1272356876}
+  soundManager: {fileID: 1354218854}
   roomController: {fileID: 0}
   playerController: {fileID: 0}
   totalMovesText: {fileID: 1697797459}
@@ -5424,10 +5425,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sfx: {fileID: 1354218856}
   music: {fileID: 1354218855}
-  moveLeft: {fileID: 0}
-  moveRight: {fileID: 0}
-  movement: {fileID: 0}
-  hit: {fileID: 0}
+  moveLeft: {fileID: 8300000, guid: 5602cee9d263bb143836432deb88692d, type: 3}
+  moveRight: {fileID: 8300000, guid: c9fc25734ae081246b9318cacafd20a5, type: 3}
+  slide: {fileID: 0}
+  hit: {fileID: 8300000, guid: 65315fed88925964bae0605b11afa489, type: 3}
   triggerButton: {fileID: 0}
   pause: {fileID: 0}
 --- !u!82 &1354218855
