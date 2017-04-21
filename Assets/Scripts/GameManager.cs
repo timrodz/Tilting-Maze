@@ -1,6 +1,4 @@
-﻿#define MORELEVELS
-using System.Collections;
-using System.Text.RegularExpressions;
+﻿using System.Collections;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -56,26 +54,6 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    public void StartLevel() {
-
-        moveCount = 0;
-        isLevelComplete = false;
-        canPause = true;
-        isPaused = false;
-
-        roomController = FindObjectOfType<RoomController>();
-        playerController = FindObjectOfType<PlayerController>();
-        
-        nextLevelCG = nextLevelButton.GetComponent<CanvasGroup>();
-        movesCG = totalMovesText.GetComponentInParent<CanvasGroup>();
-
-        Fade(nextLevelCG, false, 0);
-        Fade(movesCG, false, 0);
-
-        totalMovesText.text = "Moves: " + moveCount.ToString();
-
-    }
-
     public void SetState(GameState state) {
 
         previousState = currentState;
@@ -106,6 +84,28 @@ public class GameManager : MonoBehaviour {
 
     }
 
+    public void StartLevel() {
+
+        moveCount = 0;
+        isLevelComplete = false;
+        canPause = true;
+        isPaused = false;
+
+        roomController = FindObjectOfType<RoomController> ();
+        playerController = FindObjectOfType<PlayerController> ();
+
+        nextLevelCG = nextLevelButton.GetComponent<CanvasGroup> ();
+        movesCG = totalMovesText.GetComponentInParent<CanvasGroup> ();
+
+        Utils.Fade(nextLevelCG, false, 0);
+        Utils.Fade(movesCG, false, 0);
+
+        totalMovesText.text = "Moves: " + moveCount.ToString();
+
+        soundManager.PlayMusic();
+
+    }
+
     /// <summary>
     /// Finish the current level
     /// Show the moves it took to complete
@@ -128,6 +128,8 @@ public class GameManager : MonoBehaviour {
         canPause = false;
         isLevelComplete = true;
 
+        soundManager.StopMusic();
+        soundManager.Play(Clip.hit);
         playerController.collisionParticles.Play();
         cameraController.Shake();
 
@@ -144,11 +146,14 @@ public class GameManager : MonoBehaviour {
         euler.z -= 360;
 
         player.DORotate(euler, winningAnimationDuration, RotateMode.FastBeyond360).SetEase(winningAnimationEaseType);
-
+        
         yield return new WaitForSeconds(winningAnimationDuration);
 
+        // Move the "moves" text to the center
         totalMovesText.rectTransform.DOLocalMove(Vector3.zero, 1);
-        Fade(nextLevelCG, true, 1);
+        
+        // Show the next level button by accessing its canvas group
+        Utils.Fade(nextLevelCG, true, 1);
 
     }
 
@@ -160,7 +165,7 @@ public class GameManager : MonoBehaviour {
         GameObject currentLevel = roomController.gameObject;
 
         // Get the current level's string and load the next level based on hierarchy
-        string nextLevelName = TrimString(currentLevel.name, true);
+        string nextLevelName = Utils.FindAndIncrementNumberInString(currentLevel.name);
 
         // Destroy the current level
         Destroy(currentLevel);
@@ -190,80 +195,22 @@ public class GameManager : MonoBehaviour {
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="canvasGroup"></param>
-    /// <param name="fadeIn"></param>
-    /// <param name="duration"></param>
-    private void Fade(CanvasGroup canvasGroup, bool fadeIn, float duration) {
-
-        if (fadeIn) {
-
-            canvasGroup.DOFade(1, duration);
-            canvasGroup.blocksRaycasts = true;
-
-        } else {
-
-            canvasGroup.DOFade(0, duration);
-            canvasGroup.blocksRaycasts = false;
-
-        }
-
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
     public void IncrementMoveCount() {
 
         moveCount++;
         totalMovesText.text = "Moves: " + moveCount.ToString();
 
         if (moveCount == 1) {
-            
-            Fade(movesCG, true, 1);
-            
-        }
 
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="str"></param>
-    /// <param name="hasNumber"></param>
-    /// <returns></returns>
-    private string TrimString(string str, bool hasNumber) {
-
-        int length = str.Length - 1;
-
-        // Find the first parentheses and delete everything
-        // that follows after it
-        int index = str.IndexOf('-');
-
-#if (MORELEVELS)
-
-        if (hasNumber) {
-
-            // Recalculate the new length
-            length = str.Length - 1;
-
-            // store the number it has and remove it
-            string number = Regex.Match(str, @"\d+").Value;
-
-            // parse the number from the string and add 1 to it
-            int num = int.Parse(number) + 1;
-
-            // Remove the number at the top
-            str = str.Remove(index + 1);
-
-            str += (num);
+            Utils.Fade(movesCG, true, 1);
 
         }
 
-#endif
-
-        Debug.Log("Function TrimString returned: " + str);
-
-        return str;
+        if (moveCount % 2 == 1) {
+            soundManager.Play(Clip.moveRight);
+        } else {
+            soundManager.Play(Clip.moveLeft);
+        }
 
     }
 

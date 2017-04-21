@@ -1,25 +1,24 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class ParticleController : MonoBehaviour {
 	
 	[SerializeField]
-	private ParticleSystem topLeft, topRight, bottomLeft, bottomRight;
+	private List<ParticleSystem> particleList = new List<ParticleSystem>();
 
 	public void Play() {
 		
-		topLeft.Play();
-		topRight.Play();
-		bottomLeft.Play();
-		bottomRight.Play();
+		foreach (ParticleSystem p in particleList) {
+			p.Play();
+		}
 		
 	}
 	
 	public void Stop() {
 		
-		topLeft.Stop();
-		topRight.Stop();
-		bottomLeft.Stop();
-		bottomRight.Stop();
+		foreach (ParticleSystem p in particleList) {
+			p.Stop();
+		}
 		
 	}
 	

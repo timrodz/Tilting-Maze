@@ -21,7 +21,6 @@ public class RoomController : MonoBehaviour {
     public GameObject playerObject;
     private PlayerController playerController;
 
-    private bool isPlayerMoving = false;
 
     // -------------------------------------------------------------------------------------------
 
@@ -72,10 +71,8 @@ public class RoomController : MonoBehaviour {
         Vector3 eulerRotation = transform.eulerAngles;
 
         if (shouldRotateRight) {
-            gameManager.soundManager.Play(Clip.moveRight);
             eulerRotation.z -= 90;
         } else {
-            gameManager.soundManager.Play(Clip.moveLeft);
             eulerRotation.z += 90;
         }
 
@@ -85,7 +82,7 @@ public class RoomController : MonoBehaviour {
 
         yield return new WaitForSeconds(wait);
 
-        // particleController.Play();
+        particleController.Play();
 
         yield return new WaitForSeconds(rotationLength - wait);
 

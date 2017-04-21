@@ -6,31 +6,26 @@ public class PlayerController : MonoBehaviour {
 
     // Script References
     private GameManager gameManager;
-    
+
     // Particles
     public ParticleSystem movementParticles;
     public ParticleSystem collisionParticles;
-    private bool hasPlayedParticles = false;
 
-    // CHARACTER CONTROLLER
-    [HideInInspector] public CharacterController controller;
+    // Character Controller
+    private CharacterController controller;
     [HideInInspector] public bool isMoving = true;
     private Vector3 moveDirection = Vector3.zero;
     public float gravityMultiplier = 20.0f;
     public float speed = 6.0f;
 
+    private bool hasHit;
+
     // -------------------------------------------------------------------------------------------
 
     private void Awake() {
 
-        gameManager = FindObjectOfType<GameManager>();
-        controller = GetComponent<CharacterController>();
-
-    }
-
-    private void Start() {
-
-        // UpdateColors(1f / 6f, 1f / 2f);
+        gameManager = FindObjectOfType<GameManager> ();
+        controller = GetComponent<CharacterController> ();
 
     }
 
@@ -55,12 +50,13 @@ public class PlayerController : MonoBehaviour {
 
                     // Reset the moveDirection vector everytime the player is grounded
                     // Otherwise the gravity will accumulate too much force
-                    moveDirection = new Vector3(0, 0, 0);
+                    moveDirection = Vector3.zero;
                     moveDirection = transform.TransformDirection(moveDirection);
                     moveDirection *= speed;
 
                 }
 
+                // Apply gravity to the body
                 moveDirection.y -= gravityMultiplier * Time.deltaTime;
                 controller.Move(moveDirection * Time.deltaTime);
 
@@ -86,7 +82,7 @@ public class PlayerController : MonoBehaviour {
 
         // Has reached the goal of the level
         if ((other.CompareTag("Finish")) && (!gameManager.isLevelComplete)) {
-            
+
             gameManager.CompleteLevel();
 
         } else if (other.CompareTag("Trigger")) {
@@ -103,32 +99,43 @@ public class PlayerController : MonoBehaviour {
     /// </summary>
     /// <param name="hit">The ControllerColliderHit data associated with this collision.</param>
     private void OnControllerColliderHit(ControllerColliderHit hit) {
-        
-        if (isMoving) {
+
+        if (isMoving && !hasHit) {
+
+            StartCoroutine(ResetHasHit());
+
             gameManager.soundManager.Play(Clip.hit);
+
             collisionParticles.Play();
+
             gameManager.cameraController.Shake();
-            isMoving = false;
+
         }
-    
+
     }
 
     public void AnimateParticles() {
 
-        if (!hasPlayedParticles) {
+        if (!movementParticles.isPlaying) {
             movementParticles.transform.DOScale(1, 0);
             movementParticles.Play();
-            hasPlayedParticles = true;
         }
 
     }
 
     public void StopAnimatingParticles() {
 
-        if (hasPlayedParticles) {
+        if (movementParticles.isPlaying) {
             movementParticles.Stop();
-            hasPlayedParticles = false;
         }
+
+    }
+
+    private IEnumerator ResetHasHit() {
+
+        hasHit = true;
+        yield return new WaitForSeconds(0.1f);
+        hasHit = false;
 
     }
 
