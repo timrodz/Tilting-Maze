@@ -20,5 +20,6 @@ public class Barrier {
     public int movementDistance = 1;
     
     [HideInInspector] public bool hasMoved;
+    public bool shouldDeleteFromList = false;
 
 }

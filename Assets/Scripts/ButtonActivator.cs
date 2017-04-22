@@ -7,7 +7,7 @@ public class ButtonActivator : MonoBehaviour {
 
     private GameManager gameManager;
 
-    public bool shouldDestroy = true;
+    public int numberOfUsesBeforeDestroying = 1;
     public Ease easeType = Ease.OutSine;
 
     public float duration = 1;
@@ -16,6 +16,7 @@ public class ButtonActivator : MonoBehaviour {
 
     // Some barriers can be toggled on and off, this controls it
     private bool canRegisterCollisions = true;
+    private int collisionCount = 0;
 
     // -------------------------------------------------------------------------------------------
 
@@ -50,6 +51,10 @@ public class ButtonActivator : MonoBehaviour {
 
         }
 
+        // If the number of uses before destroying is 0, never destroy it
+        if (numberOfUsesBeforeDestroying > 0)
+            collisionCount++;
+
     }
 
     /// <summary>
@@ -58,7 +63,7 @@ public class ButtonActivator : MonoBehaviour {
     /// <param name="other">The other Collider involved in this collision.</param>
     void OnTriggerExit(Collider other) {
 
-        if (shouldDestroy)
+        if (collisionCount >= numberOfUsesBeforeDestroying && numberOfUsesBeforeDestroying > 0)
             return;
 
         Debug.Log("Exiting " + this.name);
@@ -85,24 +90,24 @@ public class ButtonActivator : MonoBehaviour {
 
             // } else {
 
-                Debug.Log("Normal direction");
-                movementDirection = VectorDirection.DetermineDirection(barrier.movementDirection);
+            Debug.Log("Normal direction");
+            movementDirection = VectorDirection.DetermineDirection(barrier.movementDirection);
 
             // }
 
         } else {
 
-        //     if ((int) gameManager.roomController.transform.eulerAngles.z == 180 || (int) gameManager.roomController.transform.eulerAngles.z == -180) {
+            //     if ((int) gameManager.roomController.transform.eulerAngles.z == 180 || (int) gameManager.roomController.transform.eulerAngles.z == -180) {
 
-        //         Debug.Log("Normal direction");
-        //         movementDirection = VectorDirection.DetermineDirection(barrier.movementDirection);
+            //         Debug.Log("Normal direction");
+            //         movementDirection = VectorDirection.DetermineDirection(barrier.movementDirection);
 
-        //     } else {
+            //     } else {
 
-                Debug.Log("Opposite direction");
-                movementDirection = VectorDirection.DetermineOppositeDirection(barrier.movementDirection);
+            Debug.Log("Opposite direction");
+            movementDirection = VectorDirection.DetermineOppositeDirection(barrier.movementDirection);
 
-        //     }
+            //     }
 
         }
 
@@ -125,7 +130,7 @@ public class ButtonActivator : MonoBehaviour {
 
         RoomController.canRotateCamera = true;
 
-        if (shouldDestroy) {
+        if (collisionCount >= numberOfUsesBeforeDestroying && numberOfUsesBeforeDestroying > 0) {
 
             // Destroy the trigger button once the animations have finished
             Destroy(this.gameObject);
@@ -133,6 +138,10 @@ public class ButtonActivator : MonoBehaviour {
         } else {
 
             barrier.hasMoved = !barrier.hasMoved;
+
+            if (barrier.shouldDeleteFromList) {
+                barrierList.Remove(barrier);
+            }
 
         }
 

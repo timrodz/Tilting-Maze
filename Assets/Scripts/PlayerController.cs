@@ -18,6 +18,8 @@ public class PlayerController : MonoBehaviour {
     public float gravityMultiplier = 20.0f;
     public float speed = 6.0f;
 
+    private float airTime = 0;
+
     private bool hasHit;
 
     // -------------------------------------------------------------------------------------------
@@ -40,6 +42,7 @@ public class PlayerController : MonoBehaviour {
             if (!(!RoomController.canRotateCamera || gameManager.currentState == GameState.Paused)) {
 
                 if (isMoving) {
+                    airTime += Time.deltaTime;
                     AnimateParticles();
                 } else {
                     StopAnimatingParticles();
@@ -104,11 +107,15 @@ public class PlayerController : MonoBehaviour {
 
             StartCoroutine(ResetHasHit());
 
+            Debug.Log("Air time: " + airTime);
+
             gameManager.soundManager.Play(Clip.hit);
 
             collisionParticles.Play();
 
             gameManager.cameraController.Shake();
+
+            airTime = 0;
 
         }
 
