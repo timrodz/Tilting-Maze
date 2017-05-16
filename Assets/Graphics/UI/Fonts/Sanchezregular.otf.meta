@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 8025da03676ff3e478283350abd396e0
+timeCreated: 1494907411
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: 'Sanchez '
+  fontNames:
+  - 'Sanchez '
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

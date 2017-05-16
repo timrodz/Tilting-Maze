@@ -28,6 +28,8 @@ public class CameraController : MonoBehaviour {
     void Start() {
 
         originalPosition = transform.position;
+        transform.position = new Vector3(0, 0, -25);
+        ResetPosition();
 
     }
 	

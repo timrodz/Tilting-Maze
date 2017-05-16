@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour {
     // UI
 
     [HeaderAttribute("UI Elements")]
+    public GameObject levelCompletePanel;
+    private CanvasGroup levelCompleteCG;
     public TextMeshProUGUI totalMovesText;
     public Button nextLevelButton;
     public Image pausePanel;
@@ -32,8 +34,8 @@ public class GameManager : MonoBehaviour {
 
     // Game state
     [HideInInspector] public static int moveCount;
-    [HideInInspector] public GameState currentState = GameState.Playing;
-    [HideInInspector] public GameState previousState = GameState.Playing;
+    [HideInInspector] public GameState currentState = GameState.LoadingLevel;
+    [HideInInspector] public GameState previousState = GameState.LoadingLevel;
 
     // Pause states
     [HideInInspector] public bool canPause = true;
@@ -49,7 +51,14 @@ public class GameManager : MonoBehaviour {
     /// any of the Update methods is called the first time.
     /// </summary>
     void Start() {
-
+        
+        SetState(GameState.LoadingLevel);
+        
+        levelCompletePanel.SetActive(true);
+        nextLevelButton.gameObject.SetActive(true);
+        
+        levelCompleteCG = levelCompletePanel.GetComponent<CanvasGroup>();
+        
         StartLevel();
 
     }
@@ -99,6 +108,7 @@ public class GameManager : MonoBehaviour {
 
         Utils.Fade(nextLevelCG, false, 0);
         Utils.Fade(movesCG, false, 0);
+        Utils.Fade(levelCompleteCG, false, 0);
 
         totalMovesText.text = "Moves: " + moveCount.ToString();
 
