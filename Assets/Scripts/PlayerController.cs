@@ -29,78 +29,85 @@ public class PlayerController : MonoBehaviour {
 
     // -------------------------------------------------------------------------------------------
 
-    private void Awake() {
+    void Start () {
 
-        gameManager = FindObjectOfType<GameManager>();
-        controller = GetComponent<CharacterController>();
+        gameManager = FindObjectOfType<GameManager> ();
+        controller = GetComponent<CharacterController> ();
 
     }
 
-    private void FixedUpdate() {
+    void FixedUpdate () {
 
         // Only process the player's movement if the goal hasn't been reached
-        if (!gameManager.isLevelComplete) {
+        if (gameManager.currentState != GameState.Playing) {
+            return;
+        }
 
-            isMoving = (int) controller.velocity.magnitude > 0;
+        isMoving = (int)controller.velocity.magnitude > 0;
 
-            // Apply movement when either the camera isn't rotating or the game's not paused
-            if (!(!RoomController.canRotateCamera || gameManager.currentState == GameState.Paused)) {
+        // Apply movement when either the camera isn't rotating or the game's not paused
+        if (!(!RoomController.canRotateCamera || gameManager.currentState == GameState.Paused)) {
 
-                if (isMoving) {
+            if (isMoving) {
 
-                    airTime += Time.deltaTime;
-                    AnimateDrop();
-                    AnimateParticles();
-
-                } else {
-
-                    StopAnimatingParticles();
-
-                }
-
-                // move the body whenever it's grounded
-                if (controller.isGrounded) {
-
-                    // Reset the moveDirection vector everytime the player is grounded
-                    // Otherwise the gravity will accumulate too much force
-                    moveDirection = Vector3.zero;
-                    moveDirection = transform.TransformDirection(moveDirection);
-                    moveDirection *= speed;
-
-                }
-
-                // Apply gravity to the body
-                moveDirection.y -= gravityMultiplier * Time.deltaTime;
-                controller.Move(moveDirection * Time.deltaTime);
-
-                // Round the position vector's positions to 1 decimal
-                // Aims to reduce many wall-sticking glitches
-                transform.position = new Vector3(
-                    (float) System.Math.Round(transform.position.x, 1),
-                    (float) System.Math.Round(transform.position.y, 1),
-                    (float) System.Math.Round(transform.position.z, 1)
-                );
-
-            } else {
-
-                StopAnimatingParticles();
+                airTime += Time.deltaTime;
+                AnimateDrop ();
+                AnimateParticles ();
 
             }
+            else {
+
+                StopAnimatingParticles ();
+
+            }
+
+            // move the body whenever it's grounded
+            if (controller.isGrounded) {
+
+                // Reset the moveDirection vector everytime the player is grounded
+                // Otherwise the gravity will accumulate too much force
+                moveDirection = Vector3.zero;
+                moveDirection = transform.TransformDirection (moveDirection);
+                moveDirection *= speed;
+
+            }
+
+            // Apply gravity to the body
+            moveDirection.y -= gravityMultiplier * Time.deltaTime;
+            controller.Move (moveDirection * Time.deltaTime);
+
+            // Round the position vector's positions to 1 decimal
+            // Aims to reduce many wall-sticking glitches
+            transform.position = new Vector3 (
+                (float)System.Math.Round (transform.position.x, 1),
+                (float)System.Math.Round (transform.position.y, 1),
+                (float)System.Math.Round (transform.position.z, 1)
+            );
+
+        }
+        else {
+
+            StopAnimatingParticles ();
 
         }
 
     }
 
-    private void OnTriggerEnter(Collider other) {
+    private void OnTriggerEnter (Collider other) {
+
+        if (gameManager.currentState != GameState.Playing) {
+            return;
+        }
 
         // Has reached the goal of the level
-        if ((other.CompareTag("Finish")) && (!gameManager.isLevelComplete)) {
+        if ((other.CompareTag ("Finish"))) {
 
-            gameManager.CompleteLevel();
+            gameManager.CompleteLevel ();
 
-        } else if (other.CompareTag("Trigger")) {
+        }
+        else if (other.CompareTag ("Trigger")) {
 
-            StopAnimatingParticles();
+            StopAnimatingParticles ();
 
         }
 
@@ -111,7 +118,11 @@ public class PlayerController : MonoBehaviour {
     /// collider while performing a Move.
     /// </summary>
     /// <param name="hit">The ControllerColliderHit data associated with this collision.</param>
-    private void OnControllerColliderHit(ControllerColliderHit hit) {
+    private void OnControllerColliderHit (ControllerColliderHit hit) {
+
+        if (gameManager.currentState != GameState.Playing) {
+            return;
+        }
 
         if ((isMoving) && (!hasCollided) && (collidedObject != hit.gameObject) && (transform.position != lastPosition)) {
 
@@ -119,90 +130,90 @@ public class PlayerController : MonoBehaviour {
 
             collidedObject = hit.gameObject;
 
-            StopAllCoroutines();
+            StopAllCoroutines ();
 
-            StartCoroutine(AnimateCollision());
+            StartCoroutine (AnimateCollision ());
 
         }
 
     }
 
-    public void AnimateParticles() {
+    public void AnimateParticles () {
 
         if (!movementParticles.isPlaying) {
-            movementParticles.transform.DOScale(1, 0);
-            movementParticles.Play();
+            movementParticles.transform.DOScale (1, 0);
+            movementParticles.Play ();
         }
 
     }
 
-    public void StopAnimatingParticles() {
+    public void StopAnimatingParticles () {
 
         if (movementParticles.isPlaying) {
-            movementParticles.Stop();
+            movementParticles.Stop ();
         }
 
     }
 
-    private IEnumerator ResetHasHit() {
+    private IEnumerator ResetHasHit () {
 
         hasCollided = true;
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds (0.1f);
         hasCollided = false;
 
     }
 
-    private IEnumerator AnimateCollision() {
+    private IEnumerator AnimateCollision () {
 
         hasCollided = true;
 
-        gameManager.soundManager.Play(Clip.hit);
+        gameManager.soundManager.Play (Clip.hit);
 
-        collisionParticles.Play();
+        collisionParticles.Play ();
 
-        gameManager.cameraController.Shake();
+        gameManager.cameraController.Shake ();
 
         float length = 0.3f;
-        float randomX = Random.Range(0.2f, 0.3f);
-        float randomY = Random.Range(0.6f, 0.7f);
+        float randomX = Random.Range (0.2f, 0.3f);
+        float randomY = Random.Range (0.6f, 0.7f);
 
-        transform.DOScaleX(randomX, length);
-        transform.DOScaleY(randomY, length);
+        transform.DOScaleX (randomX, length);
+        transform.DOScaleY (randomY, length);
 
-        yield return new WaitForSeconds(length);
+        yield return new WaitForSeconds (length);
 
-        transform.DOScaleX(1, 0.2f);
-        transform.DOScaleY(1, 0.2f);
+        transform.DOScaleX (1, 0.2f);
+        transform.DOScaleY (1, 0.2f);
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds (0.2f);
 
         hasCollided = false;
         airTime = 0;
 
     }
 
-    private void AnimateDrop() {
+    private void AnimateDrop () {
 
-        int rotationZ = (int) transform.eulerAngles.z;
+        int rotationZ = (int)transform.eulerAngles.z;
 
         switch (rotationZ) {
             case 270:
                 // x axis down, y axis right
-                transform.DOScaleY(1 - (airTime * stretchMultiplier), 0).SetEase(Ease.OutCubic);
+                transform.DOScaleY (1 - (airTime * stretchMultiplier), 0).SetEase (Ease.OutCubic);
                 break;
             case 0:
             case 360:
                 // x axis right, y axis up
-                transform.DOScaleX(1 - (airTime * stretchMultiplier), 0).SetEase(Ease.OutCubic);
+                transform.DOScaleX (1 - (airTime * stretchMultiplier), 0).SetEase (Ease.OutCubic);
                 break;
             case 90:
             case -180:
                 // x axis up, y axis left
-                transform.DOScaleY(1 - (airTime * stretchMultiplier), 0).SetEase(Ease.OutCubic);
+                transform.DOScaleY (1 - (airTime * stretchMultiplier), 0).SetEase (Ease.OutCubic);
                 break;
             case 180:
                 // x axis left, y axis down
-                transform.DOScaleX(1 - (airTime * stretchMultiplier), 0).SetEase(Ease.OutCubic);
+                transform.DOScaleX (1 - (airTime * stretchMultiplier), 0).SetEase (Ease.OutCubic);
                 break;
         }
 

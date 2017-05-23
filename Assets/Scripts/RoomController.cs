@@ -24,7 +24,7 @@ public class RoomController : MonoBehaviour {
 
     // -------------------------------------------------------------------------------------------
 
-    void Awake() {
+    void Start() {
 
         particleController = GetComponent<ParticleController>();
         playerController = playerObject.GetComponent<PlayerController>();

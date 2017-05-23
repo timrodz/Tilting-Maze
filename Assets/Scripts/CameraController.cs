@@ -56,7 +56,9 @@ public class CameraController : MonoBehaviour {
     }
 	
 	private IEnumerator ResetPositionController() {
-		
+
+        gameManager.soundManager.Play (Clip.triggerButton);
+
 		transform.DOMove(originalPosition, 2);
 		
 		yield return new WaitForSeconds(2);

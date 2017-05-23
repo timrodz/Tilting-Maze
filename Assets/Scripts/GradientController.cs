@@ -7,7 +7,7 @@ public class GradientController : MonoBehaviour {
     public Material skyboxMaterial;
     public Color topColor;
     public Color botColor;
-    [RangeAttribute (0.01f, 0.05f)]
+    [RangeAttribute (0, 0.05f)]
     public float colorChangeDelay = 0;
 
     private HSBColor topColorHSB;
@@ -28,6 +28,9 @@ public class GradientController : MonoBehaviour {
     /// Update is called every frame, if the MonoBehaviour is enabled.
     /// </summary>
     void Update () {
+        if (colorChangeDelay == 0) {
+            return;
+        }
         ChangeColors ();
     }
 

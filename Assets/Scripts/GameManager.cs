@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using XboxCtrlrInput;
 
 public class GameManager : MonoBehaviour {
 
@@ -14,32 +15,32 @@ public class GameManager : MonoBehaviour {
     [HideInInspector] public PlayerController playerController;
 
     // UI
-
-    [HeaderAttribute("UI Elements")]
+    [Space]
+    [Header("UI Elements")]
     public GameObject levelCompletePanel;
     private CanvasGroup levelCompleteCG;
     public TextMeshProUGUI totalMovesText;
-    public Button nextLevelButton;
-    public Image pausePanel;
+    //public Button nextLevelButton;
+    //public Image pausePanel;
     private CanvasGroup nextLevelCG;
     private CanvasGroup movesCG;
 
     // Winning state
-
-    [HeaderAttribute("Winning animation")]
+    [Space]
+    [Header("Winning animation")]
     public Ease winningAnimationEaseType;
     public Vector3 winningAnimationCameraPosition;
     public Vector3 winningAnimationPlayerPosition;
     public float winningAnimationDuration;
 
     // Game state
-    [HideInInspector] public static int moveCount;
     [HideInInspector] public GameState currentState = GameState.LoadingLevel;
     [HideInInspector] public GameState previousState = GameState.LoadingLevel;
+    [HideInInspector] public static int moveCount;
 
     // Pause states
-    [HideInInspector] public bool canPause = true;
-    [HideInInspector] public bool isPaused = false;
+    //[HideInInspector] public bool canPause = true;
+    //[HideInInspector] public bool isPaused = false;
 
     // Level ending
     [HideInInspector] public bool isLevelComplete = false;
@@ -52,17 +53,44 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     void Start() {
         
+        levelCompleteCG = levelCompletePanel.GetComponent<CanvasGroup>();
+        Debug.Log (levelCompleteCG);
+        movesCG = totalMovesText.GetComponentInParent<CanvasGroup>();
+
         SetState(GameState.LoadingLevel);
         
         levelCompletePanel.SetActive(true);
-        nextLevelButton.gameObject.SetActive(true);
-        
-        levelCompleteCG = levelCompletePanel.GetComponent<CanvasGroup>();
-        
+        //nextLevelButton.gameObject.SetActive(true);
+
         StartLevel();
 
     }
 
+    void Update() {
+
+        if (isLevelComplete && currentState == GameState.LevelComplete) {
+
+            if (Input.GetKeyDown (KeyCode.Return) || XCI.GetButtonDown(XboxButton.A)) {
+
+                SetState (GameState.LoadingLevel);
+                LoadNextLevel (false);
+
+            }
+
+            if (Input.GetKeyDown (KeyCode.Escape) || XCI.GetButtonDown (XboxButton.B)) {
+
+                LoadNextLevel (true);
+
+            }
+
+        }
+
+    }
+
+    /// <summary>
+    /// Sets the game state
+    /// </summary>
+    /// <param name="state"></param>
     public void SetState(GameState state) {
 
         previousState = currentState;
@@ -80,14 +108,14 @@ public class GameManager : MonoBehaviour {
 
             previousState = currentState;
             currentState = GameState.Paused;
-            pausePanel.gameObject.SetActive(true);
+            //pausePanel.gameObject.SetActive(true);
 
         }
         // Unpause the game
         else {
 
             currentState = previousState;
-            pausePanel.gameObject.SetActive(false);
+            //pausePanel.gameObject.SetActive(false);
 
         }
 
@@ -95,18 +123,17 @@ public class GameManager : MonoBehaviour {
 
     public void StartLevel() {
 
-        moveCount = 0;
-        isLevelComplete = false;
-        canPause = true;
-        isPaused = false;
-
         roomController = FindObjectOfType<RoomController> ();
         playerController = FindObjectOfType<PlayerController> ();
 
-        nextLevelCG = nextLevelButton.GetComponent<CanvasGroup> ();
-        movesCG = totalMovesText.GetComponentInParent<CanvasGroup> ();
+        moveCount = 0;
+        isLevelComplete = false;
+        //canPause = true;
+        //isPaused = false;
+        
+        //nextLevelCG = nextLevelButton.GetComponent<CanvasGroup> ();
 
-        Utils.Fade(nextLevelCG, false, 0);
+        //Utils.Fade(nextLevelCG, false, 0);
         Utils.Fade(movesCG, false, 0);
         Utils.Fade(levelCompleteCG, false, 0);
 
@@ -123,23 +150,24 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     public void CompleteLevel() {
 
+        StopAllCoroutines();
+
         StartCoroutine(AnimateLevelCompletion());
 
     }
 
     /// <summary>
-    /// 
+    /// Proceeds to animate the completion of the level
     /// </summary>
-    /// <returns></returns>
     private IEnumerator AnimateLevelCompletion() {
 
-        SetState(GameState.LoadingLevel);
+        SetState(GameState.LevelComplete);
 
-        canPause = false;
-        isLevelComplete = true;
+        //canPause = false;
 
         soundManager.StopMusic();
         soundManager.Play(Clip.hit);
+        soundManager.Play(Clip.triggerButton);
         playerController.collisionParticles.Play();
         cameraController.Shake();
 
@@ -161,16 +189,25 @@ public class GameManager : MonoBehaviour {
 
         // Move the "moves" text to the center
         totalMovesText.rectTransform.DOLocalMove(Vector3.zero, 1);
-        
+
         // Show the next level button by accessing its canvas group
-        Utils.Fade(nextLevelCG, true, 1);
+        //Utils.Fade(nextLevelCG, true, 1);
+        Utils.Fade(levelCompleteCG, true, 1);
+
+        yield return new WaitForSeconds (1);
+
+        isLevelComplete = true;
 
     }
 
     /// <summary>
     /// Loads the next level.
     /// </summary>
-    public void LoadNextLevel() {
+    public void LoadNextLevel (bool shouldReturn) {
+
+        if (shouldReturn) {
+            SceneManager.LoadScene ("Level Selection");
+        }
 
         GameObject currentLevel = roomController.gameObject;
 
