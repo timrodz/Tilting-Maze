@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class ButtonActivator : MonoBehaviour {
 
-    private GameManager gameManager;
-
     public int numberOfUsesBeforeDestroying = 1;
     public Ease easeType = Ease.OutSine;
 
@@ -19,15 +17,6 @@ public class ButtonActivator : MonoBehaviour {
     private int collisionCount = 0;
 
     // -------------------------------------------------------------------------------------------
-
-    /// <summary>
-    /// Awake is called when the script instance is being loaded.
-    /// </summary>
-    void Awake () {
-
-        gameManager = FindObjectOfType<GameManager> ();
-
-    }
 
     private void OnTriggerEnter (Collider other) {
 
@@ -48,7 +37,7 @@ public class ButtonActivator : MonoBehaviour {
 
         canRegisterCollisions = false;
 
-        gameManager.soundManager.Play (Clip.triggerButton);
+        SoundManager.Instance.PlayAudio(SoundManager.Instance.triggerButton);
 
         foreach (Barrier barrier in barrierList) {
 

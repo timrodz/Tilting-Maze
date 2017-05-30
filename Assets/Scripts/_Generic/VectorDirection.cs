@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class VectorDirection {
+public static class VectorDirection {
 
     public static Vector3 DetermineDirection(Direction dir) {
 
@@ -111,3 +111,16 @@ public class VectorDirection {
     }
 
 }
+
+// -------------------------------------------------------------------------------------------
+[System.Serializable]
+public enum Direction {
+	Up,
+	Down,
+	Right,
+	Left,
+	Forward,
+	Back,
+	One,
+	Zero
+};

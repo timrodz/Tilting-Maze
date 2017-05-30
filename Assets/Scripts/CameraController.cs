@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour {
 	
-	private GameManager gameManager;
 
     [HeaderAttribute("Screen Shake")]
     [RangeAttribute(0.3f, 1f)]
@@ -20,7 +19,6 @@ public class CameraController : MonoBehaviour {
     void Awake() {
     
 	    mainCamera = GetComponent<Camera>();
-		gameManager = FindObjectOfType<GameManager>();
     
 	}
 
@@ -57,13 +55,14 @@ public class CameraController : MonoBehaviour {
 	
 	private IEnumerator ResetPositionController() {
 
-        gameManager.soundManager.Play (Clip.triggerButton);
+        SoundManager.Instance.PlayAudio(SoundManager.Instance.triggerButton);
+        // gameManager.soundManager.Play (Clip.triggerButton);
 
 		transform.DOMove(originalPosition, 2);
 		
 		yield return new WaitForSeconds(2);
-		
-		gameManager.SetState(GameState.Playing);
+        
+        GameManager.Instance.SetState(GameState.Playing);
 		
 	}
 

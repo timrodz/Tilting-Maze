@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
     // Script References
-    private GameManager gameManager;
+    // private GameManager gameManager;
 
     // Particles
     public ParticleSystem movementParticles;
@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour {
 
     void Start () {
 
-        gameManager = FindObjectOfType<GameManager> ();
+        // gameManager = FindObjectOfType<GameManager> ();
         controller = GetComponent<CharacterController> ();
 
     }
@@ -39,14 +39,14 @@ public class PlayerController : MonoBehaviour {
     void FixedUpdate () {
 
         // Only process the player's movement if the goal hasn't been reached
-        if (gameManager.currentState != GameState.Playing) {
+        if (GameManager.Instance.currentState != GameState.Playing) {
             return;
         }
 
         isMoving = (int)controller.velocity.magnitude > 0;
 
         // Apply movement when either the camera isn't rotating or the game's not paused
-        if (!(!RoomController.canRotateCamera || gameManager.currentState == GameState.Paused)) {
+        if (!(!RoomController.canRotateCamera || GameManager.Instance.currentState == GameState.Paused)) {
 
             if (isMoving) {
 
@@ -95,14 +95,14 @@ public class PlayerController : MonoBehaviour {
 
     private void OnTriggerEnter (Collider other) {
 
-        if (gameManager.currentState != GameState.Playing) {
+        if (GameManager.Instance.currentState != GameState.Playing) {
             return;
         }
 
         // Has reached the goal of the level
         if ((other.CompareTag ("Finish"))) {
 
-            gameManager.CompleteLevel ();
+            GameManager.Instance.CompleteLevel ();
 
         }
         else if (other.CompareTag ("Trigger")) {
@@ -120,7 +120,7 @@ public class PlayerController : MonoBehaviour {
     /// <param name="hit">The ControllerColliderHit data associated with this collision.</param>
     private void OnControllerColliderHit (ControllerColliderHit hit) {
 
-        if (gameManager.currentState != GameState.Playing) {
+        if (GameManager.Instance.currentState != GameState.Playing) {
             return;
         }
 
@@ -167,11 +167,13 @@ public class PlayerController : MonoBehaviour {
 
         hasCollided = true;
 
-        gameManager.soundManager.Play (Clip.hit);
+        GameManager.Instance.soundManager.Play (Clip.hit);
 
+        var cpm = collisionParticles.main;
+        cpm.startSpeed = 3 * airTime;
         collisionParticles.Play ();
 
-        gameManager.cameraController.Shake ();
+        GameManager.Instance.cameraController.Shake ();
 
         float length = 0.3f;
         float randomX = Random.Range (0.2f, 0.3f);

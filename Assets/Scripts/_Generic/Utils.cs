@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using DG.Tweening;
 
-public class Utils : MonoBehaviour {
+public static class Utils {
 
     /// <summary>
     /// Finds numbers in a string (Level-1) and increments it (Level-2)
@@ -48,4 +48,28 @@ public class Utils : MonoBehaviour {
 
     }
 
+}
+
+
+
+// -------------------------------------------------------------------------------------------
+[System.Serializable]
+public enum Clip {
+	moveLeft,
+	moveRight,
+	slide,
+	hit,
+	triggerButton,
+	pause
+	
+}
+
+// -------------------------------------------------------------------------------------------
+[System.SerializableAttribute]
+public enum GameState {
+	LoadingLevel,
+	Playing,
+	Paused,
+	LevelComplete,
+	
 }
