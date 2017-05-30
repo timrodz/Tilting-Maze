@@ -40,11 +40,11 @@ public class RoomController : MonoBehaviour {
         // Allow for camera rotation ONLY if the player meets the following criteria
         if ((canRotateCamera) && (!playerController.isMoving) && (!GameManager.Instance.isLevelComplete)) {
 
-            if (XCI.GetAxisRaw(XboxAxis.LeftStickX) > 0 || Input.GetKey(KeyCode.D)) {
+            if (XCI.GetAxisRaw(XboxAxis.LeftStickX) > 0 || Input.GetKey(KeyCode.D) || MobileInputController.Instance.SwipeRight) {
 
                 StartCoroutine(RotateCamera(true));
 
-            } else if (XCI.GetAxisRaw(XboxAxis.LeftStickX) < 0 || Input.GetKey(KeyCode.A)) {
+            } else if (XCI.GetAxisRaw(XboxAxis.LeftStickX) < 0 || Input.GetKey(KeyCode.A) || MobileInputController.Instance.SwipeLeft) {
 
                 StartCoroutine(RotateCamera(false));
 

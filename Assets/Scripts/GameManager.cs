@@ -8,10 +8,7 @@ using XboxCtrlrInput;
 
 public class GameManager : MonoBehaviour {
 
-    public static GameManager Instance {
-        get;
-        private set;
-    }
+    public static GameManager Instance { get; private set; }
 
     // References
     public CameraController cameraController;

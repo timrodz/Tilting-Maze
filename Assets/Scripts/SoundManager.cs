@@ -2,9 +2,7 @@
 
 public class SoundManager : MonoBehaviour {
 
-    public static SoundManager Instance {
-        get; private set;
-    }
+    public static SoundManager Instance { get; private set; }
 
     [HeaderAttribute ("Audio Sources")]
     public AudioSource sfx;
