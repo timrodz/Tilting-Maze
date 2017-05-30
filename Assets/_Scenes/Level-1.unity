@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 58051729}
   - component: {fileID: 58051728}
   - component: {fileID: 58051727}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_1x1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -207,7 +207,7 @@ GameObject:
   - component: {fileID: 165919388}
   - component: {fileID: 165919387}
   - component: {fileID: 165919386}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_1x1 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -329,7 +329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc19b14da89b0ce41a12b3bf2a752a75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationEaseType: 6
+  rotationEaseType: 26
   rotationLength: 0.5
   playerObject: {fileID: 219687753}
 --- !u!4 &186893030
@@ -507,12 +507,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 223e2496e114f1e42b70e515e2632f80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  barrierMask:
+    serializedVersion: 2
+    m_Bits: 256
   movementParticles: {fileID: 394162302}
   collisionParticles: {fileID: 746197833}
   isMoving: 1
   gravityMultiplier: 30
-  speed: 10
-  hasCollided: 0
 --- !u!143 &219687755
 CharacterController:
   m_ObjectHideFlags: 0
@@ -600,7 +601,7 @@ GameObject:
   - component: {fileID: 223299392}
   - component: {fileID: 223299391}
   - component: {fileID: 223299390}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_1x2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -687,7 +688,7 @@ GameObject:
   - component: {fileID: 300315623}
   - component: {fileID: 300315622}
   - component: {fileID: 300315621}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_1x1 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -774,7 +775,7 @@ GameObject:
   - component: {fileID: 335785131}
   - component: {fileID: 335785130}
   - component: {fileID: 335785129}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_6x1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -861,7 +862,7 @@ GameObject:
   - component: {fileID: 371085867}
   - component: {fileID: 371085866}
   - component: {fileID: 371085865}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1062,7 +1063,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 986529104
+  randomSeed: 799799515
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4160,7 +4161,7 @@ GameObject:
   - component: {fileID: 556720671}
   - component: {fileID: 556720670}
   - component: {fileID: 556720669}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_2x1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4318,7 +4319,7 @@ GameObject:
   - component: {fileID: 631491719}
   - component: {fileID: 631491718}
   - component: {fileID: 631491717}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_1x1 (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4517,7 +4518,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 692413222}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Outer Barriers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4770,7 +4771,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -2060798286
+  randomSeed: -822111785
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -11005,7 +11006,7 @@ GameObject:
   - component: {fileID: 796899875}
   - component: {fileID: 796899874}
   - component: {fileID: 796899873}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_4x1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11092,7 +11093,7 @@ GameObject:
   - component: {fileID: 951772984}
   - component: {fileID: 951772983}
   - component: {fileID: 951772982}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_1x1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14342,7 +14343,7 @@ GameObject:
   - component: {fileID: 1147387325}
   - component: {fileID: 1147387324}
   - component: {fileID: 1147387323}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14429,7 +14430,7 @@ GameObject:
   - component: {fileID: 1160774043}
   - component: {fileID: 1160774042}
   - component: {fileID: 1160774041}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_7x1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14786,7 +14787,7 @@ GameObject:
   - component: {fileID: 1294897105}
   - component: {fileID: 1294897104}
   - component: {fileID: 1294897103}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14888,7 +14889,7 @@ GameObject:
   - component: {fileID: 1301042954}
   - component: {fileID: 1301042953}
   - component: {fileID: 1301042952}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15221,7 +15222,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1366965002}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Inner Barriers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15332,7 +15333,7 @@ GameObject:
   - component: {fileID: 1529313933}
   - component: {fileID: 1529313932}
   - component: {fileID: 1529313931}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_4x1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16137,7 +16138,7 @@ GameObject:
   - component: {fileID: 1835358421}
   - component: {fileID: 1835358420}
   - component: {fileID: 1835358419}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_1x2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16335,7 +16336,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1304528833
+  randomSeed: 2129939751
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -22432,7 +22433,7 @@ GameObject:
   - component: {fileID: 1979648193}
   - component: {fileID: 1979648192}
   - component: {fileID: 1979648191}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_4x1 (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22519,7 +22520,7 @@ GameObject:
   - component: {fileID: 1989926111}
   - component: {fileID: 1989926110}
   - component: {fileID: 1989926109}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Barrier_6x1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

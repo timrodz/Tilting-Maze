@@ -28,13 +28,15 @@ public class ButtonActivator : MonoBehaviour {
         // Debug.Log("Room rotation: " + (int) gameManager.roomController.transform.eulerAngles.z);
 
         // RoomController.canRotateCamera = false;
-
+        
+        // Make the player's position be the trigger's position
         other.transform.position = new Vector3 (
             (float) System.Math.Round (transform.position.x, 1),
             (float) System.Math.Round (transform.position.y, 1),
             (float) System.Math.Round (other.transform.position.z, 1)
         );
-
+        
+        // Stop registering any other collisions
         canRegisterCollisions = false;
 
         SoundManager.Instance.PlayAudio(SoundManager.Instance.triggerButton);
@@ -43,7 +45,6 @@ public class ButtonActivator : MonoBehaviour {
 
             if (barrier.gameObject != null) {
 
-                Debug.Log ("Barrier: " + barrier.gameObject.name);
                 StartCoroutine (MoveBarrier (barrier));
 
             }
@@ -82,31 +83,11 @@ public class ButtonActivator : MonoBehaviour {
 
         if (!barrier.hasMoved) {
 
-            // if ((int) gameManager.roomController.transform.eulerAngles.z == 180 || (int) gameManager.roomController.transform.eulerAngles.z == -180) {
-
-            //     Debug.Log("Opposite direction");
-            //     movementDirection = VectorDirection.DetermineOppositeDirection(barrier.movementDirection);
-
-            // } else {
-
-            Debug.Log ("Normal direction");
             movementDirection = VectorDirection.DetermineDirection (barrier.movementDirection);
-
-            // }
 
         } else {
 
-            //     if ((int) gameManager.roomController.transform.eulerAngles.z == 180 || (int) gameManager.roomController.transform.eulerAngles.z == -180) {
-
-            //         Debug.Log("Normal direction");
-            //         movementDirection = VectorDirection.DetermineDirection(barrier.movementDirection);
-
-            //     } else {
-
-            Debug.Log ("Opposite direction");
             movementDirection = VectorDirection.DetermineOppositeDirection (barrier.movementDirection);
-
-            //     }
 
         }
 

@@ -5,7 +5,6 @@ using XboxCtrlrInput;
 
 public class RoomController : MonoBehaviour {
 
-    private GameManager gameManager;
     private ParticleController particleController;
 
     [HideInInspector] public static bool canRotateCamera = true;
@@ -29,19 +28,17 @@ public class RoomController : MonoBehaviour {
         particleController = GetComponent<ParticleController>();
         playerController = playerObject.GetComponent<PlayerController>();
 
-        gameManager = FindObjectOfType<GameManager>();
-
     }
 
     void Update() {
 
         // Don't do anything if the game's curently paused
-        if (gameManager.currentState != GameState.Playing || !playerObject || !canReceiveInput) {
+        if (GameManager.Instance.currentState != GameState.Playing || !playerObject || !canReceiveInput) {
             return;
         }
 
         // Allow for camera rotation ONLY if the player meets the following criteria
-        if ((canRotateCamera) && (!playerController.isMoving) && (!gameManager.isLevelComplete)) {
+        if ((canRotateCamera) && (!playerController.isMoving) && (!GameManager.Instance.isLevelComplete)) {
 
             if (XCI.GetAxisRaw(XboxAxis.LeftStickX) > 0 || Input.GetKey(KeyCode.D)) {
 
@@ -62,7 +59,7 @@ public class RoomController : MonoBehaviour {
     /// </summary>
     public IEnumerator RotateCamera(bool shouldRotateRight) {
         
-        gameManager.IncrementMoveCount();
+        GameManager.Instance.IncrementMoveCount();
         
         playerController.movementParticles.transform.DOScale(0, 0);
 
@@ -89,6 +86,8 @@ public class RoomController : MonoBehaviour {
         canRotateCamera = true;
 
         particleController.Stop();
+        
+        playerController.CalculateMovementDirection();
 
     }
 
