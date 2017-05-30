@@ -15684,7 +15684,6 @@ GameObject:
   - component: {fileID: 1594478755}
   - component: {fileID: 1594478758}
   - component: {fileID: 1594478757}
-  - component: {fileID: 1594478756}
   m_Layer: 0
   m_Name: Foreground
   m_TagString: Untagged
@@ -15706,35 +15705,6 @@ Transform:
   m_Father: {fileID: 186893030}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1594478756
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1594478754}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02fa111c3beb61f45a617b3113f469b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlowColor:
-    r: 1
-    g: 1
-    b: 1
-    a: 0
-  LerpFactor: 10
-  <Renderers>k__BackingField: []
-  _materials: []
-  _currentColor:
-    r: 0
-    g: 0
-    b: 0
-    a: 0
-  _targetColor:
-    r: 0
-    g: 0
-    b: 0
-    a: 0
 --- !u!23 &1594478757
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -16049,7 +16019,6 @@ GameObject:
   - component: {fileID: 1813577886}
   - component: {fileID: 1813577885}
   - component: {fileID: 1813577884}
-  - component: {fileID: 1813577888}
   m_Layer: 0
   m_Name: Trigger Button (1)
   m_TagString: Trigger
@@ -16156,35 +16125,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1813577882}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1813577888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1813577882}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02fa111c3beb61f45a617b3113f469b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlowColor:
-    r: 0.9686275
-    g: 0.46274513
-    b: 0.14117648
-    a: 1
-  LerpFactor: 2
-  <Renderers>k__BackingField: []
-  _materials: []
-  _currentColor:
-    r: 0
-    g: 0
-    b: 0
-    a: 0
-  _targetColor:
-    r: 0
-    g: 0
-    b: 0
-    a: 0
 --- !u!1 &1835358417
 GameObject:
   m_ObjectHideFlags: 0
@@ -16395,7 +16335,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1200009278
+  randomSeed: -1304528833
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -22819,7 +22759,6 @@ GameObject:
   - component: {fileID: 2027748310}
   - component: {fileID: 2027748309}
   - component: {fileID: 2027748308}
-  - component: {fileID: 2027748312}
   m_Layer: 5
   m_Name: Screen Canvas
   m_TagString: Untagged
@@ -22907,18 +22846,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &2027748312
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2027748307}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51455f7c7a51145f7ab36ec887a0c33f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UIElementList: []
 --- !u!1 &2086709421
 GameObject:
   m_ObjectHideFlags: 0
