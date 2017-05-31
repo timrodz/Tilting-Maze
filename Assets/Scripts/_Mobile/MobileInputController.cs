@@ -97,7 +97,7 @@ public class MobileInputController : MonoBehaviour {
 
         // -------------------------------------------------------------------------------------------
         // Determine if deadzone has been crossed
-        if (swipeDelta.magnitude > 125) {
+        if (swipeDelta.magnitude > deadzone) {
 
             // Which direction are we swiping
             float x = swipeDelta.x;
@@ -129,18 +129,7 @@ public class MobileInputController : MonoBehaviour {
         }
 
     }
-
-#if UNITY_EDITOR
-    /// <summary>
-    /// Callback to draw gizmos that are pickable and always drawn.
-    /// </summary>
-    void OnDrawGizmos() {
-
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(Vector3.zero, deadzone);
-
-    }
-#endif
+    
     private void ResetSwipeState() {
 
         startTouch = swipeDelta = Vector2.zero;

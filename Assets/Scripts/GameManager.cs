@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour {
 
     // UI
     [Space]
-    [Header ("UI Elements")]
+    [Header("UI Elements")]
     public GameObject levelCompletePanel;
     private CanvasGroup levelCompleteCG;
     public TextMeshProUGUI totalMovesText;
@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour {
 
     // Winning state
     [Space]
-    [Header ("Winning animation")]
+    [Header("Winning animation")]
     public Ease winningAnimationEaseType;
     public Vector3 winningAnimationCameraPosition;
     public Vector3 winningAnimationPlayerPosition;
@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour {
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
-    void Awake () {
+    void Awake() {
 
         if (Instance != null & Instance != this) {
             Destroy(gameObject);
@@ -68,35 +68,37 @@ public class GameManager : MonoBehaviour {
     /// Start is called on the frame when a script is enabled just before
     /// any of the Update methods is called the first time.
     /// </summary>
-    void Start () {
+    void Start() {
 
-        levelCompleteCG = levelCompletePanel.GetComponent<CanvasGroup> ();
-        Debug.Log (levelCompleteCG);
-        movesCG = totalMovesText.GetComponentInParent<CanvasGroup> ();
+        cameraController = FindObjectOfType<CameraController>();
 
-        SetState (GameState.LoadingLevel);
+        levelCompleteCG = levelCompletePanel.GetComponent<CanvasGroup>();
+        Debug.Log(levelCompleteCG);
+        movesCG = totalMovesText.GetComponentInParent<CanvasGroup>();
 
-        levelCompletePanel.SetActive (true);
+        SetState(GameState.LoadingLevel);
+
+        levelCompletePanel.SetActive(true);
         //nextLevelButton.gameObject.SetActive(true);
 
-        StartLevel ();
+        StartLevel();
 
     }
 
-    void Update () {
+    void Update() {
 
         if (isLevelComplete && currentState == GameState.LevelComplete) {
 
-            if (Input.GetKeyDown (KeyCode.Return) || XCI.GetButtonDown (XboxButton.A)) {
+            if (Input.GetKeyDown(KeyCode.Return) || XCI.GetButtonDown(XboxButton.A)) {
 
-                SetState (GameState.LoadingLevel);
-                LoadNextLevel (false);
+                SetState(GameState.LoadingLevel);
+                LoadNextLevel(false);
 
             }
 
-            if (Input.GetKeyDown (KeyCode.Escape) || XCI.GetButtonDown (XboxButton.B)) {
+            if (Input.GetKeyDown(KeyCode.Escape) || XCI.GetButtonDown(XboxButton.B)) {
 
-                LoadNextLevel (true);
+                LoadNextLevel(true);
 
             }
 
@@ -108,7 +110,7 @@ public class GameManager : MonoBehaviour {
     /// Sets the game state
     /// </summary>
     /// <param name="state"></param>
-    public void SetState (GameState state) {
+    public void SetState(GameState state) {
 
         previousState = currentState;
         currentState = state;
@@ -118,7 +120,7 @@ public class GameManager : MonoBehaviour {
     /// <summary>
     /// Pauses the game.
     /// </summary>
-    public void TogglePause () {
+    public void TogglePause() {
 
         // Pause the game if it's not
         if (currentState != GameState.Paused) {
@@ -138,10 +140,10 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    public void StartLevel () {
+    public void StartLevel() {
 
-        roomController = FindObjectOfType<RoomController> ();
-        playerController = FindObjectOfType<PlayerController> ();
+        roomController = FindObjectOfType<RoomController>();
+        playerController = FindObjectOfType<PlayerController>();
 
         moveCount = 0;
         isLevelComplete = false;
@@ -151,12 +153,12 @@ public class GameManager : MonoBehaviour {
         //nextLevelCG = nextLevelButton.GetComponent<CanvasGroup> ();
 
         //Utils.Fade(nextLevelCG, false, 0);
-        Utils.Fade (movesCG, false, 0);
-        Utils.Fade (levelCompleteCG, false, 0);
+        Utils.Fade(movesCG, false, 0);
+        Utils.Fade(levelCompleteCG, false, 0);
 
-        totalMovesText.text = "Moves: " + moveCount.ToString ();
+        totalMovesText.text = "Moves: " + moveCount.ToString();
 
-        soundManager.PlayMusic ();
+        soundManager.PlayMusic();
 
     }
 
@@ -165,53 +167,56 @@ public class GameManager : MonoBehaviour {
     /// Show the moves it took to complete
     /// And the prompt for loading the next level
     /// </summary>
-    public void CompleteLevel () {
+    public void CompleteLevel() {
 
-        StopAllCoroutines ();
+        StopAllCoroutines();
 
-        StartCoroutine (AnimateLevelCompletion ());
+        StartCoroutine(AnimateLevelCompletion());
 
     }
 
     /// <summary>
     /// Proceeds to animate the completion of the level
     /// </summary>
-    private IEnumerator AnimateLevelCompletion () {
+    private IEnumerator AnimateLevelCompletion() {
 
-        SetState (GameState.LevelComplete);
+        SetState(GameState.LevelComplete);
 
         //canPause = false;
 
-        soundManager.StopMusic ();
-        soundManager.Play (Clip.hit);
-        soundManager.Play (Clip.triggerButton);
-        playerController.collisionParticles.Play ();
-        cameraController.Shake ();
+        soundManager.StopMusic();
+        soundManager.Play(Clip.hit);
+        soundManager.Play(Clip.triggerButton);
+        playerController.collisionParticles.Play();
+        cameraController.Shake();
 
-        yield return new WaitForSeconds (cameraController.shakeDuration);
+        yield return new WaitForSeconds(cameraController.shakeDuration);
 
-        cameraController.transform.DOMove (winningAnimationCameraPosition, winningAnimationDuration).SetEase (winningAnimationEaseType);
+        // winningAnimationCameraPosition = transform.position;
+        // winningAnimationCameraPosition.z -= 7;
+
+        cameraController.transform.DOMove(winningAnimationCameraPosition, winningAnimationDuration).SetEase(winningAnimationEaseType);
 
         Transform player = playerController.transform;
 
-        player.DOMove (winningAnimationPlayerPosition, winningAnimationDuration).SetEase (winningAnimationEaseType);
-        player.DOScale (new Vector3 (25, 25, 1), winningAnimationDuration).SetEase (winningAnimationEaseType);
+        player.DOMove(winningAnimationPlayerPosition, winningAnimationDuration).SetEase(winningAnimationEaseType);
+        player.DOScale(new Vector3(25, 25, 1), winningAnimationDuration).SetEase(winningAnimationEaseType);
 
         Vector3 euler = player.eulerAngles;
         euler.z -= 360;
 
-        player.DORotate (euler, winningAnimationDuration, RotateMode.FastBeyond360).SetEase (winningAnimationEaseType);
+        player.DORotate(euler, winningAnimationDuration, RotateMode.FastBeyond360).SetEase(winningAnimationEaseType);
 
-        yield return new WaitForSeconds (winningAnimationDuration);
+        yield return new WaitForSeconds(winningAnimationDuration);
 
         // Move the "moves" text to the center
-        totalMovesText.rectTransform.DOLocalMove (Vector3.zero, 1);
+        totalMovesText.rectTransform.DOLocalMove(Vector3.zero, 1);
 
         // Show the next level button by accessing its canvas group
         //Utils.Fade(nextLevelCG, true, 1);
-        Utils.Fade (levelCompleteCG, true, 1);
+        Utils.Fade(levelCompleteCG, true, 1);
 
-        yield return new WaitForSeconds (1);
+        yield return new WaitForSeconds(1);
 
         isLevelComplete = true;
 
@@ -220,37 +225,37 @@ public class GameManager : MonoBehaviour {
     /// <summary>
     /// Loads the next level.
     /// </summary>
-    public void LoadNextLevel (bool shouldReturn) {
+    public void LoadNextLevel(bool shouldReturn) {
 
         if (shouldReturn) {
-            SceneManager.LoadScene ("Level Selection");
+            SceneManager.LoadScene("Level Selection");
         }
 
         GameObject currentLevel = roomController.gameObject;
 
         // Get the current level's string and load the next level based on hierarchy
-        string nextLevelName = Utils.FindAndIncrementNumberInString (currentLevel.name);
+        string nextLevelName = Utils.FindAndIncrementNumberInString(currentLevel.name);
 
         // Destroy the current level
-        Destroy (currentLevel);
+        Destroy(currentLevel);
 
         // Find the level prefab by loading the resources directly
-        Object nextLevelPrefab = Resources.Load (nextLevelName);
+        Object nextLevelPrefab = Resources.Load(nextLevelName);
 
         // If there's a next level, create it
         if (nextLevelPrefab) {
 
-            cameraController.ResetPosition ();
-            totalMovesText.rectTransform.localPosition = new Vector3 (-306, 200, 0);
-            GameObject levelToInstantiate = (GameObject) Instantiate (nextLevelPrefab, Vector3.zero, Quaternion.identity);
+            cameraController.ResetPosition();
+            totalMovesText.rectTransform.localPosition = new Vector3(-306, 200, 0);
+            GameObject levelToInstantiate = (GameObject) Instantiate(nextLevelPrefab, Vector3.zero, Quaternion.identity);
             levelToInstantiate.name = nextLevelName;
-            StartLevel ();
+            StartLevel();
 
         }
         // Otherwise, go back to the menu
         else {
 
-            SceneManager.LoadScene ("Level Selection");
+            SceneManager.LoadScene("Level Selection");
 
         }
 
@@ -259,21 +264,21 @@ public class GameManager : MonoBehaviour {
     /// <summary>
     /// 
     /// </summary>
-    public void IncrementMoveCount () {
+    public void IncrementMoveCount() {
 
         moveCount++;
-        totalMovesText.text = "Moves: " + moveCount.ToString ();
+        totalMovesText.text = "Moves: " + moveCount.ToString();
 
         if (moveCount == 1) {
 
-            Utils.Fade (movesCG, true, 1);
+            Utils.Fade(movesCG, true, 1);
 
         }
 
         if (moveCount % 2 == 1) {
-            soundManager.Play (Clip.moveRight);
+            soundManager.Play(Clip.moveRight);
         } else {
-            soundManager.Play (Clip.moveLeft);
+            soundManager.Play(Clip.moveLeft);
         }
 
     }

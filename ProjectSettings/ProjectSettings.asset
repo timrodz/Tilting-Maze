@@ -6,7 +6,7 @@ PlayerSettings:
   serializedVersion: 11
   productGUID: 83957c73ee35ac04bb7234b180fcad39
   AndroidProfiler: 0
-  defaultScreenOrientation: 4
+  defaultScreenOrientation: 0
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
@@ -136,10 +136,10 @@ PlayerSettings:
   protectGraphicsMemory: 0
   useHDRDisplay: 0
   applicationIdentifier:
-    Android: com.Company.ProductName
+    Android: com.timrodz.tiltingMazeTest
     Standalone: unity.timrodz.Tilting Maze
     Tizen: com.Company.ProductName
-    iOS: com.Company.ProductName
+    iOS: com.timrodz.tiltingMazeTest
     tvOS: com.Company.ProductName
   buildNumber:
     iOS: 0
@@ -561,6 +561,7 @@ PlayerSettings:
   scriptingDefineSymbols:
     1: TMP_PRESENT
     4: TMP_PRESENT
+    7: TMP_PRESENT
     13: TMP_PRESENT
     14: TMP_PRESENT
   platformArchitecture:

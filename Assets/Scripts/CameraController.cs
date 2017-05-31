@@ -26,7 +26,8 @@ public class CameraController : MonoBehaviour {
     void Start() {
 
         originalPosition = transform.position;
-        transform.position = new Vector3(0, 0, -25);
+        GameManager.Instance.winningAnimationCameraPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z - 7.5f);
+        transform.position = GameManager.Instance.winningAnimationCameraPosition;
         ResetPosition();
 
     }
