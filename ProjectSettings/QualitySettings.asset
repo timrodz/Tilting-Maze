@@ -85,8 +85,8 @@ QualitySettings:
     asyncUploadBufferSize: 4
     excludedTargetPlatforms: []
   - serializedVersion: 2
-    name: Good
-    pixelLightCount: 2
+    name: Mobile
+    pixelLightCount: 1
     shadows: 1
     shadowResolution: 2
     shadowProjection: 1
@@ -109,7 +109,8 @@ QualitySettings:
     particleRaycastBudget: 256
     asyncUploadTimeSlice: 2
     asyncUploadBufferSize: 4
-    excludedTargetPlatforms: []
+    excludedTargetPlatforms:
+    - Standalone
   - serializedVersion: 2
     name: Beautiful
     pixelLightCount: 3
