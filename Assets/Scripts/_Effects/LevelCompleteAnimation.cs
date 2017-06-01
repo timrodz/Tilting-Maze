@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class LevelCompleteAnimation : MonoBehaviour {
-
-    private CanvasGroup transparency;
+    
+    [HideInInspector]
+    public CanvasGroup transparency;
 
     public Ease easeTye;
     public Vector3 cameraPosition;
@@ -54,6 +55,7 @@ public class LevelCompleteAnimation : MonoBehaviour {
 
         // Move the "moves" text to the center
         Utils.Fade(CanvasManager.Instance.TotalMovesPanelTransparency, true, 1);
+        
         CanvasManager.Instance.totalMovesText.rectTransform.DOLocalMove(Vector3.zero, 1);
 
         // Show the next level button by accessing its canvas group

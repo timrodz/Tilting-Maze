@@ -56,14 +56,17 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 5602cee9d263bb143836432deb88692d, type: 3}
     volume: 1
     pitch: 0.1
+    loop: 0
     source: {fileID: 0}
   - name: Collision
     clip: {fileID: 8300000, guid: 84def1c3e550e4aef8537f7a99159fff, type: 3}
     volume: 1
     pitch: 0.1
+    loop: 0
     source: {fileID: 0}
   - name: Trigger Button
     clip: {fileID: 8300000, guid: 1f0caec04a3ec4c53ba1ac25c71d5395, type: 3}
     volume: 1
     pitch: 0.1
+    loop: 0
     source: {fileID: 0}

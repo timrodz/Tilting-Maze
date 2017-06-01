@@ -16,8 +16,7 @@ public class RoomController : MonoBehaviour {
     [RangeAttribute(0.3f, 1.0f)]
     public float rotationLength = 0.5f;
 
-    [HeaderAttribute("Player")]
-    public GameObject playerObject;
+    
     private PlayerController playerController;
 
 
@@ -26,14 +25,14 @@ public class RoomController : MonoBehaviour {
     void Start() {
 
         particleController = GetComponent<ParticleController>();
-        playerController = playerObject.GetComponent<PlayerController>();
+        playerController = FindObjectOfType<PlayerController>();
 
     }
 
     void Update() {
 
         // Don't do anything if the game's curently paused
-        if (GameManager.Instance.currentState != GameState.Play || !playerObject || !canReceiveInput) {
+        if (GameManager.Instance.currentState != GameState.Play || !playerController || !canReceiveInput) {
             return;
         }
 

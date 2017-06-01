@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using DG.Tweening;
 
 public class CanvasManager : MonoBehaviour {
 
@@ -11,6 +12,7 @@ public class CanvasManager : MonoBehaviour {
     public GameObject TotalMovesPanel;
     public CanvasGroup TotalMovesPanelTransparency;
     public TextMeshProUGUI totalMovesText;
+    private Vector3 totalMovesPosition;
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.
@@ -33,13 +35,23 @@ public class CanvasManager : MonoBehaviour {
     /// any of the Update methods is called the first time.
     /// </summary>
     void Start() {
+        
 
         if (!TotalMovesPanelTransparency) {
             TotalMovesPanelTransparency = TotalMovesPanel.GetComponent<CanvasGroup>();
         }
         
+        totalMovesPosition = totalMovesText.rectTransform.localPosition;
+        
         Utils.Fade(TotalMovesPanelTransparency, false, 0);
 
+    }
+    
+    public void ResetTotalMovesPosition() {
+        
+        Utils.Fade(TotalMovesPanelTransparency, false, 0);
+        totalMovesText.rectTransform.DOLocalMove(totalMovesPosition, 0);
+        
     }
 
 }

@@ -115,14 +115,14 @@ public class GameManager : MonoBehaviour {
 
     public void StartLevel() {
         
-        // Sets the state to "Play" in the camera controller script
+        // ATTENTION: Sets the state to "Play" in the camera controller script
 
         moveCount = 0;
         isLevelComplete = false;
         canPause = true;
         isPaused = false;
         
-        Utils.Fade(CanvasManager.Instance.TotalMovesPanelTransparency, false, 0);
+        CanvasManager.Instance.ResetTotalMovesPosition();
 
     }
 
@@ -165,13 +165,19 @@ public class GameManager : MonoBehaviour {
 
         // If there's a next level, create it
         if (nextLevelPrefab) {
-
-            CameraController.Instance.ResetPosition();
-
-            // totalMovesText.rectTransform.localPosition = new Vector3(-306, 200, 0);
+            
+            Debug.Log("Next level");
 
             GameObject levelToInstantiate = (GameObject) Instantiate(nextLevelPrefab, Vector3.zero, Quaternion.identity);
+            
             levelToInstantiate.name = nextLevelName;
+            
+            Utils.Fade(FindObjectOfType<LevelCompleteAnimation>().transparency, false, 0);
+            
+            CameraController.Instance.ResetPosition();
+
+            CanvasManager.Instance.ResetTotalMovesPosition();
+            
             StartLevel();
 
         }
