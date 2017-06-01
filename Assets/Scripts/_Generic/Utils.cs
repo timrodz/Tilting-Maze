@@ -68,7 +68,7 @@ public enum Clip {
 [System.SerializableAttribute]
 public enum GameState {
 	LoadingLevel,
-	Playing,
+	Play,
 	Paused,
 	LevelComplete,
 	

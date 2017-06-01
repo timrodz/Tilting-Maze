@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour {
 	
+    public static CameraController Instance { get; private set; }
+    
+    [Header("Camera Easing")]
+    public Ease cameraEase;
 
-    [HeaderAttribute("Screen Shake")]
+    [Header("Screen Shake")]
     [RangeAttribute(0.3f, 1f)]
     public float shakeDuration = 0.5f;
 
@@ -17,6 +21,15 @@ public class CameraController : MonoBehaviour {
     /// Awake is called when the script instance is being loaded.
     /// </summary>
     void Awake() {
+        
+        // Check if there is another instance of the same type and destroy it
+        if (Instance != null & Instance != this) {
+            Destroy(gameObject);
+        }
+
+        Instance = this;
+
+        DontDestroyOnLoad(gameObject);
     
 	    mainCamera = GetComponent<Camera>();
     
@@ -26,8 +39,9 @@ public class CameraController : MonoBehaviour {
     void Start() {
 
         originalPosition = transform.position;
-        GameManager.Instance.winningAnimationCameraPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z - 7.5f);
-        transform.position = GameManager.Instance.winningAnimationCameraPosition;
+        
+        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 7.5f);
+        
         ResetPosition();
 
     }
@@ -56,14 +70,11 @@ public class CameraController : MonoBehaviour {
 	
 	private IEnumerator ResetPositionController() {
 
-        SoundManager.Instance.PlayAudio(SoundManager.Instance.triggerButton);
-        // gameManager.soundManager.Play (Clip.triggerButton);
-
-		transform.DOMove(originalPosition, 2);
+		transform.DOMove(originalPosition, 2).SetEase(cameraEase);
 		
 		yield return new WaitForSeconds(2);
         
-        GameManager.Instance.SetState(GameState.Playing);
+        GameManager.Instance.SetState(GameState.Play);
 		
 	}
 

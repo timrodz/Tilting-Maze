@@ -33,7 +33,7 @@ public class RoomController : MonoBehaviour {
     void Update() {
 
         // Don't do anything if the game's curently paused
-        if (GameManager.Instance.currentState != GameState.Playing || !playerObject || !canReceiveInput) {
+        if (GameManager.Instance.currentState != GameState.Play || !playerObject || !canReceiveInput) {
             return;
         }
 
@@ -58,6 +58,9 @@ public class RoomController : MonoBehaviour {
     /// Rotates the camera.
     /// </summary>
     public IEnumerator RotateCamera(bool shouldRotateRight) {
+        
+        // AudioManager.Instance.PlayWithRandomPitch("Move", 0.95f, 1.05f);
+        AudioManager.Instance.Play("Move");
         
         GameManager.Instance.IncrementMoveCount();
         

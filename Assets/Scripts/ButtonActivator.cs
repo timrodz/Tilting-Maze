@@ -20,7 +20,7 @@ public class ButtonActivator : MonoBehaviour {
 
     private void OnTriggerEnter (Collider other) {
 
-        if (!canRegisterCollisions || !RoomController.canRotateCamera)
+        if (!canRegisterCollisions || !RoomController.canRotateCamera || GameManager.Instance.currentState != GameState.Play)
             return;
 
         Debug.Log ("Interacting with " + this.name + " - Position: " + other.transform.position);
@@ -39,7 +39,7 @@ public class ButtonActivator : MonoBehaviour {
         // Stop registering any other collisions
         canRegisterCollisions = false;
 
-        SoundManager.Instance.PlayAudio(SoundManager.Instance.triggerButton);
+        AudioManager.Instance.Play("Trigger Button");
 
         foreach (Barrier barrier in barrierList) {
 

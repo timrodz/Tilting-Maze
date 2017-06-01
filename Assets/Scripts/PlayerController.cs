@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour {
     void Update() {
 
         // Only process the player's movement if the game state is on playing
-        if (GameManager.Instance.currentState != GameState.Playing) {
+        if (GameManager.Instance.currentState != GameState.Play) {
             return;
         }
 
@@ -74,6 +74,10 @@ public class PlayerController : MonoBehaviour {
 
                 if (isMoving) {
 
+                    if (!canCheckForCollisions) {
+                        canCheckForCollisions = true;
+                    }
+
                     airTime += Time.deltaTime;
 
                     if (!movementParticles.isPlaying) {
@@ -82,6 +86,12 @@ public class PlayerController : MonoBehaviour {
                     }
 
                     AnimateDrop();
+
+                } else {
+
+                    if (canCheckForCollisions) {
+                        canCheckForCollisions = false;
+                    }
 
                 }
 
@@ -100,7 +110,8 @@ public class PlayerController : MonoBehaviour {
             );
 
         } else {
-
+            
+            movementParticles.transform.DOScale(0, 1);
             movementParticles.Stop();
 
         }
@@ -109,7 +120,7 @@ public class PlayerController : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other) {
 
-        if (GameManager.Instance.currentState != GameState.Playing) {
+        if (GameManager.Instance.currentState != GameState.Play) {
             return;
         }
 
@@ -176,7 +187,7 @@ public class PlayerController : MonoBehaviour {
 
                 if (transform.position != lastPosition) {
 
-                    canCheckForCollisions = false;
+                    // canCheckForCollisions = false;
 
                     lastPosition = transform.position;
 
@@ -200,13 +211,13 @@ public class PlayerController : MonoBehaviour {
 
         hasCollided = true;
 
-        GameManager.Instance.soundManager.Play(Clip.hit);
+        AudioManager.Instance.Play("Collision");
 
         var cpm = collisionParticles.main;
         cpm.startSpeed = 3 * airTime;
         collisionParticles.Play();
 
-        GameManager.Instance.cameraController.Shake();
+        CameraController.Instance.Shake();
 
         float length = 0.3f;
         float randomX = Random.Range(0.2f, 0.3f);
