@@ -143,7 +143,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4334772067363698}
   m_Layer: 0
-  m_Name: Room particles
+  m_Name: Particle Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2224,11 +2224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 624d75b3e47244c46824d85e89d0133f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particleList:
-  - {fileID: 198955020534021994}
-  - {fileID: 198969788257938290}
-  - {fileID: 198992414678794964}
-  - {fileID: 198325053468628328}
+  particleContainer: {fileID: 4334772067363698}
 --- !u!114 &114548087083915576
 MonoBehaviour:
   m_ObjectHideFlags: 1

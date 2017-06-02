@@ -319,7 +319,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4985860547772182}
   m_Layer: 0
-  m_Name: Room particles
+  m_Name: Particle Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1020,7 +1020,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1795105895001378}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1, y: -5, z: -0.206}
+  m_LocalPosition: {x: -2, y: -5, z: -0.206}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4307420343081634}
@@ -2318,7 +2318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc19b14da89b0ce41a12b3bf2a752a75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationEaseType: 26
+  rotationEaseType: 8
   rotationLength: 0.5
 --- !u!114 &114928337439199432
 MonoBehaviour:
@@ -2331,11 +2331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 624d75b3e47244c46824d85e89d0133f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particleList:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  particleContainer: {fileID: 4985860547772182}
 --- !u!135 &135072398754056000
 SphereCollider:
   m_ObjectHideFlags: 1
