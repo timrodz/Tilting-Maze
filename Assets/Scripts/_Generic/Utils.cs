@@ -11,7 +11,7 @@ public static class Utils {
     /// </summary>
     /// <param name="_stringToFind"> The string to find </param>
     /// <returns> the incremented string </returns>
-    public static string FindAndIncrementNumberInString(string _stringToFind) {
+    public static string FindStringAndIncrementNumber(string _stringToFind) {
 
         // Find the first parentheses and delete everything
         // that follows after it
@@ -29,6 +29,27 @@ public static class Utils {
         _stringToFind += (num);
 
         return _stringToFind;
+
+    }
+    
+    /// <summary>
+    /// Finds numbers in a string (Level-1) and increments it (Level-2)
+    /// </summary>
+    /// <param name="_stringToFind"> The string to find </param>
+    /// <returns> the incremented string </returns>
+    public static string FindAndIncrementNumberInString(string _stringToFind) {
+
+        // Find the first parentheses and delete everything
+        // that follows after it
+        int index = _stringToFind.IndexOf('-');
+
+        // Find all numbers in the string and store it
+        string number = Regex.Match(_stringToFind, @"\d+").Value;
+
+        // parse the number from the string and add 1 to it
+        int num = int.Parse(number) + 1;
+
+        return (num.ToString());
 
     }
     

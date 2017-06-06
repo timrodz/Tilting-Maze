@@ -137,39 +137,6 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    /// <summary>
-    /// OnControllerColliderHit is called when the controller hits a
-    /// collider while performing a Move.
-    /// </summary>
-    /// <param name="hit">The ControllerColliderHit data associated with this collision.</param>
-    private void OnControllerColliderHit(ControllerColliderHit hit) {
-
-        // if (GameManager.Instance.currentState != GameState.Playing) {
-        //     return;
-        // }
-
-        // if ((isMoving) && (!hasCollided) && (collidedObject != hit.gameObject)) {
-
-        //     Debug.Log("Position: " + transform.position + " - last position: " + lastPosition);
-
-        //     if (transform.position != lastPosition) {
-
-        //         Debug.Log("ENTER CONTROLLER COLLIDER");
-
-        //         lastPosition = transform.position;
-
-        //         collidedObject = hit.gameObject;
-
-        //         StopAllCoroutines();
-
-        //         StartCoroutine(AnimateCollision());
-
-        //     }
-
-        // }
-
-    }
-
     public void CheckForCollisions() {
 
         // Since the player is at an offset Z-axis position
