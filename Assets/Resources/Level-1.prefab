@@ -647,7 +647,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1623920831521758}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5, y: 5, z: -0.206}
+  m_LocalPosition: {x: 5, y: 3, z: -0.206}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4464076990871436}
@@ -660,7 +660,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1488521237365150}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: -5, z: -0.6}
+  m_LocalPosition: {x: 5, y: 5, z: -0.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4557980283925940}
@@ -2377,6 +2377,8 @@ MonoBehaviour:
   collisionParticles: {fileID: 198255396522107090}
   isMoving: 1
   gravityMultiplier: 30
+  canCheckForCollisions: 0
+  airTime: 0
 --- !u!114 &114548087083915576
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2388,6 +2390,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc19b14da89b0ce41a12b3bf2a752a75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canRotateCamera: 1
+  canReceiveInput: 1
   rotationEaseType: 8
   rotationLength: 0.5
 --- !u!114 &114904527267720936

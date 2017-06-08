@@ -6,6 +6,8 @@ public class PlayerController : MonoBehaviour {
 
     public LayerMask barrierMask;
 
+    private RoomController room;
+
     // Particles
     public ParticleSystem movementParticles;
     public ParticleSystem collisionParticles;
@@ -17,35 +19,46 @@ public class PlayerController : MonoBehaviour {
     public float gravityMultiplier = 20.0f;
 
     // Collision registry
+    public bool canCheckForCollisions = false;
     private Vector3 lastPosition = Vector3.zero;
     private GameObject collidedObject = null;
     private bool hasCollided = false;
-    private bool canCheckForCollisions = false;
     int angleXPointsTowards = 0;
     Vector3 downwardsDirection = Vector3.zero;
 
     // Animations
-    private float airTime = 0;
-    float stretchMultiplier = 0.35f;
+    public float airTime = 0;
+    private float stretchMultiplier = 0.35f;
 
     // -------------------------------------------------------------------------------------------
 
     void Start() {
 
-        // gameManager = FindObjectOfType<GameManager> ();
         controller = GetComponent<CharacterController>();
+
+        room = FindObjectOfType<RoomController>();
+
+        CalculateMovementDirection();
+
+        canCheckForCollisions = false;
 
     }
 
     void Update() {
+
+        if (GameManager.Instance == null) {
+            return;
+        }
 
         // Only process the player's movement if the game state is on playing
         if (GameManager.Instance.currentState != GameState.Play) {
             return;
         }
 
+        Debug.DrawRay(transform.position, downwardsDirection, Color.magenta);
+
         // Apply movement when either the camera isn't rotating or the game's not paused
-        if (!(!RoomController.canRotateCamera || GameManager.Instance.currentState == GameState.Paused)) {
+        if (!(!room.canRotateCamera || GameManager.Instance.currentState == GameState.Paused)) {
 
             // Check for collisions when the map can't be moved
             if (canCheckForCollisions) {
@@ -74,10 +87,6 @@ public class PlayerController : MonoBehaviour {
 
                 if (isMoving) {
 
-                    if (!canCheckForCollisions) {
-                        canCheckForCollisions = true;
-                    }
-
                     airTime += Time.deltaTime;
 
                     if (!movementParticles.isPlaying) {
@@ -86,12 +95,6 @@ public class PlayerController : MonoBehaviour {
                     }
 
                     AnimateDrop();
-
-                } else {
-
-                    if (canCheckForCollisions) {
-                        canCheckForCollisions = false;
-                    }
 
                 }
 
@@ -110,7 +113,7 @@ public class PlayerController : MonoBehaviour {
             );
 
         } else {
-            
+
             movementParticles.transform.DOScale(0, 1);
             movementParticles.Stop();
 
@@ -124,39 +127,50 @@ public class PlayerController : MonoBehaviour {
             return;
         }
 
+        // if (!room.canRotateCamera) {
+        //     return;
+        // }
+
         // Has reached the goal of the level
         if ((other.CompareTag("Finish"))) {
 
+            movementParticles.Stop();
             GameManager.Instance.CompleteLevel();
 
         } else if (other.CompareTag("Trigger")) {
 
             movementParticles.Stop();
+            canCheckForCollisions = true;
+            Debug.Log("Entering trigger ID: " + other.name);
 
         }
 
     }
 
-    public void CheckForCollisions() {
+    public bool CheckForCollisions() {
 
         // Since the player is at an offset Z-axis position
         // store its position and set that Z back to 0
         Vector3 position = transform.position;
         position.z = 0;
 
-        Debug.DrawRay(position, downwardsDirection, Color.magenta);
-
         RaycastHit hit;
 
         if (Physics.Raycast(position, downwardsDirection, out hit, 1, barrierMask)) {
 
+            Debug.Log("Raycast enter with " + hit.collider.name);
+
+            canCheckForCollisions = false;
+
             if ((isMoving) && (!hasCollided) && (collidedObject != hit.collider.gameObject)) {
 
-                if (transform.position != lastPosition) {
+                Debug.Log("Current position: " + position + " last position: " + lastPosition);
+
+                if (position != lastPosition) {
 
                     // canCheckForCollisions = false;
 
-                    lastPosition = transform.position;
+                    lastPosition = position;
 
                     collidedObject = hit.collider.gameObject;
 
@@ -164,17 +178,35 @@ public class PlayerController : MonoBehaviour {
 
                     StartCoroutine(AnimateCollision());
 
-                    Debug.Log("Collided with " + collidedObject.name);
+                    Debug.Log("Collision with " + collidedObject.name + ": PASS");
+
+                    return true;
+
+                } else {
+
+                    Debug.Log("Collision check: FAIL - Positions didn't match");
+
+                    return false;
 
                 }
+
+            } else {
+
+                Debug.Log("Collision check: FAIL - Has not collided or moved");
+
+                return false;
 
             }
 
         }
 
+        return false;
+
     }
 
     private IEnumerator AnimateCollision() {
+
+        Debug.Log("Air time: " + airTime);
 
         hasCollided = true;
 
@@ -201,6 +233,7 @@ public class PlayerController : MonoBehaviour {
         yield return new WaitForSeconds(0.2f);
 
         hasCollided = false;
+
         airTime = 0;
 
     }

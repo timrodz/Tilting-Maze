@@ -649,7 +649,7 @@ Transform:
   - {fileID: 4420758174862328}
   - {fileID: 4658878971103942}
   m_Father: {fileID: 4307420343081634}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4283511491668752
 Transform:
@@ -692,8 +692,8 @@ Transform:
   - {fileID: 4985860547772182}
   - {fileID: 4850508157086330}
   - {fileID: 4961675958604470}
-  - {fileID: 4160360152175794}
   - {fileID: 4425001332917046}
+  - {fileID: 4160360152175794}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -786,7 +786,7 @@ Transform:
   - {fileID: 4584140581500810}
   - {fileID: 4407174803491922}
   m_Father: {fileID: 4307420343081634}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4435948515120220
 Transform:
@@ -2242,6 +2242,8 @@ MonoBehaviour:
   collisionParticles: {fileID: 198000623245829676}
   isMoving: 1
   gravityMultiplier: 30
+  canCheckForCollisions: 0
+  airTime: 0
 --- !u!114 &114349149868068010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2318,6 +2320,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc19b14da89b0ce41a12b3bf2a752a75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canRotateCamera: 1
+  canReceiveInput: 1
   rotationEaseType: 8
   rotationLength: 0.5
 --- !u!114 &114928337439199432

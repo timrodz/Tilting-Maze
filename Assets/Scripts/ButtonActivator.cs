@@ -5,47 +5,56 @@ using UnityEngine;
 
 public class ButtonActivator : MonoBehaviour {
 
+    private RoomController room;
+    private PlayerController player;
+
     public int numberOfUsesBeforeDestroying = 1;
     public Ease easeType = Ease.OutSine;
 
     public float duration = 1;
 
-    public List<Barrier> barrierList = new List<Barrier> (1);
+    public List<Barrier> barrierList = new List<Barrier>(1);
 
     // Some barriers can be toggled on and off, this controls it
     private bool canRegisterCollisions = true;
     private int collisionCount = 0;
 
+    /// <summary>
+    /// Start is called on the frame when a script is enabled just before
+    /// any of the Update methods is called the first time.
+    /// </summary>
+    void Start() {
+
+        room = FindObjectOfType<RoomController>();
+        player = FindObjectOfType<PlayerController>();
+
+    }
+
     // -------------------------------------------------------------------------------------------
+    private void OnTriggerEnter(Collider other) {
 
-    private void OnTriggerEnter (Collider other) {
-
-        if (!canRegisterCollisions || !RoomController.canRotateCamera || GameManager.Instance.currentState != GameState.Play)
+        if (!canRegisterCollisions || !room.canRotateCamera || GameManager.Instance.currentState != GameState.Play)
             return;
 
-        Debug.Log ("Interacting with " + this.name + " - Position: " + other.transform.position);
-
-        // Debug.Log("Room rotation: " + (int) gameManager.roomController.transform.eulerAngles.z);
-
-        // RoomController.canRotateCamera = false;
-        
-        // Make the player's position be the trigger's position
-        other.transform.position = new Vector3 (
-            (float) System.Math.Round (transform.position.x, 1),
-            (float) System.Math.Round (transform.position.y, 1),
-            (float) System.Math.Round (other.transform.position.z, 1)
-        );
-        
         // Stop registering any other collisions
         canRegisterCollisions = false;
 
         AudioManager.Instance.Play("Trigger Button");
 
-        foreach (Barrier barrier in barrierList) {
+        // Make the player's position be the trigger's position
+        other.transform.position = new Vector3(
+            (float) System.Math.Round(transform.position.x, 1),
+            (float) System.Math.Round(transform.position.y, 1),
+            (float) System.Math.Round(other.transform.position.z, 1)
+        );
+        
+        StartCoroutine(CollisionHelper());
+
+        foreach(Barrier barrier in barrierList) {
 
             if (barrier.gameObject != null) {
 
-                StartCoroutine (MoveBarrier (barrier));
+                StartCoroutine(MoveBarrier(barrier));
 
             }
 
@@ -55,27 +64,64 @@ public class ButtonActivator : MonoBehaviour {
         if (numberOfUsesBeforeDestroying > 0)
             collisionCount++;
 
+        Debug.Log("Interacting with " + this.name + " - Position: " + other.transform.position);
+
     }
 
     /// <summary>
     /// OnTriggerExit is called when the Collider other has stopped touching the trigger.
     /// </summary>
     /// <param name="other">The other Collider involved in this collision.</param>
-    void OnTriggerExit (Collider other) {
-
+    void OnTriggerExit(Collider other) {
+        
+        StopAllCoroutines();
+        
         if (collisionCount >= numberOfUsesBeforeDestroying && numberOfUsesBeforeDestroying > 0)
             return;
 
-        Debug.Log ("Exiting " + this.name);
+        StartCoroutine(EnableCollisionRegistry());
 
-        canRegisterCollisions = true;
+        Debug.Log("Exiting " + this.name);
 
     }
 
-    private IEnumerator MoveBarrier (Barrier barrier) {
+    private IEnumerator EnableCollisionRegistry() {
 
-        // Disable input
-        RoomController.canReceiveInput = false;
+        yield return new WaitForSeconds(1f);
+        canRegisterCollisions = true;
+
+    }
+    
+    private IEnumerator CollisionHelper() {
+        
+        room.canReceiveInput = false;
+        room.canRotateCamera = false;
+        
+        yield return new WaitForSeconds(duration);
+        
+        room.canReceiveInput = true;
+
+        room.canRotateCamera = true;
+        
+        // yield return new WaitForSeconds(0.1f);
+        // Debug.Log("pasd");
+
+        // player.canCheckForCollisions = true;
+        // Debug.Log("Check for player collisions");
+        // if (!player.CheckForCollisions()) {
+
+        //     Debug.Log("FAIL");
+        //     player.canCheckForCollisions = true;
+
+        // } else {
+
+        //     Debug.Log("PASS");
+
+        // }
+        
+    }
+
+    private IEnumerator MoveBarrier(Barrier barrier) {
 
         GameObject obj = barrier.gameObject;
 
@@ -83,11 +129,11 @@ public class ButtonActivator : MonoBehaviour {
 
         if (!barrier.hasMoved) {
 
-            movementDirection = VectorDirection.DetermineDirection (barrier.movementDirection);
+            movementDirection = VectorDirection.DetermineDirection(barrier.movementDirection);
 
         } else {
 
-            movementDirection = VectorDirection.DetermineOppositeDirection (barrier.movementDirection);
+            movementDirection = VectorDirection.DetermineOppositeDirection(barrier.movementDirection);
 
         }
 
@@ -95,35 +141,27 @@ public class ButtonActivator : MonoBehaviour {
 
         Vector3 finalPosition = obj.transform.localPosition + (movementDirection * scale);
 
-        obj.transform.DOLocalMove (finalPosition, duration).SetEase (easeType);
-
-        // Wait for a small amount of time and disable camera movement
-        // Prevents the player from moving
-        // yield return new WaitForSeconds(0.1f);
-
-        RoomController.canRotateCamera = false;
+        obj.transform.DOLocalMove(finalPosition, duration).SetEase(easeType);
 
         // Give a bit of delay in case of any glitches
-        yield return new WaitForSeconds (duration);
-
-        RoomController.canReceiveInput = true;
-
-        RoomController.canRotateCamera = true;
+        yield return new WaitForSeconds(duration);
 
         if (collisionCount >= numberOfUsesBeforeDestroying && numberOfUsesBeforeDestroying > 0) {
 
             // Destroy the trigger button once the animations have finished
-            Destroy (this.gameObject);
+            Destroy(this.gameObject);
 
         } else {
 
             barrier.hasMoved = !barrier.hasMoved;
 
             if (barrier.shouldDeleteFromList) {
-                barrierList.Remove (barrier);
+                barrierList.Remove(barrier);
             }
 
         }
+
+        
 
     }
 

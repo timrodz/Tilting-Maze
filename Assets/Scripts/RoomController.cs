@@ -6,10 +6,10 @@ using XboxCtrlrInput;
 public class RoomController : MonoBehaviour {
 
     private ParticleController particleController;
+    
+    public bool canRotateCamera = true;
 
-    [HideInInspector] public static bool canRotateCamera = true;
-
-    [HideInInspector] public static bool canReceiveInput = true;
+    public bool canReceiveInput = true;
 
     [HeaderAttribute("Rotation")]
     public Ease rotationEaseType = Ease.OutQuad;
@@ -18,9 +18,6 @@ public class RoomController : MonoBehaviour {
 
     
     private PlayerController playerController;
-
-
-    // -------------------------------------------------------------------------------------------
 
     void Start() {
 
@@ -86,8 +83,10 @@ public class RoomController : MonoBehaviour {
         yield return new WaitForSeconds(rotationLength - wait);
 
         canRotateCamera = true;
-
+        
         particleController.Stop();
+        
+        yield return new WaitForSeconds(0.05f);
         
         playerController.CalculateMovementDirection();
 

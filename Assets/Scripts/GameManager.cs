@@ -160,18 +160,19 @@ public class GameManager : MonoBehaviour {
         // Find the level prefab by loading the resources directly
         Object nextLevelPrefab = Resources.Load(nextLevelName);
 
+        StartCoroutine(DestroyCurrentLevelAndInstantiateNextLevelPrefab(currentLevel, nextLevelPrefab, nextLevelName));
+
         // If there's a next level, create it
         if (nextLevelPrefab) {
-
-            StartCoroutine(DestroyCurrentLevelAndInstantiateNextLevelPrefab(currentLevel, nextLevelPrefab, nextLevelName));
 
             FindObjectOfType<NextLevelAnimator>().ChangeLevelText(levelNumber);
 
         }
         // Otherwise, go back to the menu
         else {
-
-            SceneManager.LoadScene("Level Selection");
+            
+            FindObjectOfType<NextLevelAnimator>().ChangeLevelText("<size=100>More levels to come!");
+            // 
 
         }
 
@@ -181,40 +182,46 @@ public class GameManager : MonoBehaviour {
 
         currentLevel.transform.DOScale(1.25f, 1.25f).SetEase(Ease.InOutBack);
         yield return new WaitForSeconds(1.5f);
-        
-        // currentLevel.transform.DOScale(1, 1.5f).SetEase(Ease.InOutBack);
-        // yield return new WaitForSeconds(0.5f);
 
-        currentLevel.transform.DORotate(transform.eulerAngles * 180, 1.5f).SetEase(Ease.InOutBack);
+        // Rotate by 360 degrees
+        currentLevel.transform.DOLocalRotate(Vector3.forward * 360, 1.5f, RotateMode.LocalAxisAdd).SetEase(Ease.InOutBack);
 
-        yield return new WaitForSeconds(1.35f);
+        yield return new WaitForSeconds(1.45f);
 
         // Fade out and destroy current room
         currentLevel.transform.DOScale(0, 1).SetEase(Ease.OutExpo);
         yield return new WaitForSeconds(1);
         Destroy(currentLevel);
 
-        GameObject nextLevel = (GameObject) Instantiate(nextLevelPrefab, Vector3.zero, Quaternion.identity);
-        nextLevel.name = nextLevelName;
+        if (nextLevelPrefab != null) {
 
-        nextLevel.transform.localScale = Vector3.zero;
+            // Create the new room and fade it to 0
+            GameObject nextLevel = (GameObject) Instantiate(nextLevelPrefab, Vector3.zero, Quaternion.identity);
+            nextLevel.name = nextLevelName;
+            nextLevel.transform.localScale = Vector3.zero;
 
-        yield return new WaitForSeconds(3.5f);
+            yield return new WaitForSeconds(3f);
 
-        nextLevel.transform.DOScale(Vector3.one, 1).SetEase(Ease.OutBack);
+            // Scale it up and rotate it 360 degrees clockwise
+            nextLevel.transform.DOScale(Vector3.one, 3f).SetEase(Ease.InOutSine);
+            nextLevel.transform.DOLocalRotate(Vector3.forward * -360, 3f, RotateMode.LocalAxisAdd).SetEase(Ease.InOutSine);
 
-        // yield return new WaitForSeconds(1);
-        // nextLevel.transform.DORotate(nextLevel.transform.eulerAngles * -180, 1f).SetEase(Ease.OutBack);
-        
-        yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(3f);
 
-        // Utils.Fade(FindObjectOfType<LevelCompleteAnimation>().transparency, false, 0);
-        CameraController.Instance.ResetPosition();
-        CanvasManager.Instance.ResetTotalMovesPosition();
+            // Reset the camera's position and reset the total movement position
+            CameraController.Instance.ResetPosition();
+            CanvasManager.Instance.ResetTotalMovesPosition();
 
-        StartLevel();
+            StartLevel();
 
-        SetState(GameState.Play);
+            SetState(GameState.Play);
+
+        } else {
+            
+             yield return new WaitForSeconds(4.5f);
+            SceneManager.LoadScene("Level Selection");
+            
+        }
 
     }
 
