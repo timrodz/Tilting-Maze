@@ -48,7 +48,7 @@ public class NextLevelAnimator : MonoBehaviour {
 
         yield return new WaitForSeconds(duration * 0.5f);
 
-        Debug.Log("new Text");
+        Debug.Log("Animating new level text: #" + value.ToString());
 
         // Move it upwards and change the value
         transform.DOMoveY(MAX_VALUE, 0);

@@ -6,7 +6,6 @@ using UnityEngine;
 public class ButtonActivator : MonoBehaviour {
 
     private RoomController room;
-    private PlayerController player;
 
     public int numberOfUsesBeforeDestroying = 1;
     public Ease easeType = Ease.OutSine;
@@ -26,7 +25,6 @@ public class ButtonActivator : MonoBehaviour {
     void Start() {
 
         room = FindObjectOfType<RoomController>();
-        player = FindObjectOfType<PlayerController>();
 
     }
 
@@ -66,6 +64,8 @@ public class ButtonActivator : MonoBehaviour {
 
         Debug.Log("Interacting with " + this.name + " - Position: " + other.transform.position);
 
+        AnalyticsManager.Instance.RegisterCustomEventTriggerEnter(transform.name);
+
     }
 
     /// <summary>
@@ -82,6 +82,8 @@ public class ButtonActivator : MonoBehaviour {
         StartCoroutine(EnableCollisionRegistry());
 
         Debug.Log("Exiting " + this.name);
+
+        AnalyticsManager.Instance.RegisterCustomEventTriggerExit(transform.name);
 
     }
 

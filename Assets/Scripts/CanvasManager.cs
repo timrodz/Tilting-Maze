@@ -47,7 +47,7 @@ public class CanvasManager : MonoBehaviour {
 
     }
     
-    public void ResetTotalMovesPosition() {
+    public void ResetTotalMovesPanelPosition() {
         
         Utils.Fade(TotalMovesPanelTransparency, false, 0);
         totalMovesText.rectTransform.DOLocalMove(totalMovesPosition, 0);
