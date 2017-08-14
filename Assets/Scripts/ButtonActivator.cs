@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-public class ButtonActivator : MonoBehaviour {
-
+public class ButtonActivator : MonoBehaviour
+{
     private RoomController room;
 
     public int numberOfUsesBeforeDestroying = 1;
@@ -22,18 +22,22 @@ public class ButtonActivator : MonoBehaviour {
     /// Start is called on the frame when a script is enabled just before
     /// any of the Update methods is called the first time.
     /// </summary>
-    void Start() {
-
+    void Start()
+    {
         room = FindObjectOfType<RoomController>();
-
     }
 
     // -------------------------------------------------------------------------------------------
-    private void OnTriggerEnter(Collider other) {
-
-        if (!canRegisterCollisions || !room.canRotateCamera || GameManager.Instance.currentState != GameState.Play)
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!canRegisterCollisions || !room.canRotate || GameManager.Instance.currentState != GameState.Play)
+        {
             return;
-
+        }
+        
+        Debug.Log("============================================");
+        Debug.Log("Interacting with " + this.name + " - Position: " + other.transform.position);
+        
         // Stop registering any other collisions
         canRegisterCollisions = false;
 
@@ -45,12 +49,14 @@ public class ButtonActivator : MonoBehaviour {
             (float) System.Math.Round(transform.position.y, 1),
             (float) System.Math.Round(other.transform.position.z, 1)
         );
-        
+
         StartCoroutine(CollisionHelper());
 
-        foreach(Barrier barrier in barrierList) {
+        foreach(Barrier barrier in barrierList)
+        {
 
-            if (barrier.gameObject != null) {
+            if (barrier.gameObject != null)
+            {
 
                 StartCoroutine(MoveBarrier(barrier));
 
@@ -62,8 +68,6 @@ public class ButtonActivator : MonoBehaviour {
         if (numberOfUsesBeforeDestroying > 0)
             collisionCount++;
 
-        Debug.Log("Interacting with " + this.name + " - Position: " + other.transform.position);
-
         AnalyticsManager.Instance.RegisterCustomEventTriggerEnter(transform.name);
 
     }
@@ -72,71 +76,52 @@ public class ButtonActivator : MonoBehaviour {
     /// OnTriggerExit is called when the Collider other has stopped touching the trigger.
     /// </summary>
     /// <param name="other">The other Collider involved in this collision.</param>
-    void OnTriggerExit(Collider other) {
+    void OnTriggerExit(Collider other)
+    {
+        Debug.Log("Exiting " + this.name);
         
-        // if (!canRegisterCollisions)
-        // {
-        // return;
-        StopAllCoroutines();
-        
+        // StopAllCoroutines();
+
         if (collisionCount >= numberOfUsesBeforeDestroying && numberOfUsesBeforeDestroying > 0)
             return;
 
         StartCoroutine(EnableCollisionRegistry());
 
-        Debug.Log("Exiting " + this.name);
-
         AnalyticsManager.Instance.RegisterCustomEventTriggerExit(transform.name);
 
     }
 
-    private IEnumerator EnableCollisionRegistry() {
-
+    private IEnumerator EnableCollisionRegistry()
+    {
         yield return new WaitForSeconds(1f);
+        Debug.Log("Enable collision registry");
         canRegisterCollisions = true;
-
     }
-    
-    private IEnumerator CollisionHelper() {
-        
-        room.canReceiveInput = false;
-        room.canRotateCamera = false;
-        
+
+    private IEnumerator CollisionHelper()
+    {
+        room.registerInput = false;
+        room.canRotate = false;
         yield return new WaitForSeconds(duration);
-        
-        room.canReceiveInput = true;
-
-        room.canRotateCamera = true;
-        
-        // yield return new WaitForSeconds(0.1f);
-        // Debug.Log("pasd");
-
-        // player.canCheckForCollisions = true;
-        // Debug.Log("Check for player collisions");
-        // if (!player.CheckForCollisions()) {
-
-        //     Debug.Log("FAIL");
-        //     player.canCheckForCollisions = true;
-
-        // } else {
-
-        //     Debug.Log("PASS");
-
-        // }
-        
+        Debug.Log("Enable input and room rotation");
+        room.registerInput = true;
+        room.canRotate = true;
     }
 
-    private IEnumerator MoveBarrier(Barrier barrier) {
-
+    private IEnumerator MoveBarrier(Barrier barrier)
+    {
         GameObject obj = barrier.gameObject;
 
         Vector3 movementDirection;
 
-        if (!barrier.hasMoved) {
+        if (!barrier.hasMoved)
+        {
 
             movementDirection = VectorDirection.DetermineDirection(barrier.movementDirection);
 
-        } else {
+        }
+        else
+        {
 
             movementDirection = VectorDirection.DetermineOppositeDirection(barrier.movementDirection);
 
@@ -151,22 +136,24 @@ public class ButtonActivator : MonoBehaviour {
         // Give a bit of delay in case of any glitches
         yield return new WaitForSeconds(duration);
 
-        if (collisionCount >= numberOfUsesBeforeDestroying && numberOfUsesBeforeDestroying > 0) {
+        if (collisionCount >= numberOfUsesBeforeDestroying && numberOfUsesBeforeDestroying > 0)
+        {
 
             // Destroy the trigger button once the animations have finished
             Destroy(this.gameObject);
 
-        } else {
+        }
+        else
+        {
 
             barrier.hasMoved = !barrier.hasMoved;
 
-            if (barrier.shouldDeleteFromList) {
+            if (barrier.shouldDeleteFromList)
+            {
                 barrierList.Remove(barrier);
             }
 
         }
-
-        
 
     }
 
