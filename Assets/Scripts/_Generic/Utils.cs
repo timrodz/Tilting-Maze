@@ -39,10 +39,6 @@ public static class Utils {
     /// <returns> the incremented string </returns>
     public static string FindAndIncrementNumberInString(string _stringToFind) {
 
-        // Find the first parentheses and delete everything
-        // that follows after it
-        int index = _stringToFind.IndexOf('-');
-
         // Find all numbers in the string and store it
         string number = Regex.Match(_stringToFind, @"\d+").Value;
 

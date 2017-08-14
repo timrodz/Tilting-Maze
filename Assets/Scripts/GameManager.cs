@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
 
     // Game state
+    [HideInInspector] public int levelID = 0;
+    [HideInInspector] public float levelTime = 0.0f;
+
     [HideInInspector] public GameState currentState = GameState.LoadingLevel;
     [HideInInspector] public GameState previousState = GameState.LoadingLevel;
     [HideInInspector] public static int moveCount;
@@ -19,6 +22,7 @@ public class GameManager : MonoBehaviour {
     // Pause states
     [HideInInspector] public bool canPause = true;
     [HideInInspector] public bool isPaused = false;
+    [HideInInspector] public bool canUpdateTime = false;
 
     // Level ending
     [HideInInspector] public bool isLevelComplete = false;
@@ -34,7 +38,8 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     void Awake() {
 
-        if (Instance != null & Instance != this) {
+        if (Instance != null & Instance != this)
+        {
             Destroy(gameObject);
         }
 
@@ -56,9 +61,16 @@ public class GameManager : MonoBehaviour {
 
         StartLevel();
 
+        SetLevelID(1);
+
     }
 
     void Update() {
+
+        if (currentState == GameState.Play)
+        {
+            levelTime += Time.deltaTime;
+        }
 
         // if (isLevelComplete && currentState == GameState.LevelComplete) {
 
@@ -96,7 +108,8 @@ public class GameManager : MonoBehaviour {
     public void TogglePause() {
 
         // Pause the game if it's not
-        if (currentState != GameState.Paused) {
+        if (currentState != GameState.Paused)
+        {
 
             previousState = currentState;
             currentState = GameState.Paused;
@@ -104,7 +117,8 @@ public class GameManager : MonoBehaviour {
 
         }
         // Unpause the game
-        else {
+        else
+        {
 
             currentState = previousState;
             //pausePanel.gameObject.SetActive(false);
@@ -122,7 +136,7 @@ public class GameManager : MonoBehaviour {
         canPause = true;
         isPaused = false;
 
-        CanvasManager.Instance.ResetTotalMovesPosition();
+        CanvasManager.Instance.ResetTotalMovesPanelPosition();
 
     }
 
@@ -133,6 +147,8 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     public void CompleteLevel() {
 
+        AnalyticsManager.Instance.RegisterCustomEventLevelComplete(moveCount, levelTime);
+
         DOTween.KillAll();
 
         StopAllCoroutines();
@@ -141,7 +157,7 @@ public class GameManager : MonoBehaviour {
 
         OnLevelComplete.Invoke();
 
-        // FindObjectOfType<LevelCompleteAnimation>().PlayAnimation();
+        levelTime = 0.0f;
 
     }
 
@@ -163,16 +179,27 @@ public class GameManager : MonoBehaviour {
         StartCoroutine(DestroyCurrentLevelAndInstantiateNextLevelPrefab(currentLevel, nextLevelPrefab, nextLevelName));
 
         // If there's a next level, create it
-        if (nextLevelPrefab) {
+        if (nextLevelPrefab)
+        {
+
+            int levelID = 0;
+            if (System.Int32.TryParse(levelNumber, out levelID))
+            {
+                SetLevelID(levelID);
+            }
+            else
+            {
+                Debug.Log(">>>> ERROR - Could not set level ID");
+            }
 
             FindObjectOfType<NextLevelAnimator>().ChangeLevelText(levelNumber);
 
         }
         // Otherwise, go back to the menu
-        else {
-            
+        else
+        {
+
             FindObjectOfType<NextLevelAnimator>().ChangeLevelText("<size=100>More levels to come!");
-            // 
 
         }
 
@@ -193,10 +220,11 @@ public class GameManager : MonoBehaviour {
         yield return new WaitForSeconds(1);
         Destroy(currentLevel);
 
-        if (nextLevelPrefab != null) {
+        if (nextLevelPrefab != null)
+        {
 
             // Create the new room and fade it to 0
-            GameObject nextLevel = (GameObject) Instantiate(nextLevelPrefab, Vector3.zero, Quaternion.identity);
+            GameObject nextLevel = (GameObject)Instantiate(nextLevelPrefab, Vector3.zero, Quaternion.identity);
             nextLevel.name = nextLevelName;
             nextLevel.transform.localScale = Vector3.zero;
 
@@ -210,17 +238,19 @@ public class GameManager : MonoBehaviour {
 
             // Reset the camera's position and reset the total movement position
             CameraController.Instance.ResetPosition();
-            CanvasManager.Instance.ResetTotalMovesPosition();
+            CanvasManager.Instance.ResetTotalMovesPanelPosition();
 
             StartLevel();
 
             SetState(GameState.Play);
 
-        } else {
-            
-             yield return new WaitForSeconds(4.5f);
+        }
+        else
+        {
+
+            yield return new WaitForSeconds(4.5f);
             SceneManager.LoadScene("Level Selection");
-            
+
         }
 
     }
@@ -234,12 +264,21 @@ public class GameManager : MonoBehaviour {
 
         CanvasManager.Instance.totalMovesText.text = "Moves: " + moveCount.ToString();
 
-        if (moveCount == 1) {
+        if (moveCount == 1)
+        {
 
             Utils.Fade(CanvasManager.Instance.TotalMovesPanelTransparency, true, 1);
 
         }
 
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void SetLevelID(int levelID) {
+        Debug.Log("Set level ID: " + levelID);
+        this.levelID = levelID;
     }
 
 }

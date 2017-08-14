@@ -6,7 +6,7 @@ using XboxCtrlrInput;
 public class RoomController : MonoBehaviour {
 
     private ParticleController particleController;
-    
+
     public bool canRotateCamera = true;
 
     public bool canReceiveInput = true;
@@ -16,7 +16,7 @@ public class RoomController : MonoBehaviour {
     [RangeAttribute(0.3f, 1.0f)]
     public float rotationLength = 0.5f;
 
-    
+
     private PlayerController playerController;
 
     void Start() {
@@ -36,15 +36,35 @@ public class RoomController : MonoBehaviour {
         // Allow for camera rotation ONLY if the player meets the following criteria
         if ((canRotateCamera) && (!playerController.isMoving) && (!GameManager.Instance.isLevelComplete)) {
 
+#if UNITY_STANDALONE || UNITY_EDITOR
+
             if (XCI.GetAxisRaw(XboxAxis.LeftStickX) > 0 || Input.GetKey(KeyCode.D) || MobileInputController.Instance.SwipeRight) {
 
                 StartCoroutine(RotateCamera(true));
 
-            } else if (XCI.GetAxisRaw(XboxAxis.LeftStickX) < 0 || Input.GetKey(KeyCode.A) || MobileInputController.Instance.SwipeLeft) {
+            }
+            else if (XCI.GetAxisRaw(XboxAxis.LeftStickX) < 0 || Input.GetKey(KeyCode.A) || MobileInputController.Instance.SwipeLeft) {
 
                 StartCoroutine(RotateCamera(false));
 
             }
+
+#elif UNITY_IOS || UNITY_ANDROID
+
+            if (MobileInputController.Instance.SwipeRight)
+            {
+
+                StartCoroutine(RotateCamera(true));
+
+            }
+            else if (MobileInputController.Instance.SwipeLeft)
+            {
+
+                StartCoroutine(RotateCamera(false));
+
+            }
+
+#endif
 
         }
 
@@ -54,12 +74,12 @@ public class RoomController : MonoBehaviour {
     /// Rotates the camera.
     /// </summary>
     public IEnumerator RotateCamera(bool shouldRotateRight) {
-        
+
         // AudioManager.Instance.PlayWithRandomPitch("Move", 0.95f, 1.05f);
         AudioManager.Instance.Play("Move");
-        
+
         GameManager.Instance.IncrementMoveCount();
-        
+
         playerController.movementParticles.transform.DOScale(0, 0);
 
         canRotateCamera = false;
@@ -68,8 +88,11 @@ public class RoomController : MonoBehaviour {
 
         if (shouldRotateRight) {
             eulerRotation.z -= 90;
-        } else {
+            AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeRight);
+        }
+        else {
             eulerRotation.z += 90;
+            AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeLeft);
         }
 
         transform.DORotate(eulerRotation, rotationLength).SetEase(rotationEaseType);
@@ -83,11 +106,11 @@ public class RoomController : MonoBehaviour {
         yield return new WaitForSeconds(rotationLength - wait);
 
         canRotateCamera = true;
-        
+
         particleController.Stop();
-        
+
         yield return new WaitForSeconds(0.05f);
-        
+
         playerController.CalculateMovementDirection();
 
     }
