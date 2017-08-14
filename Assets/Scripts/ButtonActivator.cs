@@ -74,6 +74,9 @@ public class ButtonActivator : MonoBehaviour {
     /// <param name="other">The other Collider involved in this collision.</param>
     void OnTriggerExit(Collider other) {
         
+        // if (!canRegisterCollisions)
+        // {
+        // return;
         StopAllCoroutines();
         
         if (collisionCount >= numberOfUsesBeforeDestroying && numberOfUsesBeforeDestroying > 0)
