@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MobileInputController : MonoBehaviour {
-
+public class MobileInputController : MonoBehaviour
+{
     public static MobileInputController Instance { get; private set; }
 
     public float deadzone = 100;
@@ -21,10 +21,12 @@ public class MobileInputController : MonoBehaviour {
     public bool SwipeUp { get { return swipeUp; } }
     public bool SwipeDown { get { return swipeDown; } }
 
-    void Awake() {
+    void Awake()
+    {
 
         // Check if there is another instance of the same type and destroy it
-        if (Instance != null & Instance != this) {
+        if (Instance != null & Instance != this)
+        {
             Destroy(gameObject);
         }
 
@@ -37,20 +39,23 @@ public class MobileInputController : MonoBehaviour {
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.
     /// </summary>
-    void Update() {
-
+    void Update()
+    {
         // -------------------------------------------------------------------------------------------
         // Reset every frame
         tap = swipeLeft = swipeRight = swipeUp = swipeDown = false;
 
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0))
+        {
 
             tap = true;
             isDragging = true;
             startTouch = Input.mousePosition;
 
-        } else if (Input.GetMouseButtonUp(0)) {
-            
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+
             isDragging = false;
             ResetSwipeState();
 
@@ -58,10 +63,12 @@ public class MobileInputController : MonoBehaviour {
 
         // -------------------------------------------------------------------------------------------
         // Touching the screen
-        if (Input.touches.Length > 0) {
+        if (Input.touches.Length > 0)
+        {
             // Check the first touch and store its values as soon
             // as it's registered
-            if (Input.touches[0].phase == TouchPhase.Began) {
+            if (Input.touches[0].phase == TouchPhase.Began)
+            {
 
                 isDragging = true;
                 tap = true;
@@ -69,8 +76,9 @@ public class MobileInputController : MonoBehaviour {
 
             }
             // Check if the touch has ended or has been canceled
-            else if (Input.touches[0].phase == TouchPhase.Ended || Input.touches[0].phase == TouchPhase.Canceled) {
-                
+            else if (Input.touches[0].phase == TouchPhase.Ended || Input.touches[0].phase == TouchPhase.Canceled)
+            {
+
                 isDragging = false;
                 ResetSwipeState();
 
@@ -81,44 +89,57 @@ public class MobileInputController : MonoBehaviour {
         // -------------------------------------------------------------------------------------------
         // Calculate the movement difference (delta)
         swipeDelta = Vector2.zero;
-        if (isDragging) {
+        if (isDragging)
+        {
 
-            if (Input.touches.Length > 0) {
+            if (Input.touches.Length > 0)
+            {
 
                 swipeDelta = Input.touches[0].position - startTouch;
 
-            } else if (Input.GetMouseButton(0)) {
-                
+            }
+            else if (Input.GetMouseButton(0))
+            {
+
                 swipeDelta = (Vector2) Input.mousePosition - startTouch;
-                
+
             }
 
         }
 
         // -------------------------------------------------------------------------------------------
         // Determine if deadzone has been crossed
-        if (swipeDelta.magnitude > deadzone) {
+        if (swipeDelta.magnitude > deadzone)
+        {
 
             // Which direction are we swiping
             float x = swipeDelta.x;
             float y = swipeDelta.y;
 
             // X-axis is bigger (Left or right)
-            if (Mathf.Abs(x) > Mathf.Abs(y)) {
+            if (Mathf.Abs(x) > Mathf.Abs(y))
+            {
 
-                if (x < 0) {
+                if (x < 0)
+                {
                     swipeLeft = true;
-                } else {
+                }
+                else
+                {
                     swipeRight = true;
                 }
 
             }
             // Y-axis is bigger (Up or down)
-            else {
+            else
+            {
 
-                if (y < 0) {
+                if (y < 0)
+                {
                     swipeDown = true;
-                } else {
+                }
+                else
+                {
                     swipeUp = true;
                 }
 
@@ -129,8 +150,9 @@ public class MobileInputController : MonoBehaviour {
         }
 
     }
-    
-    private void ResetSwipeState() {
+
+    private void ResetSwipeState()
+    {
 
         startTouch = swipeDelta = Vector2.zero;
         isDragging = false;

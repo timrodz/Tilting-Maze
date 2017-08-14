@@ -2,8 +2,8 @@
 using UnityEngine.Audio;
 
 [System.Serializable]
-public class Sound {
-
+public class Sound
+{
     public string name = "";
 
     public AudioClip clip = null;
@@ -13,21 +13,24 @@ public class Sound {
 
     [Range(-3, 3)]
     public float pitch = 1;
-	
-	public bool loop = false;
+
+    public bool loop = false;
 
     [HideInInspector]
     public AudioSource source = null;
 
-    public void RandomizePitch(float min, float max) {
+    public void RandomizePitch(float min, float max)
+    {
 
-        if (min < -3) {
+        if (min < -3)
+        {
             min = -3;
-		}
-		
-		if (max > 3) {
-			max = 3;
-		}
+        }
+
+        if (max > 3)
+        {
+            max = 3;
+        }
 
         source.pitch = Random.Range(min, max);
 

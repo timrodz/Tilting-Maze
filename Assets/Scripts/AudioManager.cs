@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour {
-
+public class AudioManager : MonoBehaviour
+{
     public static AudioManager Instance { get; private set; }
 
     public Sound[] sounds;
@@ -12,10 +12,12 @@ public class AudioManager : MonoBehaviour {
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
-    void Awake() {
+    void Awake()
+    {
 
         // Check if there is another instance of the same type and destroy it
-        if (Instance != null & Instance != this) {
+        if (Instance != null & Instance != this)
+        {
             Destroy(gameObject);
         }
 
@@ -24,7 +26,8 @@ public class AudioManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 
         // Add the audio sources
-        foreach(Sound s in sounds) {
+        foreach(Sound s in sounds)
+        {
 
             s.source = gameObject.AddComponent<AudioSource>();
 
@@ -37,11 +40,13 @@ public class AudioManager : MonoBehaviour {
 
     }
 
-    public void PlayWithRandomPitch(string name, float min, float max) {
+    public void PlayWithRandomPitch(string name, float min, float max)
+    {
 
         Sound s = Array.Find(sounds, sound => sound.name == name);
 
-        if (s == null) {
+        if (s == null)
+        {
             return;
         }
 
@@ -50,11 +55,13 @@ public class AudioManager : MonoBehaviour {
 
     }
 
-    public void Play(string name) {
+    public void Play(string name)
+    {
 
         Sound s = Array.Find(sounds, sound => sound.name == name);
 
-        if (s == null) {
+        if (s == null)
+        {
             return;
         }
 

@@ -3,67 +3,58 @@ using DG.Tweening;
 using UnityEngine;
 using XboxCtrlrInput;
 
-public class RoomController : MonoBehaviour {
+public class RoomController : MonoBehaviour
+{
+    [SerializeField] private ParticleController particleController;
 
-    private ParticleController particleController;
+    public bool canRotate = true;
 
-    public bool canRotateCamera = true;
+    public bool registerInput = true;
 
-    public bool canReceiveInput = true;
-
-    [HeaderAttribute("Rotation")]
-    public Ease rotationEaseType = Ease.OutQuad;
-    [RangeAttribute(0.3f, 1.0f)]
-    public float rotationLength = 0.5f;
-
+    [SerializeField] private Ease rotationEaseType = Ease.OutQuad;
+    [SerializeField] private float rotationLength = 0.35f;
 
     private PlayerController playerController;
 
-    void Start() {
-
+    void Start()
+    {
         particleController = GetComponent<ParticleController>();
         playerController = FindObjectOfType<PlayerController>();
-
     }
 
-    void Update() {
-
+    void Update()
+    {
         // Don't do anything if the game's curently paused
-        if (GameManager.Instance.currentState != GameState.Play || !playerController || !canReceiveInput) {
+        if (GameManager.Instance.currentState != GameState.Play || !playerController || !registerInput)
+        {
             return;
         }
 
         // Allow for camera rotation ONLY if the player meets the following criteria
-        if ((canRotateCamera) && (!playerController.isMoving) && (!GameManager.Instance.isLevelComplete)) {
+        if ((canRotate) && (!playerController.isMoving) && (!GameManager.Instance.isLevelComplete))
+        {
 
 #if UNITY_STANDALONE || UNITY_EDITOR
 
-            if (XCI.GetAxisRaw(XboxAxis.LeftStickX) > 0 || Input.GetKey(KeyCode.D) || MobileInputController.Instance.SwipeRight) {
-
-                StartCoroutine(RotateCamera(true));
-
+            if (XCI.GetAxisRaw(XboxAxis.LeftStickX) > 0 || Input.GetKey(KeyCode.D) || MobileInputController.Instance.SwipeRight)
+            {
+                StartCoroutine(Rotate(true));
             }
-            else if (XCI.GetAxisRaw(XboxAxis.LeftStickX) < 0 || Input.GetKey(KeyCode.A) || MobileInputController.Instance.SwipeLeft) {
-
-                StartCoroutine(RotateCamera(false));
-
+            else if (XCI.GetAxisRaw(XboxAxis.LeftStickX) < 0 || Input.GetKey(KeyCode.A) || MobileInputController.Instance.SwipeLeft)
+            {
+                StartCoroutine(Rotate(false));
             }
 
 #elif UNITY_IOS || UNITY_ANDROID
 
             if (MobileInputController.Instance.SwipeRight)
             {
-
                 StartCoroutine(RotateCamera(true));
-
             }
             else if (MobileInputController.Instance.SwipeLeft)
             {
-
                 StartCoroutine(RotateCamera(false));
-
             }
-
 #endif
 
         }
@@ -73,24 +64,25 @@ public class RoomController : MonoBehaviour {
     /// <summary>
     /// Rotates the camera.
     /// </summary>
-    public IEnumerator RotateCamera(bool shouldRotateRight) {
-
-        // AudioManager.Instance.PlayWithRandomPitch("Move", 0.95f, 1.05f);
-        AudioManager.Instance.Play("Move");
+    public IEnumerator Rotate(bool shouldRotateRight)
+    {
+        AudioManager.Instance.PlayWithRandomPitch("Move", 0.98f, 1.02f);
 
         GameManager.Instance.IncrementMoveCount();
 
         playerController.movementParticles.transform.DOScale(0, 0);
 
-        canRotateCamera = false;
+        canRotate = false;
 
         Vector3 eulerRotation = transform.eulerAngles;
 
-        if (shouldRotateRight) {
+        if (shouldRotateRight)
+        {
             eulerRotation.z -= 90;
             AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeRight);
         }
-        else {
+        else
+        {
             eulerRotation.z += 90;
             AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeLeft);
         }
@@ -105,7 +97,7 @@ public class RoomController : MonoBehaviour {
 
         yield return new WaitForSeconds(rotationLength - wait);
 
-        canRotateCamera = true;
+        canRotate = true;
 
         particleController.Stop();
 

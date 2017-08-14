@@ -4,8 +4,8 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
-public class NextLevelAnimator : MonoBehaviour {
-
+public class NextLevelAnimator : MonoBehaviour
+{
     public TextMeshProUGUI text;
 
     public float duration = 0.5f;
@@ -18,19 +18,22 @@ public class NextLevelAnimator : MonoBehaviour {
     /// Start is called on the frame when a script is enabled just before
     /// any of the Update methods is called the first time.
     /// </summary>
-    void Start() {
+    void Start()
+    {
 
-		transform.DOScale(Vector3.zero, 0);
+        transform.DOScale(Vector3.zero, 0);
 
     }
 
-    public void ChangeLevelText(string value) {
+    public void ChangeLevelText(string value)
+    {
 
         StartCoroutine(Animate(value));
 
     }
 
-    private IEnumerator Animate(string value) {
+    private IEnumerator Animate(string value)
+    {
 
         transform.localScale = Vector3.one;
         transform.DOMoveY(MAX_VALUE, 0);

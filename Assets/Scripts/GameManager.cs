@@ -7,8 +7,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using XboxCtrlrInput;
 
-public class GameManager : MonoBehaviour {
 
+public class GameManager : MonoBehaviour
+{
     public static GameManager Instance { get; private set; }
 
     // Game state
@@ -36,7 +37,8 @@ public class GameManager : MonoBehaviour {
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
-    void Awake() {
+    void Awake()
+    {
 
         if (Instance != null & Instance != this)
         {
@@ -55,7 +57,8 @@ public class GameManager : MonoBehaviour {
     /// Start is called on the frame when a script is enabled just before
     /// any of the Update methods is called the first time.
     /// </summary>
-    void Start() {
+    void Start()
+    {
 
         SetState(GameState.LoadingLevel);
 
@@ -65,7 +68,8 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    void Update() {
+    void Update()
+    {
 
         if (currentState == GameState.Play)
         {
@@ -95,7 +99,8 @@ public class GameManager : MonoBehaviour {
     /// Sets the game state
     /// </summary>
     /// <param name="state"></param>
-    public void SetState(GameState state) {
+    public void SetState(GameState state)
+    {
 
         previousState = currentState;
         currentState = state;
@@ -105,7 +110,8 @@ public class GameManager : MonoBehaviour {
     /// <summary>
     /// Pauses the game.
     /// </summary>
-    public void TogglePause() {
+    public void TogglePause()
+    {
 
         // Pause the game if it's not
         if (currentState != GameState.Paused)
@@ -127,7 +133,8 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    public void StartLevel() {
+    public void StartLevel()
+    {
 
         // ATTENTION: Sets the state to "Play" in the camera controller script
 
@@ -145,7 +152,8 @@ public class GameManager : MonoBehaviour {
     /// Show the moves it took to complete
     /// And the prompt for loading the next level
     /// </summary>
-    public void CompleteLevel() {
+    public void CompleteLevel()
+    {
 
         AnalyticsManager.Instance.RegisterCustomEventLevelComplete(moveCount, levelTime);
 
@@ -164,7 +172,8 @@ public class GameManager : MonoBehaviour {
     /// <summary>
     /// Loads the next level.
     /// </summary>
-    public void LoadNextLevel() {
+    public void LoadNextLevel()
+    {
 
         GameObject currentLevel = FindObjectOfType<RoomController>().gameObject;
 
@@ -205,7 +214,8 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    private IEnumerator DestroyCurrentLevelAndInstantiateNextLevelPrefab(GameObject currentLevel, Object nextLevelPrefab, string nextLevelName) {
+    private IEnumerator DestroyCurrentLevelAndInstantiateNextLevelPrefab(GameObject currentLevel, Object nextLevelPrefab, string nextLevelName)
+    {
 
         currentLevel.transform.DOScale(1.25f, 1.25f).SetEase(Ease.InOutBack);
         yield return new WaitForSeconds(1.5f);
@@ -224,7 +234,7 @@ public class GameManager : MonoBehaviour {
         {
 
             // Create the new room and fade it to 0
-            GameObject nextLevel = (GameObject)Instantiate(nextLevelPrefab, Vector3.zero, Quaternion.identity);
+            GameObject nextLevel = (GameObject) Instantiate(nextLevelPrefab, Vector3.zero, Quaternion.identity);
             nextLevel.name = nextLevelName;
             nextLevel.transform.localScale = Vector3.zero;
 
@@ -258,7 +268,8 @@ public class GameManager : MonoBehaviour {
     /// <summary>
     /// 
     /// </summary>
-    public void IncrementMoveCount() {
+    public void IncrementMoveCount()
+    {
 
         moveCount++;
 
@@ -276,7 +287,8 @@ public class GameManager : MonoBehaviour {
     /// <summary>
     /// 
     /// </summary>
-    public void SetLevelID(int levelID) {
+    public void SetLevelID(int levelID)
+    {
         Debug.Log("Set level ID: " + levelID);
         this.levelID = levelID;
     }

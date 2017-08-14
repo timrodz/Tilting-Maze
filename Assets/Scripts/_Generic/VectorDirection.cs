@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 
-public static class VectorDirection {
-
-    public static Vector3 DetermineDirection(Direction dir) {
-
+public static class VectorDirection
+{
+    public static Vector3 DetermineDirection(Direction dir)
+    {
         Vector3 resultingVector;
 
-        switch (dir) {
+        switch (dir)
+        {
             case Direction.Up:
                 resultingVector = Vector3.up;
                 break;
@@ -37,12 +38,14 @@ public static class VectorDirection {
         return resultingVector;
 
     }
-    
-    public static Vector3 DetermineOppositeDirection(Direction dir) {
+
+    public static Vector3 DetermineOppositeDirection(Direction dir)
+    {
 
         Vector3 resultingVector;
 
-        switch (dir) {
+        switch (dir)
+        {
             case Direction.Up:
                 resultingVector = Vector3.down;
                 break;
@@ -73,12 +76,14 @@ public static class VectorDirection {
         return resultingVector;
 
     }
-    
-    public static Vector3 DeterminePerpendicularDirection(Direction dir) {
+
+    public static Vector3 DeterminePerpendicularDirection(Direction dir)
+    {
 
         Vector3 resultingVector;
 
-        switch (dir) {
+        switch (dir)
+        {
             case Direction.Up:
                 resultingVector = Vector3.right;
                 break;
@@ -114,13 +119,14 @@ public static class VectorDirection {
 
 // -------------------------------------------------------------------------------------------
 [System.Serializable]
-public enum Direction {
-	Up,
-	Down,
-	Right,
-	Left,
-	Forward,
-	Back,
-	One,
-	Zero
+public enum Direction
+{
+    Up,
+    Down,
+    Right,
+    Left,
+    Forward,
+    Back,
+    One,
+    Zero
 };

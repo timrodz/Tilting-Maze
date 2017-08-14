@@ -2,10 +2,10 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour {
-	
+public class CameraController : MonoBehaviour
+{
     public static CameraController Instance { get; private set; }
-    
+
     [Header("Camera Easing")]
     public Ease cameraEase;
 
@@ -20,45 +20,51 @@ public class CameraController : MonoBehaviour {
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
-    void Awake() {
-        
+    void Awake()
+    {
+
         // Check if there is another instance of the same type and destroy it
-        if (Instance != null & Instance != this) {
+        if (Instance != null & Instance != this)
+        {
             Destroy(gameObject);
         }
 
         Instance = this;
 
         DontDestroyOnLoad(gameObject);
-    
-	    mainCamera = GetComponent<Camera>();
-    
-	}
+
+        mainCamera = GetComponent<Camera>();
+
+    }
 
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
 
         originalPosition = transform.position;
-        
+
         transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 7.5f);
-        
+
         ResetPosition();
 
     }
-	
-	public void ResetPosition() {
-		
-		StartCoroutine(ResetPositionController());
-		
-	}
 
-    public void Shake() {
+    public void ResetPosition()
+    {
+
+        StartCoroutine(ResetPositionController());
+
+    }
+
+    public void Shake()
+    {
 
         StartCoroutine(ShakeController());
 
     }
 
-    private IEnumerator ShakeController() {
+    private IEnumerator ShakeController()
+    {
 
         transform.DOShakePosition(shakeDuration);
 
@@ -67,15 +73,16 @@ public class CameraController : MonoBehaviour {
         transform.DOMove(originalPosition, 0.35f);
 
     }
-	
-	private IEnumerator ResetPositionController() {
 
-		transform.DOMove(originalPosition, 2).SetEase(cameraEase);
-		
-		yield return new WaitForSeconds(2);
-        
+    private IEnumerator ResetPositionController()
+    {
+
+        transform.DOMove(originalPosition, 2).SetEase(cameraEase);
+
+        yield return new WaitForSeconds(2);
+
         GameManager.Instance.SetState(GameState.Play);
-		
-	}
+
+    }
 
 }

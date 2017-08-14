@@ -1,29 +1,33 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ParticleController : MonoBehaviour {
-
+public class ParticleController : MonoBehaviour
+{
     public Transform particleContainer;
 
-    private List<ParticleSystem> particleList = new List<ParticleSystem> ();
+    private List<ParticleSystem> particleList = new List<ParticleSystem>();
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
     /// any of the Update methods is called the first time.
     /// </summary>
-    void Start () {
+    void Start()
+    {
 
-        if (!particleContainer) {
-            Destroy (gameObject);
+        if (!particleContainer)
+        {
+            Destroy(gameObject);
         }
 
-        for (int i = 0; i < particleContainer.childCount; i++) {
+        for (int i = 0; i < particleContainer.childCount; i++)
+        {
 
-            ParticleSystem p = particleContainer.GetChild (i).GetComponent<ParticleSystem> ();
-			
-            if (p != null) {
+            ParticleSystem p = particleContainer.GetChild(i).GetComponent<ParticleSystem>();
 
-                particleList.Add (p);
+            if (p != null)
+            {
+
+                particleList.Add(p);
 
             }
 
@@ -31,18 +35,22 @@ public class ParticleController : MonoBehaviour {
 
     }
 
-    public void Play () {
+    public void Play()
+    {
 
-        foreach (ParticleSystem p in particleList) {
-            p.Play ();
+        foreach(ParticleSystem p in particleList)
+        {
+            p.Play();
         }
 
     }
 
-    public void Stop () {
+    public void Stop()
+    {
 
-        foreach (ParticleSystem p in particleList) {
-            p.Stop ();
+        foreach(ParticleSystem p in particleList)
+        {
+            p.Stop();
         }
 
     }

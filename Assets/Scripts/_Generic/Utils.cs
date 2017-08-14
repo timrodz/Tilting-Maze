@@ -1,17 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using UnityEngine;
 using DG.Tweening;
+using UnityEngine;
 
-public static class Utils {
+public static class Utils
+{
 
     /// <summary>
     /// Finds numbers in a string (Level-1) and increments it (Level-2)
     /// </summary>
     /// <param name="_stringToFind"> The string to find </param>
     /// <returns> the incremented string </returns>
-    public static string FindStringAndIncrementNumber(string _stringToFind) {
+    public static string FindStringAndIncrementNumber(string _stringToFind)
+    {
 
         // Find the first parentheses and delete everything
         // that follows after it
@@ -31,13 +33,14 @@ public static class Utils {
         return _stringToFind;
 
     }
-    
+
     /// <summary>
     /// Finds numbers in a string (Level-1) and increments it (Level-2)
     /// </summary>
     /// <param name="_stringToFind"> The string to find </param>
     /// <returns> the incremented string </returns>
-    public static string FindAndIncrementNumberInString(string _stringToFind) {
+    public static string FindAndIncrementNumberInString(string _stringToFind)
+    {
 
         // Find all numbers in the string and store it
         string number = Regex.Match(_stringToFind, @"\d+").Value;
@@ -48,15 +51,19 @@ public static class Utils {
         return (num.ToString());
 
     }
-    
-    public static void Fade(CanvasGroup canvasGroup, bool fadeIn, float duration) {
 
-        if (fadeIn) {
+    public static void Fade(CanvasGroup canvasGroup, bool fadeIn, float duration)
+    {
+
+        if (fadeIn)
+        {
 
             canvasGroup.DOFade(1, duration);
             canvasGroup.blocksRaycasts = true;
 
-        } else {
+        }
+        else
+        {
 
             canvasGroup.DOFade(0, duration);
             canvasGroup.blocksRaycasts = false;
@@ -67,26 +74,25 @@ public static class Utils {
 
 }
 
-
-
 // -------------------------------------------------------------------------------------------
 [System.Serializable]
-public enum Clip {
-	moveLeft,
-	moveRight,
-	slide,
-	hit,
-	triggerButton,
-	pause
-	
+public enum Clip
+{
+    moveLeft,
+    moveRight,
+    slide,
+    hit,
+    triggerButton,
+    pause
+
 }
 
 // -------------------------------------------------------------------------------------------
 [System.SerializableAttribute]
-public enum GameState {
-	LoadingLevel,
-	Play,
-	Paused,
-	LevelComplete,
-	
+public enum GameState
+{
+    LoadingLevel,
+    Play,
+    Paused,
+    LevelComplete,
 }

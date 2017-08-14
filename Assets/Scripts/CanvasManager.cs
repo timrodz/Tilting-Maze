@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
-using DG.Tweening;
 
-public class CanvasManager : MonoBehaviour {
-
+public class CanvasManager : MonoBehaviour
+{
     public static CanvasManager Instance { get; private set; }
 
     [Header("Total moves")]
@@ -17,10 +17,12 @@ public class CanvasManager : MonoBehaviour {
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
-    void Awake() {
+    void Awake()
+    {
 
         // Check if there is another instance of the same type and destroy it
-        if (Instance != null & Instance != this) {
+        if (Instance != null & Instance != this)
+        {
             Destroy(gameObject);
         }
 
@@ -34,24 +36,26 @@ public class CanvasManager : MonoBehaviour {
     /// Start is called on the frame when a script is enabled just before
     /// any of the Update methods is called the first time.
     /// </summary>
-    void Start() {
-        
+    void Start()
+    {
 
-        if (!TotalMovesPanelTransparency) {
+        if (!TotalMovesPanelTransparency)
+        {
             TotalMovesPanelTransparency = TotalMovesPanel.GetComponent<CanvasGroup>();
         }
-        
+
         totalMovesPosition = totalMovesText.rectTransform.localPosition;
-        
+
         Utils.Fade(TotalMovesPanelTransparency, false, 0);
 
     }
-    
-    public void ResetTotalMovesPanelPosition() {
-        
+
+    public void ResetTotalMovesPanelPosition()
+    {
+
         Utils.Fade(TotalMovesPanelTransparency, false, 0);
         totalMovesText.rectTransform.DOLocalMove(totalMovesPosition, 0);
-        
+
     }
 
 }

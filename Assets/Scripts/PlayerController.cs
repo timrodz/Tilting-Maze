@@ -2,11 +2,11 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : MonoBehaviour
+{
+    private RoomController room;
 
     public LayerMask barrierMask;
-
-    private RoomController room;
 
     // Particles
     public ParticleSystem movementParticles;
@@ -23,16 +23,17 @@ public class PlayerController : MonoBehaviour {
     private Vector3 lastPosition = Vector3.zero;
     private GameObject collidedObject = null;
     private bool hasCollided = false;
-    int angleXPointsTowards = 0;
-    Vector3 downwardsDirection = Vector3.zero;
+    private int angleXPointsTowards = 0;
+    private Vector3 downwardsDirection = Vector3.zero;
 
     // Animations
-    public float airTime = 0;
+    private float airTime = 0;
     private float stretchMultiplier = 0.35f;
 
     // -------------------------------------------------------------------------------------------
 
-    void Start() {
+    void Start()
+    {
 
         controller = GetComponent<CharacterController>();
 
@@ -44,31 +45,38 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    void Update() {
+    void Update()
+    {
 
-        if (GameManager.Instance == null) {
+        if (GameManager.Instance == null)
+        {
             return;
         }
 
         // Only process the player's movement if the game state is on playing
-        if (GameManager.Instance.currentState != GameState.Play) {
+        if (GameManager.Instance.currentState != GameState.Play)
+        {
             return;
         }
 
         Debug.DrawRay(transform.position, downwardsDirection, Color.magenta);
 
         // Apply movement when either the camera isn't rotating or the game's not paused
-        if (!(!room.canRotateCamera || GameManager.Instance.currentState == GameState.Paused)) {
+        if (!(!room.canRotate || GameManager.Instance.currentState == GameState.Paused))
+        {
 
             // Check for collisions when the map can't be moved
-            if (canCheckForCollisions) {
+            if (canCheckForCollisions)
+            {
                 CheckForCollisions();
             }
 
             // move the body whenever it's grounded
-            if (controller.isGrounded) {
+            if (controller.isGrounded)
+            {
 
-                if (movementParticles.isPlaying) {
+                if (movementParticles.isPlaying)
+                {
 
                     movementParticles.Stop();
 
@@ -81,15 +89,18 @@ public class PlayerController : MonoBehaviour {
 
             }
             // Otherwise animate its fall
-            else {
+            else
+            {
 
                 isMoving = (int) controller.velocity.magnitude > 0;
 
-                if (isMoving) {
+                if (isMoving)
+                {
 
                     airTime += Time.deltaTime;
 
-                    if (!movementParticles.isPlaying) {
+                    if (!movementParticles.isPlaying)
+                    {
                         movementParticles.transform.DOScale(1, 0);
                         movementParticles.Play();
                     }
@@ -112,7 +123,9 @@ public class PlayerController : MonoBehaviour {
                 (float) System.Math.Round(transform.position.z, 1)
             );
 
-        } else {
+        }
+        else
+        {
 
             movementParticles.transform.DOScale(0, 1);
             movementParticles.Stop();
@@ -121,9 +134,11 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    private void OnTriggerEnter(Collider other) {
+    private void OnTriggerEnter(Collider other)
+    {
 
-        if (GameManager.Instance.currentState != GameState.Play) {
+        if (GameManager.Instance.currentState != GameState.Play)
+        {
             return;
         }
 
@@ -132,22 +147,26 @@ public class PlayerController : MonoBehaviour {
         // }
 
         // Has reached the goal of the level
-        if ((other.CompareTag("Finish"))) {
+        if ((other.CompareTag("Finish")))
+        {
 
             movementParticles.Stop();
             GameManager.Instance.CompleteLevel();
 
-        } else if (other.CompareTag("Trigger")) {
+        }
+        else if (other.CompareTag("Trigger"))
+        {
 
             movementParticles.Stop();
             canCheckForCollisions = true;
-            Debug.Log("Entering trigger ID: " + other.name);
+            // Debug.Log("Entering trigger ID: " + other.name);
 
         }
 
     }
 
-    public bool CheckForCollisions() {
+    public bool CheckForCollisions()
+    {
 
         // Since the player is at an offset Z-axis position
         // store its position and set that Z back to 0
@@ -156,17 +175,20 @@ public class PlayerController : MonoBehaviour {
 
         RaycastHit hit;
 
-        if (Physics.Raycast(position, downwardsDirection, out hit, 1, barrierMask)) {
+        if (Physics.Raycast(position, downwardsDirection, out hit, 1, barrierMask))
+        {
 
-            Debug.Log("Raycast enter with " + hit.collider.name);
+            // Debug.Log("Raycast enter with " + hit.collider.name);
 
             canCheckForCollisions = false;
 
-            if ((isMoving) && (!hasCollided) && (collidedObject != hit.collider.gameObject)) {
+            if ((isMoving) && (!hasCollided) && (collidedObject != hit.collider.gameObject))
+            {
 
-                Debug.Log("Current position: " + position + " last position: " + lastPosition);
+                // Debug.Log("Current position: " + position + " last position: " + lastPosition);
 
-                if (position != lastPosition) {
+                if (position != lastPosition)
+                {
 
                     // canCheckForCollisions = false;
 
@@ -182,17 +204,21 @@ public class PlayerController : MonoBehaviour {
 
                     return true;
 
-                } else {
+                }
+                else
+                {
 
-                    Debug.Log("Collision check: FAIL - Positions didn't match");
+                    Debug.LogError("Collision check: FAIL - Positions didn't match");
 
                     return false;
 
                 }
 
-            } else {
+            }
+            else
+            {
 
-                Debug.Log("Collision check: FAIL - Has not collided or moved");
+                Debug.Log("Collision check: PASS - Has not collided or moved");
 
                 return false;
 
@@ -204,9 +230,10 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    private IEnumerator AnimateCollision() {
+    private IEnumerator AnimateCollision()
+    {
 
-        Debug.Log("Air time: " + airTime);
+        // Debug.Log("Air time: " + airTime);
 
         hasCollided = true;
 
@@ -238,9 +265,11 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    private void AnimateDrop() {
+    private void AnimateDrop()
+    {
 
-        switch (angleXPointsTowards) {
+        switch (angleXPointsTowards)
+        {
             // x axis down, y axis right
             case 270:
                 transform.DOScaleY(1 - (airTime * stretchMultiplier), 0).SetEase(Ease.OutCubic);
@@ -263,7 +292,8 @@ public class PlayerController : MonoBehaviour {
 
     }
 
-    public void CalculateMovementDirection() {
+    public void CalculateMovementDirection()
+    {
 
         canCheckForCollisions = true;
 
@@ -275,7 +305,7 @@ public class PlayerController : MonoBehaviour {
 
         downwardsDirection = transform.InverseTransformDirection(transform.up) * -1;
 
-        Debug.Log("Movement direction: " + angleXPointsTowards + " angles");
+        // Debug.Log("Movement direction: " + angleXPointsTowards + " angles");
 
     }
 
