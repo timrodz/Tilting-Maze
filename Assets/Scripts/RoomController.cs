@@ -14,9 +14,11 @@ public class RoomController : MonoBehaviour
     [SerializeField] private float rotationLength = 0.35f;
 
     private PlayerController playerController;
+    private ParticleController particleController;
 
     void Awake()
     {
+        particleController = GetComponent<ParticleController>(); 
         playerController = FindObjectOfType<PlayerController>();
     }
 
@@ -69,6 +71,8 @@ public class RoomController : MonoBehaviour
         playerController.movementParticles.transform.DOScale(0, 0);
 
         canRotate = false;
+        
+        particleController.Play();
 
         Vector3 eulerRotation = transform.eulerAngles;
 

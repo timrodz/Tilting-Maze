@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.17296857, g: 0.6111971, b: 0.19375947, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -356,6 +356,11 @@ Prefab:
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 225081213854342352, guid: 54520d0ccf213d24db1013a6c577c09f,
+        type: 2}
+      propertyPath: m_Alpha
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 54520d0ccf213d24db1013a6c577c09f, type: 2}
   m_IsPrefabParent: 0
@@ -399,15 +404,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: defee9c8716f44c0e8db32d0b055ea85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deadzone: 50
-  tap: 0
-  isDragging: 0
-  swipeLeft: 0
-  swipeRight: 0
-  swipeUp: 0
-  swipeDown: 0
-  startTouch: {x: 0, y: 0}
-  swipeDelta: {x: 0, y: 0}
 --- !u!1001 &832005673
 Prefab:
   m_ObjectHideFlags: 0
