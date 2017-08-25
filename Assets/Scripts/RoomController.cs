@@ -44,16 +44,15 @@ public class RoomController : MonoBehaviour
             {
                 StartCoroutine(Rotate(false));
             }
-
 #elif UNITY_IOS || UNITY_ANDROID
 
             if (MobileInputController.Instance.SwipeRight)
             {
-                StartCoroutine(RotateCamera(true));
+                StartCoroutine(Rotate(true));
             }
             else if (MobileInputController.Instance.SwipeLeft)
             {
-                StartCoroutine(RotateCamera(false));
+                StartCoroutine(Rotate(false));
             }
 #endif
 
