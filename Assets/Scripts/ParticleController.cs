@@ -13,7 +13,6 @@ public class ParticleController : MonoBehaviour
     /// </summary>
     void Start()
     {
-
         if (!particleContainer)
         {
             Destroy(gameObject);
@@ -21,38 +20,30 @@ public class ParticleController : MonoBehaviour
 
         for (int i = 0; i < particleContainer.childCount; i++)
         {
-
             ParticleSystem p = particleContainer.GetChild(i).GetComponent<ParticleSystem>();
 
             if (p != null)
             {
-
                 particleList.Add(p);
-
             }
-
         }
 
     }
 
     public void Play()
     {
-
         foreach(ParticleSystem p in particleList)
         {
             p.Play();
         }
-
     }
 
     public void Stop()
     {
-
         foreach(ParticleSystem p in particleList)
         {
             p.Stop();
         }
-
     }
 
 }

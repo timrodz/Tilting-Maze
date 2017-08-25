@@ -7,10 +7,11 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using XboxCtrlrInput;
 
-
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+
+    [SerializeField] private bool DEBUG;
 
     // Game state
     [HideInInspector] public int levelID = 0;
@@ -27,8 +28,6 @@ public class GameManager : MonoBehaviour
 
     // Level ending
     [HideInInspector] public bool isLevelComplete = false;
-
-    public GameObject levelCompletePanel;
 
     public UnityEvent OnLevelComplete;
 
@@ -48,9 +47,6 @@ public class GameManager : MonoBehaviour
         Instance = this;
 
         DontDestroyOnLoad(gameObject);
-
-        levelCompletePanel.SetActive(true);
-
     }
 
     /// <summary>
@@ -68,30 +64,25 @@ public class GameManager : MonoBehaviour
 
     }
 
-    void Update()
+    void LateUpdate()
     {
-
         if (currentState == GameState.Play)
         {
             levelTime += Time.deltaTime;
         }
 
-        // if (isLevelComplete && currentState == GameState.LevelComplete) {
-
-        //     if (Input.GetKeyDown(KeyCode.Return) || XCI.GetButtonDown(XboxButton.A)) {
-
-        //         SetState(GameState.LoadingLevel);
-        //         LoadNextLevel(false);
-
-        //     }
-
-        //     if (Input.GetKeyDown(KeyCode.Escape) || XCI.GetButtonDown(XboxButton.B)) {
-
-        //         LoadNextLevel(true);
-
-        //     }
-
-        // }
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SetState(GameState.LoadingLevel);
+            LoadNextLevel();
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.R))
+        {
+            Debug.Log("==== RELOADING SCENE ====");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+#endif
 
     }
 
@@ -101,10 +92,8 @@ public class GameManager : MonoBehaviour
     /// <param name="state"></param>
     public void SetState(GameState state)
     {
-
         previousState = currentState;
         currentState = state;
-
     }
 
     /// <summary>
@@ -112,7 +101,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void TogglePause()
     {
-
         // Pause the game if it's not
         if (currentState != GameState.Paused)
         {
@@ -135,16 +123,13 @@ public class GameManager : MonoBehaviour
 
     public void StartLevel()
     {
-
-        // ATTENTION: Sets the state to "Play" in the camera controller script
-
         moveCount = 0;
         isLevelComplete = false;
         canPause = true;
         isPaused = false;
 
+        // ATTENTION: Sets the state to "Play" in the camera controller script
         CanvasManager.Instance.ResetTotalMovesPanelPosition();
-
     }
 
     /// <summary>
@@ -154,7 +139,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void CompleteLevel()
     {
-
         AnalyticsManager.Instance.RegisterCustomEventLevelComplete(moveCount, levelTime);
 
         DOTween.KillAll();
@@ -166,7 +150,6 @@ public class GameManager : MonoBehaviour
         OnLevelComplete.Invoke();
 
         levelTime = 0.0f;
-
     }
 
     /// <summary>
@@ -174,7 +157,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void LoadNextLevel()
     {
-
         GameObject currentLevel = FindObjectOfType<RoomController>().gameObject;
 
         // Get the current level's string and load the next level based on hierarchy
@@ -207,16 +189,12 @@ public class GameManager : MonoBehaviour
         // Otherwise, go back to the menu
         else
         {
-
             FindObjectOfType<NextLevelAnimator>().ChangeLevelText("<size=100>More levels to come!");
-
         }
-
     }
 
     private IEnumerator DestroyCurrentLevelAndInstantiateNextLevelPrefab(GameObject currentLevel, Object nextLevelPrefab, string nextLevelName)
     {
-
         currentLevel.transform.DOScale(1.25f, 1.25f).SetEase(Ease.InOutBack);
         yield return new WaitForSeconds(1.5f);
 
@@ -257,10 +235,8 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-
             yield return new WaitForSeconds(4.5f);
             SceneManager.LoadScene("Level Selection");
-
         }
 
     }
@@ -270,16 +246,25 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void IncrementMoveCount()
     {
-
         moveCount++;
 
         CanvasManager.Instance.totalMovesText.text = "Moves: " + moveCount.ToString();
 
         if (moveCount == 1)
         {
+            if (DEBUG)
+            {
+                Utils.Fade(CanvasManager.Instance.TotalMovesPanelTransparency, true, 1);
+            }
+        }
 
-            Utils.Fade(CanvasManager.Instance.TotalMovesPanelTransparency, true, 1);
-
+        if (moveCount % 2 == 0)
+        {
+            AudioManager.Instance.Play("Move_L");
+        }
+        else
+        {
+            AudioManager.Instance.Play("Move_R");
         }
 
     }

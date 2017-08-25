@@ -19,7 +19,6 @@ public class CanvasManager : MonoBehaviour
     /// </summary>
     void Awake()
     {
-
         // Check if there is another instance of the same type and destroy it
         if (Instance != null & Instance != this)
         {
@@ -29,7 +28,6 @@ public class CanvasManager : MonoBehaviour
         Instance = this;
 
         DontDestroyOnLoad(gameObject);
-
     }
 
     /// <summary>
@@ -38,7 +36,6 @@ public class CanvasManager : MonoBehaviour
     /// </summary>
     void Start()
     {
-
         if (!TotalMovesPanelTransparency)
         {
             TotalMovesPanelTransparency = TotalMovesPanel.GetComponent<CanvasGroup>();
@@ -47,7 +44,6 @@ public class CanvasManager : MonoBehaviour
         totalMovesPosition = totalMovesText.rectTransform.localPosition;
 
         Utils.Fade(TotalMovesPanelTransparency, false, 0);
-
     }
 
     public void ResetTotalMovesPanelPosition()

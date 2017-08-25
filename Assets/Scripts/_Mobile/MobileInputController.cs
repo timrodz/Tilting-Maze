@@ -1,10 +1,25 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class MobileInputController : MonoBehaviour
+public class MobileInputController
 {
-    public static MobileInputController Instance { get; private set; }
+    private static MobileInputController _instance;
+    public static MobileInputController Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                Instance = new MobileInputController();
+            }
+
+            return _instance;
+        }
+
+        protected set
+        {
+            _instance = value;
+        }
+    }
 
     public float deadzone = 100;
 
@@ -20,21 +35,6 @@ public class MobileInputController : MonoBehaviour
     public bool SwipeRight { get { return swipeRight; } }
     public bool SwipeUp { get { return swipeUp; } }
     public bool SwipeDown { get { return swipeDown; } }
-
-    void Awake()
-    {
-
-        // Check if there is another instance of the same type and destroy it
-        if (Instance != null & Instance != this)
-        {
-            Destroy(gameObject);
-        }
-
-        Instance = this;
-
-        DontDestroyOnLoad(gameObject);
-
-    }
 
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.
@@ -91,7 +91,6 @@ public class MobileInputController : MonoBehaviour
         swipeDelta = Vector2.zero;
         if (isDragging)
         {
-
             if (Input.touches.Length > 0)
             {
 
@@ -111,7 +110,6 @@ public class MobileInputController : MonoBehaviour
         // Determine if deadzone has been crossed
         if (swipeDelta.magnitude > deadzone)
         {
-
             // Which direction are we swiping
             float x = swipeDelta.x;
             float y = swipeDelta.y;
@@ -133,7 +131,6 @@ public class MobileInputController : MonoBehaviour
             // Y-axis is bigger (Up or down)
             else
             {
-
                 if (y < 0)
                 {
                     swipeDown = true;
@@ -146,17 +143,14 @@ public class MobileInputController : MonoBehaviour
             }
 
             ResetSwipeState();
-
         }
 
     }
 
     private void ResetSwipeState()
     {
-
         startTouch = swipeDelta = Vector2.zero;
         isDragging = false;
-
     }
 
 }

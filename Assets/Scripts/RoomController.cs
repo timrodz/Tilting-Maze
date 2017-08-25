@@ -5,7 +5,6 @@ using XboxCtrlrInput;
 
 public class RoomController : MonoBehaviour
 {
-    [SerializeField] private ParticleController particleController;
 
     public bool canRotate = true;
 
@@ -16,9 +15,8 @@ public class RoomController : MonoBehaviour
 
     private PlayerController playerController;
 
-    void Start()
+    void Awake()
     {
-        particleController = GetComponent<ParticleController>();
         playerController = FindObjectOfType<PlayerController>();
     }
 
@@ -66,8 +64,6 @@ public class RoomController : MonoBehaviour
     /// </summary>
     public IEnumerator Rotate(bool shouldRotateRight)
     {
-        AudioManager.Instance.PlayWithRandomPitch("Move", 0.98f, 1.02f);
-
         GameManager.Instance.IncrementMoveCount();
 
         playerController.movementParticles.transform.DOScale(0, 0);
@@ -93,13 +89,9 @@ public class RoomController : MonoBehaviour
 
         yield return new WaitForSeconds(wait);
 
-        particleController.Play();
-
         yield return new WaitForSeconds(rotationLength - wait);
 
         canRotate = true;
-
-        particleController.Stop();
 
         yield return new WaitForSeconds(0.05f);
 

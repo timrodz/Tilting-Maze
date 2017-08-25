@@ -32,22 +32,19 @@ public class PlayerController : MonoBehaviour
 
     // -------------------------------------------------------------------------------------------
 
-    void Start()
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
+    void Awake()
     {
-
-        controller = GetComponent<CharacterController>();
-
         room = FindObjectOfType<RoomController>();
-
+        controller = GetComponent<CharacterController>();
         CalculateMovementDirection();
-
         canCheckForCollisions = false;
-
     }
 
     void Update()
     {
-
         if (GameManager.Instance == null)
         {
             return;
@@ -59,12 +56,9 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        Debug.DrawRay(transform.position, downwardsDirection, Color.magenta);
-
         // Apply movement when either the camera isn't rotating or the game's not paused
         if (!(!room.canRotate || GameManager.Instance.currentState == GameState.Paused))
         {
-
             // Check for collisions when the map can't be moved
             if (canCheckForCollisions)
             {
@@ -77,9 +71,7 @@ public class PlayerController : MonoBehaviour
 
                 if (movementParticles.isPlaying)
                 {
-
                     movementParticles.Stop();
-
                 }
 
                 // Reset the moveDirection vector everytime the player is grounded
@@ -91,17 +83,16 @@ public class PlayerController : MonoBehaviour
             // Otherwise animate its fall
             else
             {
-
                 isMoving = (int) controller.velocity.magnitude > 0;
 
                 if (isMoving)
                 {
-
                     airTime += Time.deltaTime;
 
                     if (!movementParticles.isPlaying)
                     {
-                        movementParticles.transform.DOScale(1, 0);
+                        Debug.Log(">> PARTICLES");
+                        movementParticles.transform.localScale = Vector3.one;
                         movementParticles.Play();
                     }
 
@@ -124,14 +115,6 @@ public class PlayerController : MonoBehaviour
             );
 
         }
-        else
-        {
-
-            movementParticles.transform.DOScale(0, 1);
-            movementParticles.Stop();
-
-        }
-
     }
 
     private void OnTriggerEnter(Collider other)
@@ -142,24 +125,19 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // if (!room.canRotateCamera) {
-        //     return;
-        // }
+        Debug.Log(">> Player OnTriggerEnter with " + other.name);
 
         // Has reached the goal of the level
         if ((other.CompareTag("Finish")))
         {
-
             movementParticles.Stop();
             GameManager.Instance.CompleteLevel();
-
         }
         else if (other.CompareTag("Trigger"))
         {
 
             movementParticles.Stop();
             canCheckForCollisions = true;
-            // Debug.Log("Entering trigger ID: " + other.name);
 
         }
 
@@ -167,7 +145,6 @@ public class PlayerController : MonoBehaviour
 
     public bool CheckForCollisions()
     {
-
         // Since the player is at an offset Z-axis position
         // store its position and set that Z back to 0
         Vector3 position = transform.position;
@@ -177,20 +154,12 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(position, downwardsDirection, out hit, 1, barrierMask))
         {
-
-            // Debug.Log("Raycast enter with " + hit.collider.name);
-
             canCheckForCollisions = false;
 
             if ((isMoving) && (!hasCollided) && (collidedObject != hit.collider.gameObject))
             {
-
-                // Debug.Log("Current position: " + position + " last position: " + lastPosition);
-
                 if (position != lastPosition)
                 {
-
-                    // canCheckForCollisions = false;
 
                     lastPosition = position;
 
@@ -203,38 +172,27 @@ public class PlayerController : MonoBehaviour
                     Debug.Log("Collision with " + collidedObject.name + ": PASS");
 
                     return true;
-
                 }
                 else
                 {
-
                     Debug.LogError("Collision check: FAIL - Positions didn't match");
-
                     return false;
-
                 }
 
             }
             else
             {
-
                 Debug.Log("Collision check: PASS - Has not collided or moved");
-
                 return false;
-
             }
 
         }
 
         return false;
-
     }
 
     private IEnumerator AnimateCollision()
     {
-
-        // Debug.Log("Air time: " + airTime);
-
         hasCollided = true;
 
         AudioManager.Instance.Play("Collision");
@@ -262,12 +220,10 @@ public class PlayerController : MonoBehaviour
         hasCollided = false;
 
         airTime = 0;
-
     }
 
     private void AnimateDrop()
     {
-
         switch (angleXPointsTowards)
         {
             // x axis down, y axis right
@@ -289,24 +245,13 @@ public class PlayerController : MonoBehaviour
                 transform.DOScaleX(1 - (airTime * stretchMultiplier), 0).SetEase(Ease.OutCubic);
                 break;
         }
-
     }
 
     public void CalculateMovementDirection()
     {
-
         canCheckForCollisions = true;
-
         angleXPointsTowards = (int) transform.eulerAngles.z;
-
-        // We get a vector from the angles given by direction
-        // It's negated because the X behaves like a Y-axis in a normal cartesian plane
-        // downwardsDirection = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angleXPointsTowards), Mathf.Sin(Mathf.Deg2Rad * -angleXPointsTowards), 0);
-
         downwardsDirection = transform.InverseTransformDirection(transform.up) * -1;
-
-        // Debug.Log("Movement direction: " + angleXPointsTowards + " angles");
-
     }
 
 }

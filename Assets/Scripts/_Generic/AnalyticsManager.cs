@@ -32,7 +32,7 @@ public class AnalyticsManager
 
     public void RegisterCustomEventLevelComplete(int moveCount, float levelTime)
     {
-
+#if !UNITY_EDITOR
         Debug.Log("==== Analytics - Registering level complete - Level ID: " + GameManager.Instance.levelID.ToString() + " - Moves: " + moveCount.ToString() + " - time: " + levelTime.ToString());
 
         Analytics.CustomEvent("Level complete", new Dictionary<string, object>
@@ -40,12 +40,12 @@ public class AnalyticsManager
             { "Moves", moveCount },
             { "Time", levelTime }
         });
-
+#endif
     }
 
     public void RegisterCustomEventSwipe(eCustomEvent customEvent)
     {
-
+#if !UNITY_EDITOR
         Debug.Log("==== Analytics - Registering swipe: " + customEvent.ToString());
 
         switch (customEvent)
@@ -60,31 +60,31 @@ public class AnalyticsManager
                 }
                 break;
         }
-
+#endif
     }
 
     public void RegisterCustomEventTriggerEnter(string gameObject)
     {
-
+#if !UNITY_EDITOR
         Debug.Log("==== Analytics - Registering Trigger enter: " + gameObject);
 
         Analytics.CustomEvent("Trigger Enter", new Dictionary<string, object>
         { { "Level", GameManager.Instance.levelID },
             { "Name", gameObject }
         });
-
+#endif
     }
 
     public void RegisterCustomEventTriggerExit(string gameObject)
     {
-
+#if !UNITY_EDITOR
         Debug.Log("==== Analytics - Registering Trigger exit: " + gameObject);
 
         Analytics.CustomEvent("Trigger Exit", new Dictionary<string, object>
         { { "Name", gameObject },
             { "Level", GameManager.Instance.levelID }
         });
-
+#endif
     }
 
 }
