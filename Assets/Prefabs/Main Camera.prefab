@@ -25,8 +25,6 @@ GameObject:
   - component: {fileID: 81914366846884942}
   - component: {fileID: 114211259309067816}
   - component: {fileID: 114345774101903830}
-  - component: {fileID: 114795635594635938}
-  - component: {fileID: 114281943974061810}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: Untagged
@@ -76,7 +74,7 @@ Camera:
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
-  m_HDR: 1
+  m_HDR: 0
   m_AllowMSAA: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 0
@@ -111,18 +109,6 @@ MonoBehaviour:
   cameraEase: 0
   shakeDuration: 0.4
   mainCamera: {fileID: 0}
---- !u!114 &114281943974061810
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1660477610746268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2382eb48c558343e9a72027159999d14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: dd29b3fa161a74d04898a65e489bcbe7, type: 2}
 --- !u!114 &114345774101903830
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -137,19 +123,7 @@ MonoBehaviour:
   skyboxMaterial: {fileID: 2100000, guid: 4fd401d2f38984dffadb0d7a91746865, type: 2}
   topColor: {r: 0.93333334, g: 0.27450982, b: 0.27450982, a: 0}
   botColor: {r: 0.08088237, g: 0.010110296, b: 0.010110296, a: 0}
-  colorChangeDelay: 0
---- !u!114 &114795635594635938
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1660477610746268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  profile: {fileID: 11400000, guid: 5be7a85751358400fb662bc9435cb58e, type: 2}
+  colorChangeDelay: 0.01
 --- !u!124 &124775669714186642
 Behaviour:
   m_ObjectHideFlags: 1
