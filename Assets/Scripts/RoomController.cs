@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using DG.Tweening;
 using UnityEngine;
-using XboxCtrlrInput;
 
 public class RoomController : MonoBehaviour
 {
@@ -36,11 +35,11 @@ public class RoomController : MonoBehaviour
 
 #if UNITY_STANDALONE || UNITY_EDITOR
 
-            if (XCI.GetAxisRaw(XboxAxis.LeftStickX) > 0 || Input.GetKey(KeyCode.D) || MobileInputController.Instance.SwipeRight)
+            if (Input.GetKey(KeyCode.D) || (MobileInputController.Instance.SwipeRight))
             {
                 StartCoroutine(Rotate(true));
             }
-            else if (XCI.GetAxisRaw(XboxAxis.LeftStickX) < 0 || Input.GetKey(KeyCode.A) || MobileInputController.Instance.SwipeLeft)
+            else if (Input.GetKey(KeyCode.A) || (MobileInputController.Instance.SwipeLeft))
             {
                 StartCoroutine(Rotate(false));
             }
