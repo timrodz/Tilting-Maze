@@ -1,25 +1,8 @@
 ﻿using UnityEngine;
 
-public class MobileInputController
+public class MobileInputController : MonoBehaviour
 {
-    private static MobileInputController _instance;
-    public static MobileInputController Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                Instance = new MobileInputController();
-            }
-
-            return _instance;
-        }
-
-        protected set
-        {
-            _instance = value;
-        }
-    }
+    public static MobileInputController Instance { get; private set; }
 
     public float deadzone = 100;
 
@@ -29,12 +12,30 @@ public class MobileInputController
 
     private Vector2 startTouch = Vector2.zero;
     private Vector2 swipeDelta = Vector2.zero;
-
+    
+    public Vector2 StartTouch { get { return startTouch; } }
     public Vector2 SwipeDelta { get { return swipeDelta; } }
+    public bool Tap { get { return tap; }}
     public bool SwipeLeft { get { return swipeLeft; } }
     public bool SwipeRight { get { return swipeRight; } }
     public bool SwipeUp { get { return swipeUp; } }
     public bool SwipeDown { get { return swipeDown; } }
+    
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
+    void Awake()
+    {
+        // Check if there is another instance of the same type and destroy it
+        if (Instance != null & Instance != this)
+        {
+            Destroy(gameObject);
+        }
+
+        Instance = this;
+
+        DontDestroyOnLoad(gameObject);
+    }
 
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.
@@ -47,18 +48,14 @@ public class MobileInputController
 
         if (Input.GetMouseButtonDown(0))
         {
-
             tap = true;
             isDragging = true;
             startTouch = Input.mousePosition;
-
         }
         else if (Input.GetMouseButtonUp(0))
         {
-
             isDragging = false;
             ResetSwipeState();
-
         }
 
         // -------------------------------------------------------------------------------------------
@@ -69,19 +66,15 @@ public class MobileInputController
             // as it's registered
             if (Input.touches[0].phase == TouchPhase.Began)
             {
-
                 isDragging = true;
                 tap = true;
                 startTouch = Input.touches[0].position;
-
             }
             // Check if the touch has ended or has been canceled
             else if (Input.touches[0].phase == TouchPhase.Ended || Input.touches[0].phase == TouchPhase.Canceled)
             {
-
                 isDragging = false;
                 ResetSwipeState();
-
             }
 
         }
@@ -89,19 +82,16 @@ public class MobileInputController
         // -------------------------------------------------------------------------------------------
         // Calculate the movement difference (delta)
         swipeDelta = Vector2.zero;
+        
         if (isDragging)
         {
             if (Input.touches.Length > 0)
             {
-
                 swipeDelta = Input.touches[0].position - startTouch;
-
             }
             else if (Input.GetMouseButton(0))
             {
-
                 swipeDelta = (Vector2) Input.mousePosition - startTouch;
-
             }
 
         }
@@ -117,7 +107,6 @@ public class MobileInputController
             // X-axis is bigger (Left or right)
             if (Mathf.Abs(x) > Mathf.Abs(y))
             {
-
                 if (x < 0)
                 {
                     swipeLeft = true;
@@ -126,7 +115,6 @@ public class MobileInputController
                 {
                     swipeRight = true;
                 }
-
             }
             // Y-axis is bigger (Up or down)
             else
@@ -139,7 +127,6 @@ public class MobileInputController
                 {
                     swipeUp = true;
                 }
-
             }
 
             ResetSwipeState();

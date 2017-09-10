@@ -88,7 +88,7 @@ QualitySettings:
     name: Mobile
     pixelLightCount: 1
     shadows: 1
-    shadowResolution: 2
+    shadowResolution: 1
     shadowProjection: 0
     shadowCascades: 1
     shadowDistance: 50

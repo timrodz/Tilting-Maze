@@ -76,13 +76,14 @@ public class CameraController : MonoBehaviour
 
     private IEnumerator ResetPositionController()
     {
-
         transform.DOMove(originalPosition, 2).SetEase(cameraEase);
 
         yield return new WaitForSeconds(2);
 
-        GameManager.Instance.SetState(GameState.Play);
-
+        if (null != GameManager.Instance)
+        {
+            GameManager.Instance.SetState(GameState.Play);
+        }
     }
 
 }
