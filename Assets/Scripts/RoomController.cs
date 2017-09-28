@@ -24,15 +24,14 @@ public class RoomController : MonoBehaviour
     void Update()
     {
         // Don't do anything if the game's curently paused
-        if (GameManager.Instance.currentState != GameState.Play || !playerController || !registerInput)
+        if (GameManager.Instance.GetState() != GameState.Play || !playerController || !registerInput)
         {
             return;
         }
 
         // Allow for camera rotation ONLY if the player meets the following criteria
-        if ((canRotate) && (!playerController.isMoving) && (!GameManager.Instance.isLevelComplete))
+        if ((canRotate) && (!playerController.isMoving) && (!GameManager.Instance.IsLevelComplete()))
         {
-
 #if UNITY_STANDALONE || UNITY_EDITOR
 
             if (Input.GetKey(KeyCode.D) || (MobileInputController.Instance.SwipeRight))
@@ -70,19 +69,19 @@ public class RoomController : MonoBehaviour
 
         canRotate = false;
         
-        particleController.Play();
+        // particleController.Play();
 
         Vector3 eulerRotation = transform.eulerAngles;
 
         if (shouldRotateRight)
         {
             eulerRotation.z -= 90;
-            AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeRight);
+            // AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeRight);
         }
         else
         {
             eulerRotation.z += 90;
-            AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeLeft);
+            // AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeLeft);
         }
 
         transform.DORotate(eulerRotation, rotationLength).SetEase(rotationEaseType);

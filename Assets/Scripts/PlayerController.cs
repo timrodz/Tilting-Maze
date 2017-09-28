@@ -51,13 +51,13 @@ public class PlayerController : MonoBehaviour
         }
 
         // Only process the player's movement if the game state is on playing
-        if (GameManager.Instance.currentState != GameState.Play)
+        if (GameManager.Instance.GetState() != GameState.Play)
         {
             return;
         }
 
         // Apply movement when either the camera isn't rotating or the game's not paused
-        if (!(!room.canRotate || GameManager.Instance.currentState == GameState.Paused))
+        if (!(!room.canRotate || GameManager.Instance.GetState() == GameState.Paused))
         {
             // Check for collisions when the map can't be moved
             if (canCheckForCollisions)
@@ -120,7 +120,7 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
 
-        if (GameManager.Instance.currentState != GameState.Play)
+        if (GameManager.Instance.GetState() != GameState.Play)
         {
             return;
         }
@@ -195,7 +195,7 @@ public class PlayerController : MonoBehaviour
     {
         hasCollided = true;
 
-        AudioManager.Instance.Play("Collision");
+        AudioManager.Play("Collision");
 
         var cpm = collisionParticles.main;
         cpm.startSpeed = 3 * airTime;

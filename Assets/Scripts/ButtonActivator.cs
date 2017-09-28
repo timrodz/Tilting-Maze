@@ -30,18 +30,15 @@ public class ButtonActivator : MonoBehaviour
     // -------------------------------------------------------------------------------------------
     private void OnTriggerEnter(Collider other)
     {
-        if (!canRegisterCollisions || !room.canRotate || GameManager.Instance.currentState != GameState.Play)
+        if (!canRegisterCollisions || !room.canRotate || GameManager.Instance.GetState() != GameState.Play)
         {
             return;
         }
         
-        Debug.Log("============================================");
-        Debug.Log("Interacting with " + this.name + " - Position: " + other.transform.position);
-        
         // Stop registering any other collisions
         canRegisterCollisions = false;
 
-        AudioManager.Instance.Play("Trigger Button");
+        AudioManager.Play("Trigger Button");
 
         // Make the player's position be the trigger's position
         other.transform.position = new Vector3(
@@ -68,7 +65,7 @@ public class ButtonActivator : MonoBehaviour
         if (numberOfUsesBeforeDestroying > 0)
             collisionCount++;
 
-        AnalyticsManager.Instance.RegisterCustomEventTriggerEnter(transform.name);
+        // AnalyticsManager.Instance.RegisterCustomEventTriggerEnter(transform.name);
 
     }
 
@@ -87,7 +84,7 @@ public class ButtonActivator : MonoBehaviour
 
         StartCoroutine(EnableCollisionRegistry());
 
-        AnalyticsManager.Instance.RegisterCustomEventTriggerExit(transform.name);
+        // AnalyticsManager.Instance.RegisterCustomEventTriggerExit(transform.name);
 
     }
 

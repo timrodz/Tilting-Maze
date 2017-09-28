@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-#if UNITY_STANDALONE || UNITY_EDITOR
-using XboxCtrlrInput;
-#endif
-
 /// <summary>
 /// Handles control using the Controller2D class
 /// 
@@ -94,7 +90,7 @@ public class PlayerController2D : Controller2D
         m_IsFacingRight = !m_IsFacingRight;
     }
 
-    private void HandleBelowCollision()
+    public void HandleBelowCollision()
     {
         if (m_CollisionInfo.below && !m_HasBegunCollisionBelow)
         {
@@ -106,19 +102,18 @@ public class PlayerController2D : Controller2D
         {
             if (firstCollision)
             {
-                Debug.Log("FIRST COLLISION");
                 firstCollision = false;
                 m_HasProcessedCollisionBelow = false;
                 return;
             }
-
-            Debug.Log("COLLISION BELOW");
+            
+            AudioManager.Play("Collision");
 
             m_HasPlayedMovementParticles = false;
 
             m_CollisionParticles.Play();
 
-            m_MovementParticles.Stop();
+            // m_MovementParticles.Stop();
 
             StartCoroutine(AnimateDrop());
         }
@@ -159,10 +154,10 @@ public class PlayerController2D : Controller2D
 
     void Update()
     {
-        HandleBelowCollision();
-
         if (!m_CanMove) { return; }
 
+        HandleBelowCollision();
+        
         Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), 0);
 
         // If is colliding with something below or above

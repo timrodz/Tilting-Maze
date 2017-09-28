@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Analytics;
 
-public enum eCustomEvent
+public enum CustomEvent
 {
     SwipeLeft,
     SwipeRight
@@ -33,28 +33,28 @@ public class AnalyticsManager
     public void RegisterCustomEventLevelComplete(int moveCount, float levelTime)
     {
 #if !UNITY_EDITOR
-        Debug.Log("==== Analytics - Registering level complete - Level ID: " + GameManager.Instance.levelID.ToString() + " - Moves: " + moveCount.ToString() + " - time: " + levelTime.ToString());
+        Debug.Log("==== Analytics - Registering level complete - Level ID: " + GameManager.Instance.GetLevelID().ToString() + " - Moves: " + moveCount.ToString() + " - time: " + levelTime.ToString());
 
         Analytics.CustomEvent("Level complete", new Dictionary<string, object>
-        { { "Level", GameManager.Instance.levelID },
+        { { "Level", GameManager.Instance.GetLevelID() },
             { "Moves", moveCount },
             { "Time", levelTime }
         });
 #endif
     }
 
-    public void RegisterCustomEventSwipe(eCustomEvent customEvent)
+    public void RegisterCustomEventSwipe(CustomEvent customEvent)
     {
 #if !UNITY_EDITOR
         Debug.Log("==== Analytics - Registering swipe: " + customEvent.ToString());
 
         switch (customEvent)
         {
-            case eCustomEvent.SwipeLeft:
-            case eCustomEvent.SwipeRight:
+            case CustomEvent.SwipeLeft:
+            case CustomEvent.SwipeRight:
                 {
                     Analytics.CustomEvent("Input", new Dictionary<string, object>
-                    { { "Level", GameManager.Instance.levelID },
+                    { { "Level", GameManager.Instance.GetLevelID() },
                         { "Swipe", customEvent }
                     });
                 }
@@ -69,7 +69,7 @@ public class AnalyticsManager
         Debug.Log("==== Analytics - Registering Trigger enter: " + gameObject);
 
         Analytics.CustomEvent("Trigger Enter", new Dictionary<string, object>
-        { { "Level", GameManager.Instance.levelID },
+        { { "Level", GameManager.Instance.GetLevelID() },
             { "Name", gameObject }
         });
 #endif
@@ -82,7 +82,7 @@ public class AnalyticsManager
 
         Analytics.CustomEvent("Trigger Exit", new Dictionary<string, object>
         { { "Name", gameObject },
-            { "Level", GameManager.Instance.levelID }
+            { "Level", GameManager.Instance.GetLevelID() }
         });
 #endif
     }

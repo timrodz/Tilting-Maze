@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Maze Foreground
-  m_Shader: {fileID: 4800000, guid: e21054cb04668ed4f83cd845358c8773, type: 3}
+  m_Shader: {fileID: 4800000, guid: d3370993a4ec04f069c44b4cda21f8ef, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0

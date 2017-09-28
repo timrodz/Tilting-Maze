@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-#if UNITY_STANDALONE || UNITY_EDITOR
-using XboxCtrlrInput;
-#endif
-
 /// <summary>
 /// Controls the level (New implementation)
 /// 
@@ -15,8 +11,6 @@ using XboxCtrlrInput;
 /// </summary>
 public class LevelController : MonoBehaviour
 {
-    [SerializeField] private bool INVERT_MOVEMENT = false;
-
     [SerializeField] private PlayerController2D m_Player;
 
     [SerializeField] public bool m_CanRotate = true;
@@ -26,45 +20,33 @@ public class LevelController : MonoBehaviour
 
     private int m_AxisZ = 0;
 
-    void Start()
-    {
-        m_Player = FindObjectOfType<PlayerController2D>();
-    }
-
     void Update()
     {
+        // Don't do anything if the game's curently paused
+        if (GameManager.Instance.GetState() != GameState.Play || !m_Player || !m_RegisterInput)
+        {
+            return;
+        }
+
         if (
             // Not currently rotating
             m_CanRotate
-			// Player can move
-			&& (m_Player.m_CanMove)
+            // Player can move
+            &&
+            (m_Player.m_CanMove)
             // Not currently colliding with anything
             &&
             (m_Player.m_CollisionInfo.above || m_Player.m_CollisionInfo.right || m_Player.m_CollisionInfo.below || m_Player.m_CollisionInfo.left)
         )
         {
 #if UNITY_STANDALONE || UNITY_EDITOR
-            if (!INVERT_MOVEMENT)
+            if (Input.GetKey(KeyCode.E) || MobileInputController.Instance.SwipeRight)
             {
-                if (Input.GetKey(KeyCode.E) || XCI.GetButtonDown(XboxButton.RightBumper) || (XCI.GetAxisRaw(XboxAxis.RightTrigger) != 0))
-                {
-                    StartCoroutine(Rotate(true));
-                }
-                else if (Input.GetKey(KeyCode.Q) || XCI.GetButtonDown(XboxButton.LeftBumper) || (XCI.GetAxisRaw(XboxAxis.LeftTrigger) != 0))
-                {
-                    StartCoroutine(Rotate(false));
-                }
+                StartCoroutine(Rotate(true));
             }
-            else
+            else if (Input.GetKey(KeyCode.Q) || MobileInputController.Instance.SwipeLeft)
             {
-                if (Input.GetKey(KeyCode.Q) || XCI.GetButtonDown(XboxButton.LeftBumper) || (XCI.GetAxisRaw(XboxAxis.LeftTrigger) != 0))
-                {
-                    StartCoroutine(Rotate(true));
-                }
-                else if (Input.GetKey(KeyCode.E) || XCI.GetButtonDown(XboxButton.RightBumper) || (XCI.GetAxisRaw(XboxAxis.RightTrigger) != 0))
-                {
-                    StartCoroutine(Rotate(false));
-                }
+                StartCoroutine(Rotate(false));
             }
 #elif UNITY_IOS || UNITY_ANDROID
             if (MobileInputController.Instance.SwipeRight)
@@ -85,6 +67,10 @@ public class LevelController : MonoBehaviour
     /// </summary>
     public IEnumerator Rotate(bool _shouldRotateRight)
     {
+        GameManager.Instance.IncrementMoveCount();
+        
+        m_Player.HandleBelowCollision();
+
         m_Player.m_CanMove = false;
 
         m_CanRotate = false;
@@ -94,28 +80,29 @@ public class LevelController : MonoBehaviour
         if (_shouldRotateRight)
         {
             eulerRotation.z -= 90;
-            AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeRight);
+            // AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeRight);
         }
         else
         {
             eulerRotation.z += 90;
-            AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeLeft);
+            // AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeLeft);
         }
 
         // Rotate the transform
         transform.DORotate(eulerRotation, m_RotationLength).SetEase(m_RotationEaseType);
 
-        float wait = m_RotationLength * 0.2f;
+        yield return new WaitForSeconds(m_RotationLength);
+        // float wait = m_RotationLength * 0.2f;
 
-        yield return new WaitForSeconds(wait);
+        // yield return new WaitForSeconds(wait);
 
-        yield return new WaitForSeconds(m_RotationLength - wait);
-
+        // yield return new WaitForSeconds(m_RotationLength - wait);
         m_CanRotate = true;
 
-        yield return new WaitForSeconds(0.05f);
+        // yield return new WaitForSeconds(0.05f);
 
         m_Player.m_CanMove = true;
+
     }
 
 }

@@ -10,25 +10,23 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [SerializeField] private bool DEBUG;
+    public bool USE_CANVAS_MANAGER;
 
     // Game state
-    [HideInInspector] public int levelID = 0;
-    [HideInInspector] public float levelTime = 0.0f;
+    [SerializeField] private int m_LevelID = 0;
+    [SerializeField] private float m_ElapsedLevelTime = 0.0f;
 
-    [HideInInspector] public GameState currentState = GameState.LoadingLevel;
-    [HideInInspector] public GameState previousState = GameState.LoadingLevel;
-    [HideInInspector] public static int moveCount;
+    [SerializeField] private GameState m_State = GameState.LoadingLevel;
+    [SerializeField] private GameState m_LastState = GameState.LoadingLevel;
+    [SerializeField] private static int m_MoveCount;
 
     // Pause states
-    [HideInInspector] public bool canPause = true;
-    [HideInInspector] public bool isPaused = false;
-    [HideInInspector] public bool canUpdateTime = false;
+    [SerializeField] private bool canPause = true;
+    [SerializeField] private bool isPaused = false;
+    [SerializeField] private bool canUpdateTime = false;
 
     // Level ending
-    [HideInInspector] public bool isLevelComplete = false;
-
-    public UnityEvent OnLevelComplete;
+    [SerializeField] private bool isLevelComplete = false;
 
     // -------------------------------------------------------------------------------------------
 
@@ -37,7 +35,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Awake()
     {
-
         if (Instance != null & Instance != this)
         {
             Destroy(gameObject);
@@ -54,20 +51,18 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void Start()
     {
-
-        SetState(GameState.LoadingLevel);
+        SetState(GameState.Play);
 
         StartLevel();
 
         SetLevelID(1);
-
     }
 
     void LateUpdate()
     {
-        if (currentState == GameState.Play)
+        if (m_State == GameState.Play)
         {
-            levelTime += Time.deltaTime;
+            m_ElapsedLevelTime += Time.deltaTime;
         }
 
 #if UNITY_EDITOR
@@ -86,49 +81,38 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the game state
-    /// </summary>
-    /// <param name="state"></param>
-    public void SetState(GameState state)
-    {
-        previousState = currentState;
-        currentState = state;
-    }
-
-    /// <summary>
     /// Pauses the game.
     /// </summary>
     public void TogglePause()
     {
         // Pause the game if it's not
-        if (currentState != GameState.Paused)
+        if (m_State != GameState.Paused)
         {
-
-            previousState = currentState;
-            currentState = GameState.Paused;
+            m_LastState = m_State;
+            m_State = GameState.Paused;
             //pausePanel.gameObject.SetActive(true);
-
         }
         // Unpause the game
         else
         {
-
-            currentState = previousState;
+            m_State = m_LastState;
             //pausePanel.gameObject.SetActive(false);
-
         }
 
     }
 
     public void StartLevel()
     {
-        moveCount = 0;
+        m_MoveCount = 0;
         isLevelComplete = false;
         canPause = true;
         isPaused = false;
 
         // ATTENTION: Sets the state to "Play" in the camera controller script
-        CanvasManager.Instance.ResetTotalMovesPanelPosition();
+        if (null != CanvasManager.Instance)
+        {
+            CanvasManager.Instance.ResetTotalMovesPanelPosition();
+        }
     }
 
     /// <summary>
@@ -138,17 +122,19 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void CompleteLevel()
     {
-        AnalyticsManager.Instance.RegisterCustomEventLevelComplete(moveCount, levelTime);
+        // AnalyticsManager.Instance.RegisterCustomEventLevelComplete(m_MoveCount, m_ElapsedLevelTime);
 
         DOTween.KillAll();
 
         StopAllCoroutines();
 
+        m_ElapsedLevelTime = 0.0f;
+        
         SetState(GameState.LevelComplete);
 
-        OnLevelComplete.Invoke();
-
-        levelTime = 0.0f;
+        AudioManager.Play("Trigger Button");
+        
+        LoadNextLevel();
     }
 
     /// <summary>
@@ -161,7 +147,7 @@ public class GameManager : MonoBehaviour
         // Get the current level's string and load the next level based on hierarchy
         string nextLevelName = Utils.FindStringAndIncrementNumber(currentLevel.name);
 
-        string levelNumber = Utils.FindAndIncrementNumberInString(currentLevel.name);
+        string levelNumber = Utils.FindStringAndReturnIncrementedNumber(currentLevel.name);
 
         // Find the level prefab by loading the resources directly
         Object nextLevelPrefab = Resources.Load(nextLevelName);
@@ -171,7 +157,6 @@ public class GameManager : MonoBehaviour
         // If there's a next level, create it
         if (nextLevelPrefab)
         {
-
             int levelID = 0;
             if (System.Int32.TryParse(levelNumber, out levelID))
             {
@@ -240,41 +225,68 @@ public class GameManager : MonoBehaviour
 
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     public void IncrementMoveCount()
     {
-        moveCount++;
-
-        CanvasManager.Instance.totalMovesText.text = "Moves: " + moveCount.ToString();
-
-        if (moveCount == 1)
+        m_MoveCount++;
+        
+        if (USE_CANVAS_MANAGER)
         {
-            if (DEBUG)
+            CanvasManager.Instance.totalMovesText.text = "Moves: " + m_MoveCount.ToString();
+        }
+
+        if (m_MoveCount == 1)
+        {
+            if (USE_CANVAS_MANAGER)
             {
                 Utils.Fade(CanvasManager.Instance.TotalMovesPanelTransparency, true, 1);
             }
         }
 
-        if (moveCount % 2 == 0)
+        if (m_MoveCount % 2 == 0)
         {
-            AudioManager.Instance.Play("Move_L");
+            AudioManager.Play("Move_L");
         }
         else
         {
-            AudioManager.Instance.Play("Move_R");
+            AudioManager.Play("Move_R");
         }
 
     }
-
+    
     /// <summary>
-    /// 
+    /// Sets the game state
     /// </summary>
+    /// <param name="state"></param>
+    public void SetState(GameState state)
+    {
+        m_LastState = m_State;
+        m_State = state;
+    }
+    
+    public GameState GetState()
+    {
+        return m_State;
+    }
+    
+    public GameState GetLastState()
+    {
+        return m_LastState;
+    }
+
     public void SetLevelID(int levelID)
     {
         Debug.Log("Set level ID: " + levelID);
-        this.levelID = levelID;
+        this.m_LevelID = levelID;
+    }
+    
+    public int GetLevelID()
+    {
+        return m_LevelID;
+    }
+    
+    public bool IsLevelComplete()
+    {
+        return isLevelComplete;
     }
 
 }

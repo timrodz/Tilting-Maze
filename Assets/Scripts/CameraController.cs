@@ -7,13 +7,13 @@ public class CameraController : MonoBehaviour
     public static CameraController Instance { get; private set; }
 
     [Header("Camera Easing")]
-    public Ease cameraEase;
+    [SerializeField] private Ease cameraEase;
 
     [Header("Screen Shake")]
     [RangeAttribute(0.3f, 1f)]
-    public float shakeDuration = 0.5f;
+    [SerializeField] private float shakeDuration = 0.5f;
 
-    [HideInInspector] public Camera mainCamera;
+    [SerializeField] private Camera mainCamera;
 
     private Vector3 originalPosition;
 
@@ -22,7 +22,6 @@ public class CameraController : MonoBehaviour
     /// </summary>
     void Awake()
     {
-
         // Check if there is another instance of the same type and destroy it
         if (Instance != null & Instance != this)
         {
@@ -32,46 +31,42 @@ public class CameraController : MonoBehaviour
         Instance = this;
 
         DontDestroyOnLoad(gameObject);
-
-        mainCamera = GetComponent<Camera>();
-
     }
 
     // Use this for initialization
     void Start()
     {
-
+        mainCamera = GetComponent<Camera>();
+        
         originalPosition = transform.position;
+        
+        // if (null != GameManager.Instance)
+        // {
+            // GameManager.Instance.SetState(GameState.Play);
+        // }
+        
+        // transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 7.5f);
 
-        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 7.5f);
-
-        ResetPosition();
-
-    }
-
-    public void ResetPosition()
-    {
-
-        StartCoroutine(ResetPositionController());
-
+        // ResetPosition();
     }
 
     public void Shake()
     {
-
         StartCoroutine(ShakeController());
-
     }
 
     private IEnumerator ShakeController()
     {
-
         transform.DOShakePosition(shakeDuration);
 
         yield return new WaitForSeconds(shakeDuration);
 
         transform.DOMove(originalPosition, 0.35f);
-
+    }
+    
+    public void ResetPosition()
+    {
+        StartCoroutine(ResetPositionController());
     }
 
     private IEnumerator ResetPositionController()

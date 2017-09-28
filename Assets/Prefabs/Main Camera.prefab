@@ -21,10 +21,8 @@ GameObject:
   - component: {fileID: 4349457117483716}
   - component: {fileID: 20178361002162452}
   - component: {fileID: 92076357173077016}
-  - component: {fileID: 124775669714186642}
   - component: {fileID: 81914366846884942}
-  - component: {fileID: 114211259309067816}
-  - component: {fileID: 114345774101903830}
+  - component: {fileID: 114324891271413294}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: Untagged
@@ -39,7 +37,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1660477610746268}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -17.5}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -53,8 +51,8 @@ Camera:
   m_GameObject: {fileID: 1660477610746268}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.77205884, g: 0.2590234, b: 0.107861176, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -64,8 +62,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 17.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -95,7 +93,7 @@ Behaviour:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1660477610746268}
   m_Enabled: 1
---- !u!114 &114211259309067816
+--- !u!114 &114324891271413294
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -106,28 +104,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a15dd45a688ce7246b69ac3614391e99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraEase: 0
-  shakeDuration: 0.4
+  cameraEase: 3
+  shakeDuration: 0.5
   mainCamera: {fileID: 0}
---- !u!114 &114345774101903830
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1660477610746268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 755e91ad188144e149f14a4354d1bc11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  skyboxMaterial: {fileID: 2100000, guid: 4fd401d2f38984dffadb0d7a91746865, type: 2}
-  topColor: {r: 0.93333334, g: 0.27450982, b: 0.27450982, a: 0}
-  botColor: {r: 0.08088237, g: 0.010110296, b: 0.010110296, a: 0}
-  colorChangeDelay: 0.01
---- !u!124 &124775669714186642
-Behaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1660477610746268}
-  m_Enabled: 1
