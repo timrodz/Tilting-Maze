@@ -1,11 +1,19 @@
 ﻿using UnityEngine;
-using UnityEngine.Audio;
+
+[System.Serializable]
+public enum ClipType
+{
+    None,
+    Move_L,
+    Move_R,
+    Trigger_Button,
+    Collision
+}
 
 [System.Serializable]
 public class Sound
 {
-    public string name = "";
-
+    public ClipType clipType = ClipType.None;
     public AudioClip clip = null;
 
     [Range(0f, 1f)]
@@ -13,27 +21,5 @@ public class Sound
 
     [Range(-3, 3)]
     public float pitch = 1;
-
-    public bool loop = false;
-
-    [HideInInspector]
-    public AudioSource source = null;
-
-    public void RandomizePitch(float min, float max)
-    {
-
-        if (min < -3)
-        {
-            min = -3;
-        }
-
-        if (max > 3)
-        {
-            max = 3;
-        }
-
-        source.pitch = Random.Range(min, max);
-
-    }
-
+    public bool loop;
 }

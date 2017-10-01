@@ -34,7 +34,8 @@ public static class VectorDirection
                 resultingVector = Vector3.zero;
                 break;
         }
-
+        
+        
         return resultingVector;
 
     }

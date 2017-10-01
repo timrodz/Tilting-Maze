@@ -7,15 +7,13 @@ public class CameraController : MonoBehaviour
     public static CameraController Instance { get; private set; }
 
     [Header("Camera Easing")]
-    [SerializeField] private Ease cameraEase;
+    [SerializeField] private Ease m_CameraEase;
 
     [Header("Screen Shake")]
     [RangeAttribute(0.3f, 1f)]
-    [SerializeField] private float shakeDuration = 0.5f;
+    [SerializeField] private float m_ShakeDuration = 0.5f;
 
-    [SerializeField] private Camera mainCamera;
-
-    private Vector3 originalPosition;
+    [SerializeField] private Vector3 m_OriginalPosition;
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.
@@ -36,49 +34,49 @@ public class CameraController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        mainCamera = GetComponent<Camera>();
-        
-        originalPosition = transform.position;
-        
-        // if (null != GameManager.Instance)
-        // {
-            // GameManager.Instance.SetState(GameState.Play);
-        // }
-        
-        // transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 7.5f);
+        m_OriginalPosition = transform.position;
 
-        // ResetPosition();
+        transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 7.5f);
+
+        ResetPosition();
     }
 
-    public void Shake()
+    public static void Shake()
     {
-        StartCoroutine(ShakeController());
+        if (null == CameraController.Instance)
+        {
+            return;
+        }
+
+        CameraController.Instance.StartCoroutine(CameraController.Instance.ShakeController());
     }
 
     private IEnumerator ShakeController()
     {
-        transform.DOShakePosition(shakeDuration);
+        transform.DOShakePosition(m_ShakeDuration);
 
-        yield return new WaitForSeconds(shakeDuration);
+        yield return new WaitForSeconds(m_ShakeDuration);
 
-        transform.DOMove(originalPosition, 0.35f);
+        transform.DOMove(m_OriginalPosition, 0.35f);
     }
-    
-    public void ResetPosition()
+
+    public static void ResetPosition()
     {
-        StartCoroutine(ResetPositionController());
+        if (null == CameraController.Instance)
+        {
+            return;
+        }
+        
+        CameraController.Instance.StartCoroutine(CameraController.Instance.ResetPositionController());
     }
 
     private IEnumerator ResetPositionController()
     {
-        transform.DOMove(originalPosition, 2).SetEase(cameraEase);
+        transform.DOMove(m_OriginalPosition, 2).SetEase(m_CameraEase);
 
         yield return new WaitForSeconds(2);
 
-        if (null != GameManager.Instance)
-        {
-            GameManager.Instance.SetState(GameState.Play);
-        }
+        GameManager.SetState(GameState.Play);
     }
 
 }

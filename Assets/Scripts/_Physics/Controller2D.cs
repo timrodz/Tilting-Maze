@@ -6,7 +6,7 @@ using UnityEngine;
 public class Controller2D : MonoBehaviour
 {
     [Header("Controller2D Variables")]
-    [SerializeField] private LayerMask m_CollisionMask;
+    [SerializeField] protected LayerMask m_CollisionMask;
 
     [SerializeField] private const float SKIN_WIDTH = 0.015f;
     [Range(2, 8)]
@@ -21,7 +21,8 @@ public class Controller2D : MonoBehaviour
     [SerializeField] private RaycastOrigins m_RaycastOrigins;
     [SerializeField] public CollisionInfo m_CollisionInfo;
     
-    [SerializeField] public bool m_CanMove = true;
+    [SerializeField] protected bool m_CanMove = true;
+    [SerializeField] protected bool m_ApplyGravity = true;
 
     // Use this for initialization
     void Start()
@@ -158,6 +159,16 @@ public class Controller2D : MonoBehaviour
     {
         m_BoxCollider2D = GetComponent<BoxCollider2D>();
         CalculateRaySpacing();
+    }
+    
+    public void SetCanMove(bool _CanMove)
+    {
+        m_CanMove = _CanMove;
+    }
+
+    public bool CanMove()
+    {
+        return (m_CanMove);
     }
     
     [System.Serializable]

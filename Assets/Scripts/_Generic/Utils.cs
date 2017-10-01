@@ -69,6 +69,7 @@ public static class Utils
 [System.SerializableAttribute]
 public enum GameState
 {
+    NULL,
     LoadingLevel,
     Play,
     Paused,

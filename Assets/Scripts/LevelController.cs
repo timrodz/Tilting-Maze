@@ -8,22 +8,31 @@ using UnityEngine;
 /// 
 /// Author: Juan Rodriguez
 /// Date: 10/09/2017
+/// Version: 1.0
 /// </summary>
 public class LevelController : MonoBehaviour
 {
-    [SerializeField] private PlayerController2D m_Player;
+    [HideInInspector][SerializeField] public PlayerController2D m_Player;
 
     [SerializeField] public bool m_CanRotate = true;
     [SerializeField] public bool m_RegisterInput = true;
     [SerializeField] private Ease m_RotationEaseType = Ease.OutQuad;
     [SerializeField] private float m_RotationLength = 0.4f;
 
-    private int m_AxisZ = 0;
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
+    void Awake()
+    {
+        Game_Events.Instance.OnPlayerTriggerButtonEnter += OnPlayerTriggerButtonEnter;
+        Game_Events.Instance.OnPlayerTriggerButtonExit += OnPlayerTriggerButtonExit;
+        Game_Events.Instance.TriggerButtonAnimationFinished += TriggerButtonAnimationFinished;
+    }
 
     void Update()
     {
         // Don't do anything if the game's curently paused
-        if (GameManager.Instance.GetState() != GameState.Play || !m_Player || !m_RegisterInput)
+        if (GameManager.GetState() != GameState.Play || !m_Player || !m_RegisterInput)
         {
             return;
         }
@@ -33,7 +42,7 @@ public class LevelController : MonoBehaviour
             m_CanRotate
             // Player can move
             &&
-            (m_Player.m_CanMove)
+            (m_Player.CanMove())
             // Not currently colliding with anything
             &&
             (m_Player.m_CollisionInfo.above || m_Player.m_CollisionInfo.right || m_Player.m_CollisionInfo.below || m_Player.m_CollisionInfo.left)
@@ -68,10 +77,10 @@ public class LevelController : MonoBehaviour
     public IEnumerator Rotate(bool _shouldRotateRight)
     {
         GameManager.Instance.IncrementMoveCount();
-        
-        m_Player.HandleBelowCollision();
 
-        m_Player.m_CanMove = false;
+        m_Player.SetCanMove(false);
+
+        m_Player.ProcessCollisions();
 
         m_CanRotate = false;
 
@@ -99,10 +108,27 @@ public class LevelController : MonoBehaviour
         // yield return new WaitForSeconds(m_RotationLength - wait);
         m_CanRotate = true;
 
-        // yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(0.05f);
 
-        m_Player.m_CanMove = true;
+        m_Player.SetCanMove(true);
 
+    }
+
+    public void OnPlayerTriggerButtonEnter(Vector3 _position)
+    {
+        m_CanRotate = false;
+        m_RegisterInput = false;
+    }
+
+    public void OnPlayerTriggerButtonExit()
+    {
+
+    }
+
+    public void TriggerButtonAnimationFinished()
+    {
+        m_CanRotate = true;
+        m_RegisterInput = true;
     }
 
 }
