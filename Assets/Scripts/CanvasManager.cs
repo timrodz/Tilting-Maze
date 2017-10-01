@@ -9,10 +9,10 @@ public class CanvasManager : MonoBehaviour
     public static CanvasManager Instance { get; private set; }
 
     [Header("Total moves")]
-    public GameObject TotalMovesPanel;
-    public CanvasGroup TotalMovesPanelTransparency;
-    public TextMeshProUGUI totalMovesText;
-    private Vector3 totalMovesPosition;
+    [SerializeField] private GameObject TotalMovesPanel;
+    [SerializeField] public CanvasGroup TotalMovesPanelTransparency;
+    [SerializeField] private TextMeshProUGUI totalMovesText;
+    [SerializeField] private Vector3 totalMovesPosition;
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.
@@ -46,12 +46,27 @@ public class CanvasManager : MonoBehaviour
         Utils.Fade(TotalMovesPanelTransparency, false, 0);
     }
 
-    public void ResetTotalMovesPanelPosition()
+    public static void ResetTotalMovesPanelPosition()
     {
+        if (null == CanvasManager.Instance)
+        {
+            return;
+        }
+        
+        Utils.Fade(CanvasManager.Instance.TotalMovesPanelTransparency, false, 0);
+        
+        CanvasManager.Instance.totalMovesText.rectTransform.DOLocalMove(CanvasManager.Instance.totalMovesPosition, 0);
 
-        Utils.Fade(TotalMovesPanelTransparency, false, 0);
-        totalMovesText.rectTransform.DOLocalMove(totalMovesPosition, 0);
-
+    }
+    
+    public static void SetTotalMovesText(string _text)
+    {
+        if (null == CanvasManager.Instance)
+        {
+            return;
+        }
+        
+        CanvasManager.Instance.totalMovesText.text = _text;
     }
 
 }

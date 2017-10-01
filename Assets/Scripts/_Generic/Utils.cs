@@ -14,7 +14,6 @@ public static class Utils
     /// <returns> the incremented string </returns>
     public static string FindStringAndIncrementNumber(string _stringToFind)
     {
-
         // Find the first parentheses and delete everything
         // that follows after it
         int index = _stringToFind.IndexOf('-');
@@ -31,7 +30,6 @@ public static class Utils
         _stringToFind += (num);
 
         return _stringToFind;
-
     }
 
     /// <summary>
@@ -39,9 +37,8 @@ public static class Utils
     /// </summary>
     /// <param name="_stringToFind"> The string to find </param>
     /// <returns> the incremented string </returns>
-    public static string FindAndIncrementNumberInString(string _stringToFind)
+    public static string FindStringAndReturnIncrementedNumber(string _stringToFind)
     {
-
         // Find all numbers in the string and store it
         string number = Regex.Match(_stringToFind, @"\d+").Value;
 
@@ -49,41 +46,22 @@ public static class Utils
         int num = int.Parse(number) + 1;
 
         return (num.ToString());
-
     }
 
-    public static void Fade(CanvasGroup canvasGroup, bool fadeIn, float duration)
+    public static void Fade(CanvasGroup _canvasGroup, bool _fadeIn, float _duration)
     {
-
-        if (fadeIn)
+        if (_fadeIn)
         {
-
-            canvasGroup.DOFade(1, duration);
-            canvasGroup.blocksRaycasts = true;
-
+            _canvasGroup.DOFade(1, _duration);
+            _canvasGroup.blocksRaycasts = true;
         }
         else
         {
-
-            canvasGroup.DOFade(0, duration);
-            canvasGroup.blocksRaycasts = false;
-
+            _canvasGroup.DOFade(0, _duration);
+            _canvasGroup.blocksRaycasts = false;
         }
 
     }
-
-}
-
-// -------------------------------------------------------------------------------------------
-[System.Serializable]
-public enum Clip
-{
-    moveLeft,
-    moveRight,
-    slide,
-    hit,
-    triggerButton,
-    pause
 
 }
 
@@ -91,6 +69,7 @@ public enum Clip
 [System.SerializableAttribute]
 public enum GameState
 {
+    NULL,
     LoadingLevel,
     Play,
     Paused,

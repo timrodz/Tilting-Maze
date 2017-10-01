@@ -6,15 +6,20 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
+    
+    public bool MUTE = false;
 
-    public Sound[] sounds;
+    [Header("Audio sources")]
+    [SerializeField] private AudioSource m_MusicSource;
+    [SerializeField] private AudioSource m_EffectSource;
+
+    public Sound[] m_Sounds;
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
     void Awake()
     {
-
         // Check if there is another instance of the same type and destroy it
         if (Instance != null & Instance != this)
         {
@@ -24,49 +29,53 @@ public class AudioManager : MonoBehaviour
         Instance = this;
 
         DontDestroyOnLoad(gameObject);
-
-        // Add the audio sources
-        foreach(Sound s in sounds)
-        {
-
-            s.source = gameObject.AddComponent<AudioSource>();
-
-            s.source.clip = s.clip;
-            s.source.volume = s.volume;
-            s.source.pitch = s.pitch;
-            s.source.loop = s.loop;
-
-        }
-
     }
 
-    public void PlayWithRandomPitch(string name, float min, float max)
+    public static void PlayEffect(ClipType _clipType)
     {
-
-        Sound s = Array.Find(sounds, sound => sound.name == name);
-
-        if (s == null)
+        if (AudioManager.Instance.MUTE)
         {
             return;
         }
-
-        s.RandomizePitch(min, max);
-        s.source.Play();
-
+        
+        for (int i = 0; i < AudioManager.Instance.m_Sounds.Length; i++)
+        {
+            if (_clipType == AudioManager.Instance.m_Sounds[i].clipType)
+            {
+                AudioManager.Instance.m_EffectSource.pitch = AudioManager.Instance.m_Sounds[i].pitch;
+                AudioManager.Instance.m_EffectSource.PlayOneShot(AudioManager.Instance.m_Sounds[i].clip, AudioManager.Instance.m_Sounds[i].volume);
+            }
+        }
     }
 
-    public void Play(string name)
+    public static void PlayMusic(ClipType _clipType)
     {
-
-        Sound s = Array.Find(sounds, sound => sound.name == name);
-
-        if (s == null)
+        if (AudioManager.Instance.MUTE)
         {
             return;
         }
-
-        s.source.Play();
-
+        
+        for (int i = 0; i < AudioManager.Instance.m_Sounds.Length; i++)
+        {
+            if (_clipType == AudioManager.Instance.m_Sounds[i].clipType)
+            {
+                AudioManager.Instance.m_EffectSource.loop = AudioManager.Instance.m_Sounds[i].loop;
+                AudioManager.Instance.m_MusicSource.pitch = AudioManager.Instance.m_Sounds[i].pitch;
+                AudioManager.Instance.m_MusicSource.PlayOneShot(AudioManager.Instance.m_Sounds[i].clip, AudioManager.Instance.m_Sounds[i].volume);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Called when the script is loaded or a value is changed in the
+    /// inspector (Called in the editor only).
+    /// </summary>
+    void OnValidate()
+    {
+        if (MUTE)
+        {
+            m_MusicSource.volume = 0;
+        }
     }
 
 }

@@ -7,10 +7,11 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Trigger Button
-  m_Shader: {fileID: 4800000, guid: e21054cb04668ed4f83cd845358c8773, type: 3}
+  m_Shader: {fileID: 4800000, guid: 35adb5a89689c4caba3c3589946f758b, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
