@@ -6,6 +6,10 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -288,3 +292,22 @@ public class GameManager : MonoBehaviour
     }
 
 }
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(GameManager))]
+public class GameManagerEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        if (DrawDefaultInspector())
+        {
+            
+        }
+        
+        if (GUILayout.Button("Complete Level"))
+        {
+            GameManager.CompleteLevel();
+        }
+    }
+}
+#endif

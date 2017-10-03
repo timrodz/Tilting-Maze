@@ -6,23 +6,34 @@ using UnityEngine;
 
 public class NextLevelAnimator : MonoBehaviour
 {
-    public TextMeshProUGUI text;
+    [SerializeField] private TextMeshProUGUI m_Text;
+    [SerializeField] private RectTransform m_RectTransform;
 
     public float duration = 0.5f;
 
     public Ease EaseType;
 
-    private const int MAX_VALUE = 2500;
+    [SerializeField] private int MAX_VERTICAL_OFFSET = 2500;
 
-    
     void Awake()
     {
         Game_Events.Instance.OnLevelComplete += OnLevelComplete;
+
+        if (null == m_Text)
+        {
+            m_Text = GetComponentInChildren<TextMeshProUGUI>();
+        }
+
+        if (null == m_RectTransform)
+        {
+            m_RectTransform = GetComponent<RectTransform>();
+        }
     }
-    
+
     void Start()
     {
-        transform.DOScale(Vector3.zero, 0);
+        m_RectTransform.localScale = Vector3.zero;
+        m_Text.text = (GameManager.Instance.GetLevelID() + 1).ToString();
     }
 
     public void ChangeLevelText(string value)
@@ -31,43 +42,48 @@ public class NextLevelAnimator : MonoBehaviour
     }
 
     private IEnumerator Animate(string value)
-    {
-        transform.localScale = Vector3.one;
-        transform.DOMoveY(MAX_VALUE, 0);
+    {        
+        Debug.Log("Animating new level text: #" + value.ToString());
+        
+        m_RectTransform.localScale = Vector3.one;
+        m_RectTransform.DOAnchorPosY(MAX_VERTICAL_OFFSET, 0);
 
         yield return new WaitForSeconds(2.75f);
 
         // Show the text
-        // transform.DOScale(1, duration).SetEase(EaseType);
-        transform.DOLocalMove(Vector3.zero, duration).SetEase(EaseType);
+        m_RectTransform.DOAnchorPosY(0, duration).SetEase(EaseType);
 
         yield return new WaitForSeconds(duration * 2);
 
         // Move it downwards
-        transform.DOMoveY(-MAX_VALUE, duration).SetEase(EaseType);
+        m_RectTransform.DOAnchorPosY(-MAX_VERTICAL_OFFSET, duration).SetEase(EaseType).OnComplete(() =>
+        {
+            // Move it upwards and change the value
+            m_RectTransform.anchoredPosition = new Vector2(0, MAX_VERTICAL_OFFSET);
+            // m_RectTransform.DOAnchorPosY(MAX_VALUE, duration).SetEase(EaseType);
+        });
 
-        yield return new WaitForSeconds(duration * 0.5f);
+        yield return new WaitForSeconds(duration * 2);
 
         Debug.Log("Animating new level text: #" + value.ToString());
-
-        // Move it upwards and change the value
-        transform.DOMoveY(MAX_VALUE, 0);
-        text.text = value;
+        
+        Debug.Log("Position: " + m_RectTransform.anchoredPosition.y);
+        m_Text.text = value;
 
         // Move the new text to the center
-        transform.DOLocalMove(Vector3.zero, duration).SetEase(EaseType);
+        m_RectTransform.DOAnchorPosY(0, duration).SetEase(EaseType);
 
         yield return new WaitForSeconds(duration * 2f);
 
         // Move it downwards
-        transform.DOMoveY(-MAX_VALUE, duration).SetEase(EaseType);
+        m_RectTransform.DOAnchorPosY(-MAX_VERTICAL_OFFSET, duration).SetEase(EaseType);
 
     }
-    
+
     public void OnLevelComplete(int _levelID)
     {
-        string result = (_levelID == -1) ? ("<size=60>More levels to come!") : (_levelID.ToString());
-        
+        string result = (_levelID == -1) ? ("<size=60>More levels to come!") : ((_levelID + 1).ToString());
+
         StartCoroutine(Animate(result));
     }
 
