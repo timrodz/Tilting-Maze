@@ -14,27 +14,24 @@ public class NextLevelAnimator : MonoBehaviour
 
     private const int MAX_VALUE = 2500;
 
-    /// <summary>
-    /// Start is called on the frame when a script is enabled just before
-    /// any of the Update methods is called the first time.
-    /// </summary>
+    
+    void Awake()
+    {
+        Game_Events.Instance.OnLevelComplete += OnLevelComplete;
+    }
+    
     void Start()
     {
-
         transform.DOScale(Vector3.zero, 0);
-
     }
 
     public void ChangeLevelText(string value)
     {
-
         StartCoroutine(Animate(value));
-
     }
 
     private IEnumerator Animate(string value)
     {
-
         transform.localScale = Vector3.one;
         transform.DOMoveY(MAX_VALUE, 0);
 
@@ -65,6 +62,13 @@ public class NextLevelAnimator : MonoBehaviour
         // Move it downwards
         transform.DOMoveY(-MAX_VALUE, duration).SetEase(EaseType);
 
+    }
+    
+    public void OnLevelComplete(int _levelID)
+    {
+        string result = (_levelID == -1) ? ("<size=60>More levels to come!") : (_levelID.ToString());
+        
+        StartCoroutine(Animate(result));
     }
 
 }

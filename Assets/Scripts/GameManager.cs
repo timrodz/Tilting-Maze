@@ -20,7 +20,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameState m_LastState = GameState.LoadingLevel;
     [SerializeField] private static int m_MoveCount;
 
-    // Level ending
     [SerializeField] private bool m_IsLevelComplete = false;
 
     // -------------------------------------------------------------------------------------------
@@ -107,21 +106,26 @@ public class GameManager : MonoBehaviour
     /// Show the moves it took to complete
     /// And the prompt for loading the next level
     /// </summary>
-    public void CompleteLevel()
+    public static void CompleteLevel()
     {
+        if (null == GameManager.Instance)
+        {
+            return;
+        }
+        
         // AnalyticsManager.Instance.RegisterCustomEventLevelComplete(m_MoveCount, m_ElapsedLevelTime);
 
         DOTween.KillAll();
 
-        StopAllCoroutines();
+        GameManager.Instance.StopAllCoroutines();
 
-        m_ElapsedLevelTime = 0.0f;
+        GameManager.Instance.m_ElapsedLevelTime = 0.0f;
 
         SetState(GameState.LevelComplete);
 
         AudioManager.PlayEffect(ClipType.Trigger_Button);
 
-        LoadNextLevel();
+        GameManager.Instance.LoadNextLevel();
     }
 
     /// <summary>
@@ -134,7 +138,7 @@ public class GameManager : MonoBehaviour
         // Get the current level's string and load the next level based on hierarchy
         string nextLevelName = Utils.FindStringAndIncrementNumber(currentLevel.name);
 
-        string levelNumber = Utils.FindStringAndReturnIncrementedNumber(currentLevel.name);
+        string stringLevelNumber = Utils.FindStringAndReturnIncrementedNumber(currentLevel.name);
 
         // Find the level prefab by loading the resources directly
         Object nextLevelPrefab = Resources.Load(nextLevelName);
@@ -145,7 +149,7 @@ public class GameManager : MonoBehaviour
         if (nextLevelPrefab)
         {
             int levelID = 0;
-            if (System.Int32.TryParse(levelNumber, out levelID))
+            if (System.Int32.TryParse(stringLevelNumber, out levelID))
             {
                 SetLevelID(levelID);
             }
@@ -153,13 +157,15 @@ public class GameManager : MonoBehaviour
             {
                 Debug.Log(">>>> ERROR - Could not set level ID");
             }
-
-            FindObjectOfType<NextLevelAnimator>().ChangeLevelText(levelNumber);
+            
+            Game_Events.Instance.Event_LevelComplete(levelID);
+            // FindObjectOfType<NextLevelAnimator>().ChangeLevelText(stringLevelNumber);
 
         }
         // Otherwise, go back to the menu
         else
         {
+            Game_Events.Instance.Event_LevelComplete(-1);
             FindObjectOfType<NextLevelAnimator>().ChangeLevelText("<size=100>More levels to come!");
         }
     }

@@ -26,14 +26,21 @@ public class Game_Events : MonoBehaviour
     }
 
     // All events used by this model
+    public event OnLevelCompleteDelegate OnLevelComplete;
     public event OnPlayerTriggerButtonEnterDelegate OnPlayerTriggerButtonEnter;
     public event TriggerButtonAnimationFinishedDelegate TriggerButtonAnimationFinished;
     public event OnPlayerTriggerButtonExitDelegate OnPlayerTriggerButtonExit;
 
     // Delegates
+    public delegate void OnLevelCompleteDelegate(int _levelID);
     public delegate void OnPlayerTriggerButtonEnterDelegate(Vector3 _position);
     public delegate void TriggerButtonAnimationFinishedDelegate();
     public delegate void OnPlayerTriggerButtonExitDelegate();
+
+    public void Event_LevelComplete(int _levelID)
+    {
+        OnLevelComplete(_levelID);
+    }
 
     public void Event_PlayerTriggerEnter(Vector3 _position)
     {

@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof (BoxCollider2D))]
-[RequireComponent(typeof (Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class Interactable : MonoBehaviour
 {
-	[Header("Components")]
+    [Header("Components")]
     [SerializeField] private BoxCollider2D m_Collider;
-	[SerializeField] private Rigidbody2D m_Rigidbody;
-	
-	[Header("Variables")]
-	[SerializeField] private bool m_IsTrigger = true;
+    [SerializeField] private Rigidbody2D m_Rigidbody;
+
+    [Header("Variables")]
+    [SerializeField] private bool m_IsTrigger = true;
+    [SerializeField] private bool m_IsKinematic = false;
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.
@@ -20,18 +21,37 @@ public class Interactable : MonoBehaviour
         {
             m_Collider = GetComponent<BoxCollider2D>();
         }
-		
-		if (null == m_Rigidbody)
-		{
-			m_Rigidbody = GetComponent<Rigidbody2D>();
-		}
-		
-		// Force the collider to be trigger
-		m_Collider.isTrigger = m_IsTrigger;
-		
-		m_Rigidbody.isKinematic = true;
-		m_Rigidbody.gravityScale = 0;
-		m_Rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+
+        if (null == m_Rigidbody)
+        {
+            m_Rigidbody = GetComponent<Rigidbody2D>();
+        }
+        
+        InitializePhysics();
+    }
+
+    private void InitializePhysics()
+    {
+        if ((null == m_Collider) || (null == m_Rigidbody))
+        {
+            return;
+        }
+        
+        // Force the collider to be trigger
+        m_Collider.isTrigger = m_IsTrigger;
+
+        m_Rigidbody.isKinematic = m_IsKinematic;
+        
+        if (m_IsKinematic)
+        {
+            m_Rigidbody.gravityScale = 0.0f;
+            m_Rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+        }
+        else
+        {
+            m_Rigidbody.gravityScale = 1.0f;
+            m_Rigidbody.constraints = RigidbodyConstraints2D.None;
+        }
     }
 
     /// <summary>
@@ -40,8 +60,8 @@ public class Interactable : MonoBehaviour
     /// </summary>
     /// <param name="other">The other Collider2D involved in this collision.</param>
     protected virtual void OnTriggerEnter2D(Collider2D other)
-    {
-		Debug.LogFormat("-> OnTriggerEnter2D: ({0})::({1})", this.gameObject.name, other.gameObject.name);
+    {   
+        Debug.LogFormat("-> OnTriggerEnter2D: ({0})::({1})", this.gameObject.name, other.gameObject.name);
     }
 
     /// <summary>
@@ -51,6 +71,15 @@ public class Interactable : MonoBehaviour
     /// <param name="other">The other Collider2D involved in this collision.</param>
     protected virtual void OnTriggerExit2D(Collider2D other)
     {
-		Debug.LogFormat("-> OnTriggerExit2D: ({0})::({1})", this.gameObject.name, other.gameObject.name);
+        Debug.LogFormat("-> OnTriggerExit2D: ({0})::({1})", this.gameObject.name, other.gameObject.name);
+    }
+    
+    /// <summary>
+    /// Called when the script is loaded or a value is changed in the
+    /// inspector (Called in the editor only).
+    /// </summary>
+    void OnValidate()
+    {
+        InitializePhysics();
     }
 }

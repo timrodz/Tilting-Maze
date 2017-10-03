@@ -67,15 +67,15 @@ public class TriggerButton : Interactable
         {
             return;
         }
-        
+
         if (!other.CompareTag("Player"))
         {
             return;
         }
 
-        Game_Events.Instance.Event_PlayerTriggerEnter(transform.position);
-        
         base.OnTriggerEnter2D(other);
+
+        Game_Events.Instance.Event_PlayerTriggerEnter(transform.position);
 
         StartCoroutine(LevelControllerHandler());
 
@@ -91,7 +91,7 @@ public class TriggerButton : Interactable
     /// </summary>
     /// <param name="other">The other Collider2D involved in this collision.</param>
     protected override void OnTriggerExit2D(Collider2D other)
-    {        
+    {
         Game_Events.Instance.Event_PlayerTriggerExit();
     }
 
