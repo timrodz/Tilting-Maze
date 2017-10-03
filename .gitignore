@@ -34,4 +34,3 @@ sysinfo.txt
 # These files should not be ignored!
 !XInputDotNetPure.dll
 !XInputInterface.dll
-Assets/Graphics/Materials/Skybox\.mat
