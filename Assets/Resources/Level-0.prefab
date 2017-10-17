@@ -913,7 +913,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1691216165874624}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: -5, z: 0}
+  m_LocalPosition: {x: 1, y: -5, z: 0}
   m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_Children: []
   m_Father: {fileID: 4232583734626630}
@@ -3285,68 +3285,68 @@ MonoBehaviour:
   m_IsTrigger: 1
   m_IsKinematic: 1
   m_GizmosColor: {r: 0.1397059, g: 1, b: 1, a: 1}
-  m_TriggerEndAction: 0
+  m_TriggerEndAction: 1
   m_BarrierList:
   - m_GameObject: {fileID: 0}
     m_MovementDirection: 0
     m_MovementDistance: 1
+    m_ShouldDeleteFromList: 0
+    m_AnimationSettings:
+      duration: 1
+      delay: 0
+      ease: 6
     m_OriginalPosition: {x: -4, y: 0, z: 0}
     m_FinalPosition: {x: -4, y: 1, z: 0}
     m_FinalDirection: {x: 0, y: 0, z: 0}
     m_HasMoved: 0
+  - m_GameObject: {fileID: 0}
+    m_MovementDirection: 0
+    m_MovementDistance: 1
     m_ShouldDeleteFromList: 0
     m_AnimationSettings:
       duration: 1
       delay: 0
       ease: 6
-  - m_GameObject: {fileID: 0}
-    m_MovementDirection: 0
-    m_MovementDistance: 1
     m_OriginalPosition: {x: -1, y: 1.5, z: 0}
     m_FinalPosition: {x: -1, y: 2.5, z: 0}
     m_FinalDirection: {x: 0, y: 0, z: 0}
     m_HasMoved: 0
+  - m_GameObject: {fileID: 0}
+    m_MovementDirection: 2
+    m_MovementDistance: 1
     m_ShouldDeleteFromList: 0
     m_AnimationSettings:
       duration: 1
       delay: 0
       ease: 6
-  - m_GameObject: {fileID: 0}
-    m_MovementDirection: 2
-    m_MovementDistance: 1
     m_OriginalPosition: {x: 2.5, y: 2, z: 0}
     m_FinalPosition: {x: 3.5, y: 2, z: 0}
     m_FinalDirection: {x: 0, y: 0, z: 0}
     m_HasMoved: 0
+  - m_GameObject: {fileID: 0}
+    m_MovementDirection: 3
+    m_MovementDistance: 1
     m_ShouldDeleteFromList: 0
     m_AnimationSettings:
       duration: 1
       delay: 0
       ease: 6
-  - m_GameObject: {fileID: 0}
-    m_MovementDirection: 3
-    m_MovementDistance: 1
     m_OriginalPosition: {x: -3.5, y: 2, z: 0}
     m_FinalPosition: {x: -4.5, y: 2, z: 0}
     m_FinalDirection: {x: 0, y: 0, z: 0}
     m_HasMoved: 0
-    m_ShouldDeleteFromList: 0
-    m_AnimationSettings:
-      duration: 1
-      delay: 0
-      ease: 6
   - m_GameObject: {fileID: 0}
     m_MovementDirection: 3
     m_MovementDistance: 1
-    m_OriginalPosition: {x: 6, y: 1, z: 0}
-    m_FinalPosition: {x: 5, y: 1, z: 0}
-    m_FinalDirection: {x: 0, y: 0, z: 0}
-    m_HasMoved: 0
     m_ShouldDeleteFromList: 0
     m_AnimationSettings:
       duration: 0
       delay: 0
       ease: 0
+    m_OriginalPosition: {x: 6, y: 1, z: 0}
+    m_FinalPosition: {x: 5, y: 1, z: 0}
+    m_FinalDirection: {x: 0, y: 0, z: 0}
+    m_HasMoved: 0
 --- !u!114 &114717068726658540
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3363,44 +3363,44 @@ MonoBehaviour:
   m_IsTrigger: 1
   m_IsKinematic: 1
   m_GizmosColor: {r: 1, g: 0, b: 1, a: 1}
-  m_TriggerEndAction: 0
+  m_TriggerEndAction: 1
   m_BarrierList:
   - m_GameObject: {fileID: 1608965509877806}
     m_MovementDirection: 2
     m_MovementDistance: 1
+    m_ShouldDeleteFromList: 0
+    m_AnimationSettings:
+      duration: 0.5
+      delay: 0
+      ease: 30
     m_OriginalPosition: {x: 5, y: -3.5, z: 0}
     m_FinalPosition: {x: 6, y: -3.5, z: 0}
     m_FinalDirection: {x: 1, y: 0, z: 0}
     m_HasMoved: 0
-    m_ShouldDeleteFromList: 0
-    m_AnimationSettings:
-      duration: 1
-      delay: 0
-      ease: 6
   - m_GameObject: {fileID: 1121171037808364}
     m_MovementDirection: 1
     m_MovementDistance: 1
+    m_ShouldDeleteFromList: 0
+    m_AnimationSettings:
+      duration: 0.8
+      delay: 0
+      ease: 6
     m_OriginalPosition: {x: -2, y: -3, z: 0}
     m_FinalPosition: {x: -2, y: -4, z: 0}
     m_FinalDirection: {x: 0, y: -1, z: 0}
     m_HasMoved: 0
-    m_ShouldDeleteFromList: 0
-    m_AnimationSettings:
-      duration: 1
-      delay: 0
-      ease: 6
   - m_GameObject: {fileID: 1178131793883476}
     m_MovementDirection: 1
     m_MovementDistance: 1
+    m_ShouldDeleteFromList: 0
+    m_AnimationSettings:
+      duration: 0.75
+      delay: 0
+      ease: 6
     m_OriginalPosition: {x: 4, y: -2, z: 0}
     m_FinalPosition: {x: 4, y: -3, z: 0}
     m_FinalDirection: {x: 0, y: -1, z: 0}
     m_HasMoved: 0
-    m_ShouldDeleteFromList: 0
-    m_AnimationSettings:
-      duration: 1
-      delay: 0
-      ease: 6
 --- !u!114 &114751646525190058
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3459,32 +3459,32 @@ MonoBehaviour:
   m_IsTrigger: 1
   m_IsKinematic: 1
   m_GizmosColor: {r: 1, g: 0.90507096, b: 0.1397059, a: 1}
-  m_TriggerEndAction: 0
+  m_TriggerEndAction: 1
   m_BarrierList:
   - m_GameObject: {fileID: 1291663136626668}
     m_MovementDirection: 0
     m_MovementDistance: 1
-    m_OriginalPosition: {x: -2.5, y: -2, z: 0}
-    m_FinalPosition: {x: -2.5, y: -1, z: 0}
-    m_FinalDirection: {x: 0, y: 1, z: 0}
-    m_HasMoved: 0
     m_ShouldDeleteFromList: 0
     m_AnimationSettings:
       duration: 0.75
       delay: 0
       ease: 6
+    m_OriginalPosition: {x: -2.5, y: -2, z: 0}
+    m_FinalPosition: {x: -2.5, y: -1, z: 0}
+    m_FinalDirection: {x: 0, y: 1, z: 0}
+    m_HasMoved: 0
   - m_GameObject: {fileID: 1603337785989794}
     m_MovementDirection: 0
     m_MovementDistance: 2
-    m_OriginalPosition: {x: -3, y: -2, z: 0}
-    m_FinalPosition: {x: -3, y: 0, z: 0}
-    m_FinalDirection: {x: 0, y: 2, z: 0}
-    m_HasMoved: 0
     m_ShouldDeleteFromList: 0
     m_AnimationSettings:
       duration: 0.5
       delay: 0
       ease: 6
+    m_OriginalPosition: {x: -3, y: -2, z: 0}
+    m_FinalPosition: {x: -3, y: 0, z: 0}
+    m_FinalDirection: {x: 0, y: 2, z: 0}
+    m_HasMoved: 0
 --- !u!114 &114966651647129180
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -12,11 +12,14 @@ public class Interactable : MonoBehaviour
     [SerializeField] private bool m_IsTrigger = true;
     [SerializeField] private bool m_IsKinematic = false;
 
+    private Vector3 pos;
+
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
     void Awake()
     {
+        pos = transform.position;
         if (null == m_Collider)
         {
             m_Collider = GetComponent<BoxCollider2D>();
@@ -52,6 +55,8 @@ public class Interactable : MonoBehaviour
             m_Rigidbody.gravityScale = 1.0f;
             m_Rigidbody.constraints = RigidbodyConstraints2D.None;
         }
+
+        transform.position = pos;
     }
 
     /// <summary>

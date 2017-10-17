@@ -171,14 +171,15 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
         if (nextLevelPrefab != null)
         {
             // Create the new room and fade it to 0
-            GameObject nextLevel = (GameObject) Instantiate(nextLevelPrefab, Vector3.zero, Quaternion.identity);
+            GameObject nextLevel = (GameObject) Instantiate(nextLevelPrefab, new Vector3(0, 0, 1000), Quaternion.identity);
             nextLevel.name = nextLevelName;
-            nextLevel.transform.localScale = Vector3.zero;
+            // nextLevel.transform.localScale = Vector3.zero;
 
             yield return new WaitForSeconds(3f);
 
             // Scale it up and rotate it 360 degrees clockwise
-            nextLevel.transform.DOScale(Vector3.one, 3f).SetEase(Ease.InOutSine);
+            nextLevel.transform.DOLocalMoveZ(0, 3f).SetEase(Ease.InOutSine);
+            // nextLevel.transform.DOScale(Vector3.one, 3f).SetEase(Ease.InOutSine);
             nextLevel.transform.DOLocalRotate(Vector3.forward * -360, 3f, RotateMode.LocalAxisAdd).SetEase(Ease.InOutSine);
 
             yield return new WaitForSeconds(3f);
@@ -190,7 +191,6 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
             StartLevel();
 
             SetState(GameState.Play);
-
         }
         else
         {
@@ -274,6 +274,12 @@ public class GameManagerEditor : Editor
         if (GUILayout.Button("Complete Level"))
         {
             GameManager.CompleteLevel();
+        }
+
+        if (GUILayout.Button("Load level-1"))
+        {
+               Object nextLevelPrefab = Resources.Load("level-1");
+            GameObject nextLevel = (GameObject) Instantiate(nextLevelPrefab, Vector3.zero, Quaternion.identity);
         }
     }
 }
