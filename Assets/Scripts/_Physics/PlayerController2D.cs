@@ -41,6 +41,16 @@ public class PlayerController2D : Controller2D
 
         InitializePhysics();
     }
+    
+    /// <summary>
+    /// This function is called when the behaviour becomes disabled or inactive.
+    /// </summary>
+    void OnDisable()
+    {
+        Game_Events.Instance.OnPlayerTriggerButtonEnter -= OnPlayerTriggerButtonEnter;
+        Game_Events.Instance.OnPlayerTriggerButtonExit -= OnPlayerTriggerButtonExit;
+        Game_Events.Instance.TriggerButtonAnimationFinished -= TriggerButtonAnimationFinished;
+    }
 
     private void InitializePhysics()
     {

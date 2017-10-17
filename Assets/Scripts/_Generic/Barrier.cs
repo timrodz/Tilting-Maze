@@ -28,7 +28,7 @@ public class MovableBarrier
     {
         m_FinalDirection = Transform.TransformDirection(MovementDirection * MovementDistance);
         
-        OriginalPosition = Transform.position;
+        OriginalPosition = new Vector3(Transform.position.x, Transform.position.y, 0);
         
         FinalPosition = OriginalPosition + FinalDirection;
     }
