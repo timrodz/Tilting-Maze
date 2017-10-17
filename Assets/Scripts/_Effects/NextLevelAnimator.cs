@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class NextLevelAnimator : MonoBehaviour
 {
+    [SerializeField] private CanvasGroup m_Transparency;
     [SerializeField] private TextMeshProUGUI m_Text;
     [SerializeField] private RectTransform m_RectTransform;
 
@@ -18,6 +19,11 @@ public class NextLevelAnimator : MonoBehaviour
     void Awake()
     {
         Game_Events.Instance.OnLevelComplete += OnLevelComplete;
+
+        if (null == m_Transparency)
+        {
+            m_Transparency = GetComponent<CanvasGroup>();
+        }
 
         if (null == m_Text)
         {
@@ -32,6 +38,7 @@ public class NextLevelAnimator : MonoBehaviour
 
     void Start()
     {
+        m_Transparency.alpha = 1;
         m_RectTransform.localScale = Vector3.zero;
         m_Text.text = (GameManager.Instance.GetLevelID() + 1).ToString();
     }
@@ -60,7 +67,6 @@ public class NextLevelAnimator : MonoBehaviour
         {
             // Move it upwards and change the value
             m_RectTransform.anchoredPosition = new Vector2(0, MAX_VERTICAL_OFFSET);
-            // m_RectTransform.DOAnchorPosY(MAX_VALUE, duration).SetEase(EaseType);
         });
 
         yield return new WaitForSeconds(duration * 2);
@@ -77,7 +83,6 @@ public class NextLevelAnimator : MonoBehaviour
 
         // Move it downwards
         m_RectTransform.DOAnchorPosY(-MAX_VERTICAL_OFFSET, duration).SetEase(EaseType);
-
     }
 
     public void OnLevelComplete(int _levelID)

@@ -65,6 +65,23 @@ public static class Utils
 
 }
 
+[System.Serializable]
+public class AnimationSettings
+{
+    [Range(0.0f, 2.0f)]
+    [SerializeField] public float duration = 1.0f;
+    [Range(0.0f, 4.0f)]
+    [SerializeField] public float delay = 0.0f;
+    [SerializeField] public Ease ease = Ease.OutQuad;
+}
+
+[System.Serializable]
+public enum EndAction
+    {
+        None,
+        Destroy
+    }
+
 // -------------------------------------------------------------------------------------------
 [System.SerializableAttribute]
 public enum GameState

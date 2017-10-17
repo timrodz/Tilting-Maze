@@ -10,9 +10,8 @@ using UnityEngine.UI;
 using UnityEditor;
 #endif
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviourSingleton<GameManager>
 {
-    public static GameManager Instance { get; private set; }
 
     public bool USE_CANVAS_MANAGER;
 
@@ -27,21 +26,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool m_IsLevelComplete = false;
 
     // -------------------------------------------------------------------------------------------
-
-    /// <summary>
-    /// Awake is called when the script instance is being loaded.
-    /// </summary>
-    void Awake()
-    {
-        if (Instance != null & Instance != this)
-        {
-            Destroy(gameObject);
-        }
-
-        Instance = this;
-
-        DontDestroyOnLoad(gameObject);
-    }
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -100,7 +84,7 @@ public class GameManager : MonoBehaviour
         m_IsLevelComplete = false;
 
         CanvasManager.ResetTotalMovesPanelPosition();
-        
+
         // IMPORTANT
         // Sets the state to "Play" in the camera controller script
     }
@@ -112,11 +96,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public static void CompleteLevel()
     {
-        if (null == GameManager.Instance)
-        {
-            return;
-        }
-        
         // AnalyticsManager.Instance.RegisterCustomEventLevelComplete(m_MoveCount, m_ElapsedLevelTime);
 
         DOTween.KillAll();
@@ -161,7 +140,7 @@ public class GameManager : MonoBehaviour
             {
                 Debug.Log(">>>> ERROR - Could not set level ID");
             }
-            
+
             Game_Events.Instance.Event_LevelComplete(levelID);
             // FindObjectOfType<NextLevelAnimator>().ChangeLevelText(stringLevelNumber);
 
@@ -191,7 +170,6 @@ public class GameManager : MonoBehaviour
 
         if (nextLevelPrefab != null)
         {
-
             // Create the new room and fade it to 0
             GameObject nextLevel = (GameObject) Instantiate(nextLevelPrefab, Vector3.zero, Quaternion.identity);
             nextLevel.name = nextLevelName;
@@ -247,7 +225,6 @@ public class GameManager : MonoBehaviour
         {
             AudioManager.PlayEffect(ClipType.Move_R);
         }
-
     }
 
     /// <summary>
@@ -256,22 +233,12 @@ public class GameManager : MonoBehaviour
     /// <param name="state"></param>
     public static void SetState(GameState state)
     {
-        if (null == GameManager.Instance)
-        {
-            return;
-        }
-        
         GameManager.Instance.m_LastState = GameManager.Instance.m_State;
         GameManager.Instance.m_State = state;
     }
 
     public static GameState GetState()
     {
-        if (null == GameManager.Instance)
-        {
-            return GameState.NULL;
-        }
-        
         return (GameManager.Instance.m_State);
     }
 
@@ -301,9 +268,9 @@ public class GameManagerEditor : Editor
     {
         if (DrawDefaultInspector())
         {
-            
+
         }
-        
+
         if (GUILayout.Button("Complete Level"))
         {
             GameManager.CompleteLevel();

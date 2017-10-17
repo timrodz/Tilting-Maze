@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+public class AudioManager : MonoBehaviourSingleton<AudioManager>
 {
-    public static AudioManager Instance { get; private set; }
     
     public bool MUTE = false;
 
@@ -14,22 +13,6 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource m_EffectSource;
 
     public Sound[] m_Sounds;
-
-    /// <summary>
-    /// Awake is called when the script instance is being loaded.
-    /// </summary>
-    void Awake()
-    {
-        // Check if there is another instance of the same type and destroy it
-        if (Instance != null & Instance != this)
-        {
-            Destroy(gameObject);
-        }
-
-        Instance = this;
-
-        DontDestroyOnLoad(gameObject);
-    }
 
     public static void PlayEffect(ClipType _clipType)
     {

@@ -28,14 +28,14 @@ public class Game_Events : MonoBehaviour
     // All events used by this model
     public event OnLevelCompleteDelegate OnLevelComplete;
     public event OnPlayerTriggerButtonEnterDelegate OnPlayerTriggerButtonEnter;
-    public event TriggerButtonAnimationFinishedDelegate TriggerButtonAnimationFinished;
     public event OnPlayerTriggerButtonExitDelegate OnPlayerTriggerButtonExit;
+    public event TriggerButtonAnimationFinishedDelegate TriggerButtonAnimationFinished;
 
     // Delegates
     public delegate void OnLevelCompleteDelegate(int _levelID);
     public delegate void OnPlayerTriggerButtonEnterDelegate(Vector3 _position);
-    public delegate void TriggerButtonAnimationFinishedDelegate();
     public delegate void OnPlayerTriggerButtonExitDelegate();
+    public delegate void TriggerButtonAnimationFinishedDelegate();
 
     public void Event_LevelComplete(int _levelID)
     {
@@ -47,14 +47,14 @@ public class Game_Events : MonoBehaviour
         OnPlayerTriggerButtonEnter(_position);
     }
 
-    public void Event_TriggerButtonAnimationFinished()
-    {
-        TriggerButtonAnimationFinished();
-    }
-
     public void Event_PlayerTriggerExit()
     {
         OnPlayerTriggerButtonExit();
+    }
+    
+    public void Event_TriggerButtonAnimationFinished()
+    {
+        TriggerButtonAnimationFinished();
     }
 
 }

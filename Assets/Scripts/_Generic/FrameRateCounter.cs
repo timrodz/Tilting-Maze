@@ -18,10 +18,10 @@ public class FrameRateCounter : MonoBehaviour
         QualitySettings.vSyncCount = 0;
         SetFrameRate();
 
-        if (!Debug.isDebugBuild)
-        {
+        // if (!Debug.isDebugBuild)
+        // {
             Destroy(this.gameObject);
-        }
+        // }
     }
 
     public void SetFrameRate()

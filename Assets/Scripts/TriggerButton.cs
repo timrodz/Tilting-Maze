@@ -14,21 +14,15 @@ using UnityEngine;
 public class TriggerButton : Interactable
 {
 
-    public enum EndAction
-    {
-        None,
-        Destroy
-    }
-
     [Header("Visual debugging")]
     [SerializeField] private Color m_GizmosColor = Color.white;
 
     [Header("Barrier related")]
-    [Range(0.25f, 2f)]
-    [SerializeField] private float m_AnimationDuration = 1f;
-    [SerializeField] private Ease m_AnimationEase;
-    [SerializeField] private EndAction m_AnimationEndAction = EndAction.Destroy;
+    // [SerializeField] private AnimationSettings m_AnimationSettings;
+    [SerializeField] public EndAction m_TriggerEndAction = EndAction.None;
     [SerializeField] private List<MovableBarrier> m_BarrierList = new List<MovableBarrier>(1);
+
+    private Sequence m_AnimationSequence;
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -41,18 +35,15 @@ public class TriggerButton : Interactable
 
     void InitializeBarrierPositions()
     {
-        for (int i = 0; i < m_BarrierList.Count; i++)
+        foreach (MovableBarrier barrier in m_BarrierList)
         {
-            if (null == m_BarrierList[i].GameObject())
+            // Do not initialize positions if the object does not exist
+            if (null == barrier.GameObject)
             {
                 continue;
             }
-
-            m_BarrierList[i].SetOriginalPosition(m_BarrierList[i].Transform().position);
-
-            m_BarrierList[i].SetFinalPosition(m_BarrierList[i].GetOriginalPosition() + m_BarrierList[i].GetFinalDirection());
-
-            // Debug.LogFormat("Barrier ({0}), Original Position::{1}--Final Position::{2}", m_BarrierList[i].GameObject().name, m_BarrierList[i].GetOriginalPosition(), m_BarrierList[i].GetFinalPosition());
+            
+            barrier.Setup();
         }
     }
 
@@ -77,12 +68,10 @@ public class TriggerButton : Interactable
 
         Game_Events.Instance.Event_PlayerTriggerEnter(transform.position);
 
-        StartCoroutine(LevelControllerHandler());
+        AudioManager.PlayEffect(ClipType.Trigger_Button);
 
-        for (int i = 0; i < m_BarrierList.Count; i++)
-        {
-            StartCoroutine(MoveBarrier(m_BarrierList[i]));
-        }
+        AnimateBarriers();
+
     }
 
     /// <summary>
@@ -92,46 +81,52 @@ public class TriggerButton : Interactable
     /// <param name="other">The other Collider2D involved in this collision.</param>
     protected override void OnTriggerExit2D(Collider2D other)
     {
-        Game_Events.Instance.Event_PlayerTriggerExit();
-    }
-
-    private IEnumerator LevelControllerHandler()
-    {
-        yield return new WaitForSeconds(m_AnimationDuration);
-
-        Game_Events.Instance.Event_TriggerButtonAnimationFinished();
-    }
-
-    private IEnumerator MoveBarrier(MovableBarrier barrier)
-    {
-        Vector3 finalPosition = (!barrier.HasMoved()) ? barrier.GetFinalPosition() : barrier.GetOriginalPosition();
-
-        barrier.Transform().DOLocalMove(finalPosition, m_AnimationDuration).SetEase(m_AnimationEase);
-
-        // Give a bit of delay in case of any glitches
-        yield return new WaitForSeconds(m_AnimationDuration);
-
-        Debug.LogFormat("----> Moving barrier ({0}) to position::{1}", barrier.GameObject().name, finalPosition);
-
-        switch (m_AnimationEndAction)
+        if (m_TriggerEndAction != EndAction.Destroy)
         {
-            case EndAction.None:
-                {
-                    barrier.SetHasMoved(!barrier.HasMoved());
+            Game_Events.Instance.Event_PlayerTriggerExit();
+        }
+    }
 
-                    if (barrier.ShouldDeleteFromList())
-                    {
-                        m_BarrierList.Remove(barrier);
-                    }
-                }
-                break;
-            case EndAction.Destroy:
-                {
-                    Destroy(this.gameObject);
-                }
-                break;
+    private void AnimateBarriers()
+    {
+        if (null != m_AnimationSequence)
+        {
+            m_AnimationSequence.Kill();
         }
 
+        m_AnimationSequence = DOTween.Sequence();
+
+        foreach (MovableBarrier barrier in m_BarrierList)
+        {
+            if (null == barrier.GameObject)
+            {
+                continue;
+            }
+            
+            Vector3 targetPosition = (!barrier.HasMoved) ? barrier.FinalPosition : barrier.OriginalPosition;
+            
+            m_AnimationSequence.Append(
+                barrier.Transform.DOLocalMove(targetPosition, barrier.AnimationSettings.duration).SetEase(barrier.AnimationSettings.ease).SetDelay(barrier.AnimationSettings.delay).OnComplete(() =>
+                {
+                    if (m_TriggerEndAction == EndAction.None)
+                    {
+                        barrier.HasMoved = !barrier.HasMoved;
+                    }
+                })
+            );
+        }
+
+        m_AnimationSequence.OnComplete(() =>
+        {
+            Debug.LogFormat("Button {0} - Animation finished", this.name);
+
+            Game_Events.Instance.Event_TriggerButtonAnimationFinished();
+
+            if (m_TriggerEndAction == EndAction.Destroy)
+            {
+                Destroy(this.gameObject);
+            }
+        });
     }
 
     /// <summary>
@@ -142,19 +137,21 @@ public class TriggerButton : Interactable
         Gizmos.color = m_GizmosColor;
 
         // Draw a wire sphere on top of the button
-        Gizmos.DrawWireSphere(transform.position + Vector3.back, 0.45f);
-
-        for (int i = 0; i < m_BarrierList.Count; i++)
+        Gizmos.DrawWireSphere(transform.position + Vector3.back, 0.49f);
+        
+        foreach (MovableBarrier barrier in m_BarrierList)
         {
-            Vector3 position = m_BarrierList[i].GetPosition();
-            Vector3 scale = m_BarrierList[i].GetScale();
-
+            if (null == barrier.GameObject)
+            {
+                continue;
+            }
+            
             // Draws an arrow from the center of the barrier to the target position
-            DrawArrow.ForGizmo2D(position, m_BarrierList[i].GetFinalDirection(), m_GizmosColor);
+            DrawArrow.ForGizmo2D(barrier.Position, barrier.FinalDirection, m_GizmosColor);
 
             // Draws a cube around the initial and final positions of the barrier
-            Gizmos.DrawWireCube(position, scale);
-            Gizmos.DrawWireCube(m_BarrierList[i].GetWorldFinalPosition(), scale);
+            Gizmos.DrawWireCube(barrier.Position, barrier.Scale);
+            Gizmos.DrawWireCube(barrier.FinalPosition, barrier.Scale);
         }
     }
 

@@ -3,133 +3,175 @@
 [System.Serializable]
 public class MovableBarrier
 {
-    [SerializeField] private GameObject gameObject;
+    [SerializeField] private GameObject m_GameObject;
     [SerializeField] private Direction m_MovementDirection;
-    [RangeAttribute(1, 12)]
-    [SerializeField] private int m_MovementDistance = 1;
-
-    [SerializeField] private Vector3 m_OriginalPosition;
-    [SerializeField] private Vector3 m_FinalPosition;
-
-    [HideInInspector] [SerializeField] private bool m_HasMoved;
-    [HideInInspector] [SerializeField] private bool m_ShouldDeleteFromList = false;
+    [RangeAttribute(1, 12)] [SerializeField] private int m_MovementDistance = 1;
+    [SerializeField] private bool m_ShouldDeleteFromList = false;
+    [SerializeField] private AnimationSettings m_AnimationSettings;
+    
+    [HideInInspector][SerializeField] private Vector3 m_OriginalPosition;
+    [HideInInspector][SerializeField] private Vector3 m_FinalPosition;
+    [HideInInspector][SerializeField] private Vector3 m_FinalDirection;
+    [HideInInspector][SerializeField] private bool m_HasMoved;
 
     public MovableBarrier() { }
 
     public MovableBarrier(GameObject gameObject, Direction movementDirection, int movementDistance)
     {
-        this.gameObject = gameObject;
+        this.m_GameObject = gameObject;
         this.m_MovementDirection = movementDirection;
         this.m_MovementDistance = movementDistance;
         this.m_OriginalPosition = gameObject.transform.position;
+    }
+
+    public void Setup()
+    {
+        m_FinalDirection = Transform.TransformDirection(MovementDirection * MovementDistance);
+        
+        OriginalPosition = Transform.position;
+        
+        FinalPosition = OriginalPosition + FinalDirection;
     }
 
     /// <summary>
     /// BASIC METHODS
     /// </summary>
 
-    public GameObject GameObject()
+    public GameObject GameObject
     {
-        return (gameObject);
+        get
+        {
+            return (m_GameObject);
+        }
+        set
+        {
+            m_GameObject = value;
+        }
     }
 
-    public Transform Transform()
+    public Transform Transform
     {
-        return (gameObject.transform);
+        get
+        {
+            return (m_GameObject.transform);
+        }
+    }
+    
+    public Vector3 MovementDirection
+    {
+        get
+        {
+            return (VectorDirection.DetermineDirection(m_MovementDirection));
+        }
+    }
+    
+    public int MovementDistance
+    {
+        get
+        {
+            return (m_MovementDistance);
+        }
     }
 
-    public void SetOriginalPosition(Vector3 _position)
+    public AnimationSettings AnimationSettings
     {
-        m_OriginalPosition = _position;
+        get
+        {
+            return (m_AnimationSettings);
+        }
+        set
+        {
+            m_AnimationSettings = value;
+        }
     }
 
-    public Vector3 GetOriginalPosition()
+    public Vector3 OriginalPosition
     {
-        return (m_OriginalPosition);
+        get
+        {
+            return (m_OriginalPosition);
+        }
+        set
+        {
+            m_OriginalPosition = value;
+        }
     }
 
-    public void SetFinalPosition(Vector3 _position)
+    public Vector3 Position
     {
-        m_FinalPosition = _position;
+        get
+        {
+            return (m_GameObject.transform.position);
+        }
+        set
+        {
+            m_GameObject.transform.position = value;
+        }
     }
 
-    public Vector3 GetFinalPosition()
+    public Vector3 Scale
     {
-        return (m_FinalPosition);
+        get
+        {
+            return (m_GameObject.transform.localScale);
+        }
+        set
+        {
+            m_GameObject.transform.localScale = value;
+        }
     }
 
-    public Vector3 GetPosition()
+    public bool HasMoved
     {
-        return (gameObject.transform.position);
+        get
+        {
+            return (m_HasMoved);
+        }
+        set
+        {
+            m_HasMoved = value;
+        }
     }
 
-    public Vector3 GetScale()
+    public bool ShouldDeleteFromList
     {
-        return (gameObject.transform.localScale);
-    }
-
-    public void SetHasMoved(bool _HasMoved)
-    {
-        m_HasMoved = _HasMoved;
-    }
-
-    public bool HasMoved()
-    {
-        return (m_HasMoved);
-    }
-
-    public bool ShouldDeleteFromList()
-    {
-        return (m_ShouldDeleteFromList);
+        get
+        {
+            return (m_ShouldDeleteFromList);
+        }
+        set
+        {
+            m_ShouldDeleteFromList = value;
+        }
     }
 
     /// <summary>
     /// FINAL POSITIONS
     /// </summary>
-
-    public Vector3 GetWorldFinalPosition()
+    public Vector3 FinalPosition
     {
-        return (Transform().TransformDirection(m_FinalPosition));
+        get
+        {
+            return (m_FinalPosition);
+        }
+        set
+        {
+            m_FinalPosition = value;
+        }
     }
 
-    /// <summary>
-    /// FINAL DIRECTIONS
-    /// </summary>
-
-    public Vector3 GetFinalDirection()
+    public Vector3 FinalDirection
     {
-        return (gameObject.transform.TransformDirection(GetMovementDirection() * m_MovementDistance));
+        get
+        {
+            return (m_FinalDirection);
+        }
+        set
+        {
+            m_FinalDirection = value;
+        }
     }
 
-    public Vector3 GetFinalOppositeDirection()
-    {
-        return (gameObject.transform.TransformDirection(GetOppositeMovementDirection() * m_MovementDistance));
-    }
-
-    public Vector3 GetFinalPerpendicularDirection()
-    {
-        return (gameObject.transform.TransformDirection(GetPerpendicularMovementDirection() * m_MovementDistance));
-    }
-
-    /// <summary>
-    /// MOVEMENT DIRECTION
-    /// </summary>
-
-    private Vector3 GetMovementDirection()
-    {
-        return (VectorDirection.DetermineDirection(m_MovementDirection));
-    }
-
-    private Vector3 GetOppositeMovementDirection()
-    {
-        return (VectorDirection.DetermineOppositeDirection(m_MovementDirection));
-    }
-
-    private Vector3 GetPerpendicularMovementDirection()
-    {
-        return (VectorDirection.DeterminePerpendicularDirection(m_MovementDirection));
-    }
-    
     /// <summary>
     /// Called when the script is loaded or a value is changed in the
     /// inspector (Called in the editor only).

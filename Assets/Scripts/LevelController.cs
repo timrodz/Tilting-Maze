@@ -18,6 +18,9 @@ public class LevelController : MonoBehaviour
     [SerializeField] public bool m_RegisterInput = true;
     [SerializeField] private Ease m_RotationEaseType = Ease.OutQuad;
     [SerializeField] private float m_RotationLength = 0.4f;
+    
+    [Space][Header("Rotation modes")]
+    public bool m_InvertRotation = false;
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.
@@ -51,20 +54,20 @@ public class LevelController : MonoBehaviour
 #if UNITY_STANDALONE || UNITY_EDITOR
             if (Input.GetKey(KeyCode.E) || MobileInputController.Instance.SwipeRight)
             {
-                StartCoroutine(Rotate(true));
+                StartCoroutine(Rotate((m_InvertRotation) ? false : true));
             }
             else if (Input.GetKey(KeyCode.Q) || MobileInputController.Instance.SwipeLeft)
             {
-                StartCoroutine(Rotate(false));
+                StartCoroutine(Rotate((m_InvertRotation) ? true : false));
             }
 #elif UNITY_IOS || UNITY_ANDROID
             if (MobileInputController.Instance.SwipeRight)
             {
-                StartCoroutine(Rotate(true));
+                StartCoroutine(Rotate((m_InvertRotation) ? false : true));
             }
             else if (MobileInputController.Instance.SwipeLeft)
             {
-                StartCoroutine(Rotate(false));
+                StartCoroutine(Rotate((m_InvertRotation) ? true : false));
             }
 #endif
         }
@@ -101,11 +104,7 @@ public class LevelController : MonoBehaviour
         transform.DORotate(eulerRotation, m_RotationLength).SetEase(m_RotationEaseType);
 
         yield return new WaitForSeconds(m_RotationLength);
-        // float wait = m_RotationLength * 0.2f;
-
-        // yield return new WaitForSeconds(wait);
-
-        // yield return new WaitForSeconds(m_RotationLength - wait);
+        
         m_CanRotate = true;
 
         yield return new WaitForSeconds(0.05f);
@@ -119,12 +118,12 @@ public class LevelController : MonoBehaviour
         m_CanRotate = false;
         m_RegisterInput = false;
     }
-
+    
     public void OnPlayerTriggerButtonExit()
     {
-
+        
     }
-
+    
     public void TriggerButtonAnimationFinished()
     {
         m_CanRotate = true;

@@ -166,7 +166,7 @@ public class PlayerController2D : Controller2D
         transform.DOMove(_position, 0.1f).OnComplete(() =>
         {
             // Since there's no way to process other collisions, I raycast one unit below to check if there's a barrier
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.position - (transform.InverseTransformDirection(transform.up)), 1, m_CollisionMask);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, DownDirection, 1, m_CollisionMask);
 
             // If a barrier exists, then animate the collision
             if (hit)
@@ -183,10 +183,10 @@ public class PlayerController2D : Controller2D
 
         });
     }
-
+    
     public void OnPlayerTriggerButtonExit()
     {
-
+        
     }
 
     public void TriggerButtonAnimationFinished()
@@ -197,7 +197,16 @@ public class PlayerController2D : Controller2D
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position + Vector3.back, transform.position - (transform.InverseTransformDirection(transform.up)) + Vector3.back);
+        Ray r = new Ray(transform.position + Vector3.back, DownDirection + Vector3.back);
+        Gizmos.DrawRay(r);
+    }
+    
+    public Vector3 DownDirection
+    {
+        get
+        {
+            return (-transform.InverseTransformDirection(transform.up));
+        }
     }
 
     void OnValidate()
