@@ -47,9 +47,9 @@ public class PlayerController2D : Controller2D
     /// </summary>
     void OnDisable()
     {
-        Game_Events.Instance.OnPlayerTriggerButtonEnter -= OnPlayerTriggerButtonEnter;
-        Game_Events.Instance.OnPlayerTriggerButtonExit -= OnPlayerTriggerButtonExit;
-        Game_Events.Instance.TriggerButtonAnimationFinished -= TriggerButtonAnimationFinished;
+        // Game_Events.Instance.OnPlayerTriggerButtonEnter -= OnPlayerTriggerButtonEnter;
+        // Game_Events.Instance.OnPlayerTriggerButtonExit -= OnPlayerTriggerButtonExit;
+        // Game_Events.Instance.TriggerButtonAnimationFinished -= TriggerButtonAnimationFinished;
     }
 
     private void InitializePhysics()
