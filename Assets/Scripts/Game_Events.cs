@@ -30,12 +30,14 @@ public class Game_Events : MonoBehaviour
     public event OnPlayerTriggerButtonEnterDelegate OnPlayerTriggerButtonEnter;
     public event OnPlayerTriggerButtonExitDelegate OnPlayerTriggerButtonExit;
     public event TriggerButtonAnimationFinishedDelegate TriggerButtonAnimationFinished;
+    public event ToggleDraggingDelegate ToggleDragging;
 
     // Delegates
     public delegate void OnLevelCompleteDelegate(int _levelID);
     public delegate void OnPlayerTriggerButtonEnterDelegate(Vector3 _position);
     public delegate void OnPlayerTriggerButtonExitDelegate();
     public delegate void TriggerButtonAnimationFinishedDelegate();
+    public delegate void ToggleDraggingDelegate(bool _state);
 
     public void Event_LevelComplete(int _levelID)
     {
@@ -55,6 +57,12 @@ public class Game_Events : MonoBehaviour
     public void Event_TriggerButtonAnimationFinished()
     {
         TriggerButtonAnimationFinished();
+    }
+    
+    public void Event_ToggleDragging(bool _state)
+    {
+        ToggleDragging(_state);
+        Debug.LogFormat("Dragging: {0}", _state);
     }
 
 }

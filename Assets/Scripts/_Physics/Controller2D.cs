@@ -22,7 +22,7 @@ public class Controller2D : MonoBehaviour
     [SerializeField] public CollisionInfo m_CollisionInfo;
     
     [SerializeField] protected bool m_CanMove = true;
-    [SerializeField] protected bool m_ApplyGravity = true;
+    [SerializeField] protected bool m_IsMoving = false;
 
     // Use this for initialization
     void Start()

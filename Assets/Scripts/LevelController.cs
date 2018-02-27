@@ -30,6 +30,13 @@ public class LevelController : MonoBehaviour
         Game_Events.Instance.OnPlayerTriggerButtonEnter += OnPlayerTriggerButtonEnter;
         Game_Events.Instance.OnPlayerTriggerButtonExit += OnPlayerTriggerButtonExit;
         Game_Events.Instance.TriggerButtonAnimationFinished += TriggerButtonAnimationFinished;
+        
+        m_Camera = Camera.main;
+        
+        if (null == m_Camera)
+        {
+            m_Camera = FindObjectOfType<Camera>();
+        }
     }
 
     void Update()
@@ -51,25 +58,25 @@ public class LevelController : MonoBehaviour
             (m_Player.m_CollisionInfo.above || m_Player.m_CollisionInfo.right || m_Player.m_CollisionInfo.below || m_Player.m_CollisionInfo.left)
         )
         {
-#if UNITY_STANDALONE || UNITY_EDITOR
-            if (Input.GetKey(KeyCode.E) || MobileInputController.Instance.SwipeRight)
-            {
-                StartCoroutine(Rotate((m_InvertRotation) ? false : true));
-            }
-            else if (Input.GetKey(KeyCode.Q) || MobileInputController.Instance.SwipeLeft)
-            {
-                StartCoroutine(Rotate((m_InvertRotation) ? true : false));
-            }
-#elif UNITY_IOS || UNITY_ANDROID
-            if (MobileInputController.Instance.SwipeRight)
-            {
-                StartCoroutine(Rotate((m_InvertRotation) ? false : true));
-            }
-            else if (MobileInputController.Instance.SwipeLeft)
-            {
-                StartCoroutine(Rotate((m_InvertRotation) ? true : false));
-            }
-#endif
+// #if UNITY_STANDALONE || UNITY_EDITOR
+//             if (Input.GetKey(KeyCode.E) || MobileInputController.Instance.SwipeRight)
+//             {
+//                 StartCoroutine(Rotate((m_InvertRotation) ? false : true));
+//             }
+//             else if (Input.GetKey(KeyCode.Q) || MobileInputController.Instance.SwipeLeft)
+//             {
+//                 StartCoroutine(Rotate((m_InvertRotation) ? true : false));
+//             }
+// #elif UNITY_IOS || UNITY_ANDROID
+//             if (MobileInputController.Instance.SwipeRight)
+//             {
+//                 StartCoroutine(Rotate((m_InvertRotation) ? false : true));
+//             }
+//             else if (MobileInputController.Instance.SwipeLeft)
+//             {
+//                 StartCoroutine(Rotate((m_InvertRotation) ? true : false));
+//             }
+// #endif
         }
 
     }
@@ -77,7 +84,7 @@ public class LevelController : MonoBehaviour
     /// <summary>
     /// Rotates the level
     /// </summary>
-    public IEnumerator Rotate(bool _shouldRotateRight)
+    public IEnumerator Rotate(bool _shouldRotateRight, bool _override = false, float _overrideAngle = 0)
     {
         GameManager.Instance.IncrementMoveCount();
 
@@ -89,7 +96,14 @@ public class LevelController : MonoBehaviour
 
         Vector3 eulerRotation = transform.eulerAngles;
 
-        if (_shouldRotateRight)
+        if (_override)
+        {
+            eulerRotation.z = _overrideAngle;
+            Debug.LogFormat("Overriding, new angle is: {0}", _overrideAngle);
+        }
+        else
+        {
+            if (_shouldRotateRight)
         {
             eulerRotation.z -= 90;
             // AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeRight);
@@ -99,6 +113,8 @@ public class LevelController : MonoBehaviour
             eulerRotation.z += 90;
             // AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeLeft);
         }
+        }
+        
 
         // Rotate the transform
         transform.DORotate(eulerRotation, m_RotationLength).SetEase(m_RotationEaseType);
@@ -111,6 +127,56 @@ public class LevelController : MonoBehaviour
 
         m_Player.SetCanMove(true);
 
+    }
+    
+    public void RoundToNearestNinenty(float _currentAngle)
+    {
+        if (MobileInputController.Instance.SwipeRight || MobileInputController.Instance.SwipeLeft)
+        {
+            if (MobileInputController.Instance.SwipeRight)
+            {
+                StartCoroutine(Rotate(true));
+            }
+            else if (MobileInputController.Instance.SwipeLeft)
+            {
+                StartCoroutine(Rotate(false));
+            }
+            
+            Debug.LogFormat("Rounding to nearest ninety but swiping right/left");
+            
+            return;
+        }
+        
+        Debug.LogFormat("Rounding to nearest ninety - Current angle: {0}", _currentAngle);
+        
+        // RIGHT SIDE ANGLES
+        if (_currentAngle > -45 && _currentAngle <= 45)
+        {
+            _currentAngle = 0;
+        }
+        if (_currentAngle > 45 && _currentAngle <= 135)
+        {
+            _currentAngle = 90;
+        }
+        else if (_currentAngle > 135 && _currentAngle <= 225)
+        {
+            _currentAngle = 180;
+        }
+        else if (_currentAngle > 225 && _currentAngle <= 315)
+        {
+            _currentAngle = 270;
+        }
+        else if (_currentAngle >= -180 && _currentAngle < -135)
+        {
+            _currentAngle = -180;
+        }
+        else if (_currentAngle >= -135 && _currentAngle < -45)
+        {
+            _currentAngle = -90;
+        }
+        
+        // LEFT SIDE ANGLES
+        StartCoroutine(Rotate(false, true, _currentAngle));
     }
 
     public void OnPlayerTriggerButtonEnter(Vector3 _position)
@@ -128,6 +194,53 @@ public class LevelController : MonoBehaviour
     {
         m_CanRotate = true;
         m_RegisterInput = true;
+    }
+    
+    private float m_BaseAngle = 0.0f;
+	private bool m_IsRotating;
+    
+    private Camera m_Camera;
+
+    void OnMouseDown()
+    {
+        if (!m_Player.CanMove())
+        {
+            return;
+        }
+        Vector3 pos = m_Camera.WorldToScreenPoint(transform.position);
+        pos = Input.mousePosition - pos;
+        m_BaseAngle = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg;
+        Debug.LogFormat("Initial Base Angle: {0} - Position: {1}", m_BaseAngle, pos);
+        m_BaseAngle -= Mathf.Atan2(transform.right.y, transform.right.x) * Mathf.Rad2Deg;
+        Debug.LogFormat("Initial Base Angle: {0}", m_BaseAngle);
+        
+        Game_Events.Instance.Event_ToggleDragging(true);
+    }
+    
+    void OnMouseUp()
+    {
+        Game_Events.Instance.Event_ToggleDragging(false);
+        
+        Vector3 pos = m_Camera.WorldToScreenPoint(transform.position);
+        pos = Input.mousePosition - pos;
+        float ang = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
+        transform.rotation = Quaternion.AngleAxis(ang, Vector3.forward);
+        
+        // Debug.LogFormat("Angle: {0} - Difference: {1}", ang, (float)(m_BaseAngle - ang));
+        
+        RoundToNearestNinenty(ang);
+    }
+
+    void OnMouseDrag()
+    {
+        // if (!m_CanRotate)
+        // {
+        //     return;
+        // }
+        Vector3 pos = m_Camera.WorldToScreenPoint(transform.position);
+        pos = Input.mousePosition - pos;
+        float ang = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
+        transform.rotation = Quaternion.AngleAxis(ang, Vector3.forward);
     }
 
 }

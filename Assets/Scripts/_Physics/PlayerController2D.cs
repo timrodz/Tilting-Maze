@@ -38,6 +38,7 @@ public class PlayerController2D : Controller2D
         Game_Events.Instance.OnPlayerTriggerButtonEnter += OnPlayerTriggerButtonEnter;
         Game_Events.Instance.OnPlayerTriggerButtonExit += OnPlayerTriggerButtonExit;
         Game_Events.Instance.TriggerButtonAnimationFinished += TriggerButtonAnimationFinished;
+        Game_Events.Instance.ToggleDragging += ToggleDragging;
 
         InitializePhysics();
     }
@@ -77,7 +78,8 @@ public class PlayerController2D : Controller2D
         {
             m_Velocity.y = 0;
         }
-
+           
+        // Player just started moving
         if (m_Velocity.y < -2.0f && !m_HasPlayedMovementParticles)
         {
             m_CanProcessCollisions = true;
@@ -160,6 +162,8 @@ public class PlayerController2D : Controller2D
         m_AirTime = 0;
 
         m_CanMove = true;
+        
+        m_IsMoving = false;
     }
 
     public void OnPlayerTriggerButtonEnter(Vector3 _position)
@@ -202,6 +206,24 @@ public class PlayerController2D : Controller2D
     public void TriggerButtonAnimationFinished()
     {
         m_CanMove = true;
+    }
+    
+    public void ToggleDragging(bool _state)
+    {
+        // Dragging
+        if (_state == true)
+        {
+            m_CanMove = false;
+        }
+        // Stopped Dragging
+        // The player must wait for the map to even its angles before moving
+        // Otherwise this will break the movement
+        else
+        {
+            
+        }
+        
+        Debug.LogFormat("Can player move: {0}", m_CanMove);
     }
 
     void OnDrawGizmos()
