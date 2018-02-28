@@ -1024,6 +1024,11 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 371a18b8d5527ee429abfb95520de8cd, type: 2}
+    - target: {fileID: 114555661863715746, guid: 349ba7b3840514dd2ac36797da6c1f0b,
+        type: 2}
+      propertyPath: m_BarrierList.Array.data[4].m_AnimationSettings.duration
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 349ba7b3840514dd2ac36797da6c1f0b, type: 2}
   m_IsPrefabParent: 0
