@@ -33,7 +33,7 @@ public class Controller2D : MonoBehaviour
 
     public void Move(Vector3 velocity)
     {
-        if (!m_CanMove) { return; }
+        if (!CanMove) { return; }
         
         UpdateRaycastOrigins();
         
@@ -160,15 +160,17 @@ public class Controller2D : MonoBehaviour
         m_BoxCollider2D = GetComponent<BoxCollider2D>();
         CalculateRaySpacing();
     }
-    
-    public void SetCanMove(bool _CanMove)
+
+    public bool CanMove
     {
-        m_CanMove = _CanMove;
+        get { return m_CanMove; }
+        set { m_CanMove = value; }
     }
 
-    public bool CanMove()
+    public bool IsMoving
     {
-        return (m_CanMove);
+        get { return m_IsMoving; }
+        set { m_IsMoving = value; }
     }
     
     [System.Serializable]

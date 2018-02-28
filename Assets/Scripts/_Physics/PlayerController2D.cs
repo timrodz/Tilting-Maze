@@ -11,20 +11,20 @@ using UnityEngine;
 /// </summary>
 public class PlayerController2D : Controller2D
 {
-    [Header("Movement")]
+    [Header ("Movement")]
     [SerializeField] private float m_JumpUnitHeight = 4;
     [SerializeField] private float m_JumpPeakTime = 0.5f;
 
-    [Header("Gravity and jumping")]
+    [Header ("Gravity and jumping")]
     [HideInInspector][SerializeField] private float m_Gravity;
     [SerializeField] private float m_AirTime = 0;
     [SerializeField] private Vector3 m_Velocity;
 
-    [Header("Particles")]
+    [Header ("Particles")]
     [SerializeField] private bool m_HasPlayedMovementParticles = false;
     [SerializeField] ParticleSystem m_CollisionParticles;
 
-    [Header("Collision")]
+    [Header ("Collision")]
     [SerializeField] private bool m_IsCollidingBelow;
     [SerializeField] private bool m_IsProcessingCollision;
     [SerializeField] private bool firstCollision = true;
@@ -33,44 +33,46 @@ public class PlayerController2D : Controller2D
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
-    void Awake()
+    void Awake ()
     {
         Game_Events.Instance.OnPlayerTriggerButtonEnter += OnPlayerTriggerButtonEnter;
         Game_Events.Instance.OnPlayerTriggerButtonExit += OnPlayerTriggerButtonExit;
         Game_Events.Instance.TriggerButtonAnimationFinished += TriggerButtonAnimationFinished;
         Game_Events.Instance.ToggleDragging += ToggleDragging;
 
-        InitializePhysics();
+        InitializePhysics ();
+
+        CanMove = true;
     }
-    
+
     /// <summary>
     /// This function is called when the behaviour becomes disabled or inactive.
     /// </summary>
-    void OnDisable()
+    void OnDisable ()
     {
         // Game_Events.Instance.OnPlayerTriggerButtonEnter -= OnPlayerTriggerButtonEnter;
         // Game_Events.Instance.OnPlayerTriggerButtonExit -= OnPlayerTriggerButtonExit;
         // Game_Events.Instance.TriggerButtonAnimationFinished -= TriggerButtonAnimationFinished;
     }
 
-    private void InitializePhysics()
+    private void InitializePhysics ()
     {
-        m_Gravity = -((2.0f * m_JumpUnitHeight) / (Mathf.Pow(m_JumpPeakTime, 2.0f)));
+        m_Gravity = -((2.0f * m_JumpUnitHeight) / (Mathf.Pow (m_JumpPeakTime, 2.0f)));
     }
 
-    void Update()
+    void Update ()
     {
-        if (GameManager.GetState() != GameState.Play)
+        if (GameManager.GetState () != GameState.Play)
         {
             return;
         }
 
-        if (!m_CanMove)
+        if (!CanMove)
         {
             return;
         }
 
-        ProcessCollisions();
+        ProcessCollisions ();
 
         // If is colliding with something below or above
         // Vertical velocity will be 0
@@ -78,7 +80,16 @@ public class PlayerController2D : Controller2D
         {
             m_Velocity.y = 0;
         }
-           
+
+        if (m_Velocity.y != 0.0f)
+        {
+            IsMoving = true;
+        }
+        // else
+        // {
+        //     IsMoving = false;
+        // }
+
         // Player just started moving
         if (m_Velocity.y < -2.0f && !m_HasPlayedMovementParticles)
         {
@@ -91,10 +102,10 @@ public class PlayerController2D : Controller2D
         // Always apply gravity
         m_Velocity.y += m_Gravity * Time.deltaTime;
 
-        Move(m_Velocity * Time.deltaTime);
+        Move (m_Velocity * Time.deltaTime);
     }
 
-    public void ProcessCollisions()
+    public void ProcessCollisions ()
     {
         if (!m_CanProcessCollisions)
         {
@@ -116,78 +127,91 @@ public class PlayerController2D : Controller2D
                 return;
             }
 
-            AnimateCollision();
+            AnimateCollision ();
         }
     }
 
-    private void AnimateCollision()
+    private void AnimateCollision ()
     {
-        StopCoroutine("AnimateDrop");
+        Debug.LogFormat (">> ANIMATE COLLISION");
+        CanMove = true;
+        StopCoroutine ("AnimateDrop");
 
-        AudioManager.PlayEffect(ClipType.Collision);
+        AudioManager.PlayEffect (ClipType.Collision);
 
         m_HasPlayedMovementParticles = false;
 
-        m_CollisionParticles.Play();
+        m_CollisionParticles.Play ();
 
-        StartCoroutine("AnimateDrop");
+        StartCoroutine ("AnimateDrop");
     }
 
-    private IEnumerator AnimateDrop()
+    private IEnumerator AnimateDrop ()
     {
-        m_CanMove = false;
+        CanMove = false;
 
         m_IsProcessingCollision = false;
 
         var cpm = m_CollisionParticles.main;
         cpm.startSpeed = 3 * m_AirTime;
-        m_CollisionParticles.Play();
+        m_CollisionParticles.Play ();
 
-        CameraController.Shake();
+        CameraController.Shake ();
 
         float length = 0.2f;
-        float randomX = Random.Range(0.2f, 0.3f);
-        float randomY = Random.Range(0.6f, 0.7f);
+        float randomX = Random.Range (0.2f, 0.3f);
+        float randomY = Random.Range (0.6f, 0.7f);
 
-        transform.DOScaleX(randomX, length);
-        transform.DOScaleY(randomY, length);
+        transform.DOScaleX (randomX, length);
+        transform.DOScaleY (randomY, length);
 
-        yield return new WaitForSeconds(length);
+        yield return new WaitForSeconds (length);
 
-        transform.DOScaleX(1, 0.2f);
-        transform.DOScaleY(1, 0.2f);
+        transform.DOScaleX (1, 0.2f);
+        transform.DOScaleY (1, 0.2f);
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds (0.2f);
+
+        if (button)
+        {
+            Debug.LogFormat ("BUTTON");
+            button = false;
+        }
+        else
+        {
+            CanMove = true;
+            IsMoving = false;
+        }
 
         m_AirTime = 0;
-
-        m_CanMove = true;
-        
-        m_IsMoving = false;
     }
 
-    public void OnPlayerTriggerButtonEnter(Vector3 _position)
+    [SerializeField] bool button;
+
+    public void OnPlayerTriggerButtonEnter (Vector3 _position)
     {
+        button = true;
         // Need the player not to process collisions when the trigger button is entered
         // Also the player should not move and the vertical velocity should be set to 0
 
         // This is done because processing collisions happen every frame
         m_CanProcessCollisions = false;
         m_Velocity.y = 0;
-        m_CanMove = false;
+        CanMove = false;
+        IsMoving = false;
 
         // I will then proceed to move the player towards the center of the trigger buton
-        transform.DOMove(_position, 0.1f).OnComplete(() =>
+        transform.DOMove (_position, 0.1f).OnComplete (() =>
         {
             // Since there's no way to process other collisions, I raycast one unit below to check if there's a barrier
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, DownDirection, 1, m_CollisionMask);
+            RaycastHit2D hit = Physics2D.Raycast (transform.position, DownDirection, 1, m_CollisionMask);
 
             // If a barrier exists, then animate the collision
             if (hit)
             {
-                AnimateCollision();
+                AnimateCollision ();
 
-                Debug.LogFormat("Hit distance: {0}, Object: {1}", hit.distance, hit.transform.name);
+                Debug.LogFormat ("Hit distance: {0}, Object: {1}", hit.distance, hit.transform.name);
             }
             // If no barrier exists, proceed to process collisions normally
             else
@@ -197,52 +221,53 @@ public class PlayerController2D : Controller2D
 
         });
     }
-    
-    public void OnPlayerTriggerButtonExit()
+
+    public void OnPlayerTriggerButtonExit ()
     {
-        
+
     }
 
-    public void TriggerButtonAnimationFinished()
+    public void TriggerButtonAnimationFinished ()
     {
-        m_CanMove = true;
+        CanMove = true;
     }
-    
-    public void ToggleDragging(bool _state)
+
+    public void ToggleDragging (bool _state)
     {
         // Dragging
         if (_state == true)
         {
-            m_CanMove = false;
+            CanMove = false;
+            IsMoving = false;
         }
         // Stopped Dragging
         // The player must wait for the map to even its angles before moving
         // Otherwise this will break the movement
         else
         {
-            
+
         }
-        
-        Debug.LogFormat("Can player move: {0}", m_CanMove);
+
+        Debug.LogFormat ("Can player move: {0}", CanMove);
     }
 
-    void OnDrawGizmos()
+    void OnDrawGizmos ()
     {
         Gizmos.color = Color.red;
-        Ray r = new Ray(transform.position + Vector3.back, DownDirection + Vector3.back);
-        Gizmos.DrawRay(r);
+        Ray r = new Ray (transform.position + Vector3.back, DownDirection + Vector3.back);
+        Gizmos.DrawRay (r);
     }
-    
+
     public Vector3 DownDirection
     {
         get
         {
-            return (-transform.InverseTransformDirection(transform.up));
+            return (-transform.InverseTransformDirection (transform.up));
         }
     }
 
-    void OnValidate()
+    void OnValidate ()
     {
-        InitializePhysics();
+        InitializePhysics ();
     }
 }
