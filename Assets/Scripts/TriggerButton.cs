@@ -134,6 +134,10 @@ public class TriggerButton : Interactable
     /// </summary>
     void OnDrawGizmos()
     {
+        // Aiming to make the gizmos rotate with the level's rotation - Not important
+        // Matrix4x4 matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
+        // Gizmos.matrix = matrix;
+        
         Gizmos.color = m_GizmosColor;
 
         // Draw a wire sphere on top of the button
@@ -148,6 +152,9 @@ public class TriggerButton : Interactable
             
             // Draws an arrow from the center of the barrier to the target position
             DrawArrow.ForGizmo2D(barrier.Position, barrier.FinalDirection, m_GizmosColor);
+            
+            // Matrix4x4 rotationMatrix = Matrix4x4.TRS(barrier.Position, transform.parent.rotation, transform.lossyScale);
+            // Gizmos.matrix = rotationMatrix;
 
             // Draws a cube around the initial and final positions of the barrier
             Gizmos.DrawWireCube(barrier.Position, barrier.Scale);

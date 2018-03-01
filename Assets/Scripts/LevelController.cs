@@ -14,19 +14,24 @@ public class LevelController : MonoBehaviour
 {
     [HideInInspector][SerializeField] public PlayerController2D m_Player;
 
-    [SerializeField] public bool m_CanRotate = true;
     [SerializeField] public bool m_RegisterInput = true;
     [SerializeField] private Ease m_RotationEaseType = Ease.OutQuad;
     [SerializeField] private float m_RotationLength = 0.4f;
 
-    [Space][Header ("Rotation modes")]
-    public bool m_InvertRotation = false;
-
+    [Header("Dragging")]
+    [SerializeField] public bool m_CanRotate = true;
+    [SerializeField] private float m_BaseAngle = 0.0f;
+    [SerializeField] bool m_Dragging;
+    [SerializeField] bool m_CanDrag;
+    [SerializeField] bool m_StartedDragging;
+    
     /// <summary>
-    /// Awake is called when the script instance is being loaded.
+    /// Start is called on the frame when a script is enabled just before
+    /// any of the Update methods is called the first time.
     /// </summary>
-    void Awake ()
+    void Start()
     {
+        // Initialize values on start because this object can be spawned dynamically
         Game_Events.Instance.OnPlayerTriggerButtonEnter += OnPlayerTriggerButtonEnter;
         Game_Events.Instance.OnPlayerTriggerButtonExit += OnPlayerTriggerButtonExit;
         Game_Events.Instance.TriggerButtonAnimationFinished += TriggerButtonAnimationFinished;
@@ -35,17 +40,17 @@ public class LevelController : MonoBehaviour
 
         if (null == m_Camera)
         {
-            m_Camera = FindObjectOfType<Camera> ();
+            m_Camera = FindObjectOfType<Camera>();
         }
     }
 
-    void Update ()
+    void Update()
     {
         //         // Don't do anything if the game's curently paused
-        //         if (GameManager.GetState() != GameState.Play || !m_Player || !m_RegisterInput)
-        //         {
-        //             return;
-        //         }
+        // if (GameManager.GetState() != GameState.Play || !m_Player || !m_RegisterInput)
+        // {
+        //     return;
+        // }
 
         //         if (
         //             // Not currently rotating
@@ -84,13 +89,13 @@ public class LevelController : MonoBehaviour
     /// <summary>
     /// Rotates the level
     /// </summary>
-    public IEnumerator Rotate (bool _shouldRotateRight, bool _override = false, float _overrideAngle = 0)
+    public IEnumerator Rotate(bool _shouldRotateRight, bool _override = false, float _overrideAngle = 0)
     {
-        GameManager.Instance.IncrementMoveCount ();
+        GameManager.Instance.IncrementMoveCount();
 
         m_Player.CanMove = false;
 
-        m_Player.ProcessCollisions ();
+        m_Player.ProcessCollisions();
 
         m_CanRotate = false;
 
@@ -99,7 +104,7 @@ public class LevelController : MonoBehaviour
         if (_override)
         {
             eulerRotation.z = _overrideAngle;
-            Debug.LogFormat ("Overriding, new angle is: {0}", _overrideAngle);
+            Debug.LogFormat("Overriding, new angle is: {0}", _overrideAngle);
         }
         else
         {
@@ -116,24 +121,24 @@ public class LevelController : MonoBehaviour
         }
 
         // Rotate the transform
-        transform.DORotate (eulerRotation, m_RotationLength).SetEase (m_RotationEaseType);
+        transform.DORotate(eulerRotation, m_RotationLength).SetEase(m_RotationEaseType);
 
-        yield return new WaitForSeconds (m_RotationLength);
+        yield return new WaitForSeconds(m_RotationLength);
 
         m_CanRotate = true;
 
-        yield return new WaitForSeconds (0.05f);
+        yield return new WaitForSeconds(0.05f);
 
         m_Player.CanMove = true;
 
         // yield return new WaitForSeconds (0.15f);
 
         m_BaseAngle = eulerRotation.z;
-        candrag = true;
-        drag = false;
+        m_CanDrag = true;
+        m_Dragging = false;
     }
 
-    public void RoundToNearestNinenty (float _currentAngle)
+    public void RoundToNearestNinenty(float _currentAngle)
     {
         // if (MobileInputController.Instance.SwipeRight || MobileInputController.Instance.SwipeLeft)
         // {
@@ -151,7 +156,7 @@ public class LevelController : MonoBehaviour
         //     return;
         // }
 
-        Debug.LogFormat ("Rounding to nearest ninety - Current angle: {0}", _currentAngle);
+        Debug.LogFormat("Rounding to nearest ninety - Current angle: {0}", _currentAngle);
 
         // RIGHT SIDE ANGLES
         if (_currentAngle > -45 && _currentAngle <= 45)
@@ -192,19 +197,19 @@ public class LevelController : MonoBehaviour
         }
 
         // LEFT SIDE ANGLES
-        StartCoroutine (Rotate (false, true, _currentAngle));
+        StartCoroutine(Rotate(false, true, _currentAngle));
     }
-
-    private float m_BaseAngle = 0.0f;
-    [SerializeField] bool drag;
-    [SerializeField] bool candrag;
-    [SerializeField] bool startdrag;
 
     private Camera m_Camera;
 
-    void OnMouseDown ()
+    void OnMouseDown()
     {
-        if (!candrag)
+        if (GameManager.GetState() != GameState.Play || !m_Player || !m_RegisterInput)
+        {
+            return;
+        }
+
+        if (!m_CanDrag)
         {
             return;
         }
@@ -214,82 +219,94 @@ public class LevelController : MonoBehaviour
             return;
         }
 
-        Debug.LogFormat (">>>>>>>>>>>>>>>>>>>>> MOUSE DOWN");
-        Vector3 pos = m_Camera.WorldToScreenPoint (transform.position);
+        Debug.LogFormat(">>>>>>>>>>>>>>>>>>>>> MOUSE DOWN");
+        Vector3 pos = m_Camera.WorldToScreenPoint(transform.position);
         pos = Input.mousePosition - pos;
-        m_BaseAngle = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg;
-        Debug.LogFormat ("Initial Base Angle: {0} - Position: {1}", m_BaseAngle, pos);
-        m_BaseAngle -= Mathf.Atan2 (transform.right.y, transform.right.x) * Mathf.Rad2Deg;
-        Debug.LogFormat ("Initial Base Angle: {0}", m_BaseAngle);
+        m_BaseAngle = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg;
+        Debug.LogFormat("Initial Base Angle: {0} - Position: {1}", m_BaseAngle, pos);
+        m_BaseAngle -= Mathf.Atan2(transform.right.y, transform.right.x) * Mathf.Rad2Deg;
+        Debug.LogFormat("Initial Base Angle: {0}", m_BaseAngle);
 
-        Game_Events.Instance.Event_ToggleDragging (true);
+        Game_Events.Instance.Event_ToggleDragging(true);
 
-        drag = true;
-        candrag = false;
-        startdrag = true;
+        m_Dragging = true;
+        m_CanDrag = false;
+        m_StartedDragging = true;
     }
 
-    void OnMouseUp ()
+    void OnMouseUp()
     {
-        if (!startdrag)
-        {
-            return;
-        }
-
-        if (m_Player.IsMoving)
-        {
-            return;
-        }
-
-        Debug.LogFormat (">>>>>>>>>>>>>>>>>>>>> MOUSE UP");
-        Game_Events.Instance.Event_ToggleDragging (false);
-
-        Vector3 pos = m_Camera.WorldToScreenPoint (transform.position);
-        pos = Input.mousePosition - pos;
-        float ang = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
-
-        RoundToNearestNinenty (ang);
-        startdrag = false;
-    }
-
-    void OnMouseDrag ()
-    {
-        if (!startdrag)
-        {
-            return;
-        }
-
-        if (!drag && candrag)
-        {
-            return;
-        }
-
-        if (m_Player.IsMoving)
+        if (GameManager.GetState() != GameState.Play || !m_Player || !m_RegisterInput)
         {
             return;
         }
         
-        Vector3 pos = m_Camera.WorldToScreenPoint (transform.position);
+        if (!m_StartedDragging)
+        {
+            return;
+        }
+
+        if (m_Player.IsMoving)
+        {
+            return;
+        }
+
+        Debug.LogFormat(">>>>>>>>>>>>>>>>>>>>> MOUSE UP");
+        Game_Events.Instance.Event_ToggleDragging(false);
+
+        Vector3 pos = m_Camera.WorldToScreenPoint(transform.position);
         pos = Input.mousePosition - pos;
-        float ang = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
-        transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
+        float ang = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
+
+        RoundToNearestNinenty(ang);
+        m_StartedDragging = false;
     }
 
-    public void OnPlayerTriggerButtonEnter (Vector3 _position)
+    void OnMouseDrag()
+    {
+        if (GameManager.GetState() != GameState.Play || !m_Player || !m_RegisterInput)
+        {
+            return;
+        }
+        
+        if (!m_StartedDragging)
+        {
+            return;
+        }
+
+        if (!m_Dragging && m_CanDrag)
+        {
+            return;
+        }
+
+        if (m_Player.IsMoving)
+        {
+            return;
+        }
+
+        Vector3 pos = m_Camera.WorldToScreenPoint(transform.position);
+        pos = Input.mousePosition - pos;
+        float ang = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
+        transform.rotation = Quaternion.AngleAxis(ang, Vector3.forward);
+    }
+
+    public void OnPlayerTriggerButtonEnter(Vector3 _position)
     {
         m_CanRotate = false;
         m_RegisterInput = false;
+        m_CanDrag = false;
     }
 
-    public void OnPlayerTriggerButtonExit ()
+    public void OnPlayerTriggerButtonExit()
     {
 
     }
 
-    public void TriggerButtonAnimationFinished ()
+    public void TriggerButtonAnimationFinished()
     {
         m_CanRotate = true;
         m_RegisterInput = true;
+        m_CanDrag = true;
     }
 
 }
