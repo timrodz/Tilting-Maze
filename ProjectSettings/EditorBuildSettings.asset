@@ -5,15 +5,6 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: 
-    guid: 00000000000000000000000000000000
-  - enabled: 0
-    path: Assets/_Scenes/Barriers.unity
-    guid: 12a2d8aba79ae4a58a90d6b092de870e
-  - enabled: 0
-    path: Assets/_Scenes/Level-0.unity
-    guid: e8c3b53bc316d4b3db9664cd10251c9a
   - enabled: 1
     path: Assets/_Scenes/Drag-to-rotate.unity
     guid: 287974f96489ded42b34416052214941

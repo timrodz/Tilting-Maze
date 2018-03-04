@@ -38,7 +38,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1660477610746268}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -30}
+  m_LocalPosition: {x: 0, y: 0, z: -25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -75,11 +75,11 @@ Camera:
   m_TargetEye: 3
   m_HDR: 0
   m_AllowMSAA: 0
+  m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
-  m_StereoMirrorMode: 0
 --- !u!81 &81914366846884942
 AudioListener:
   m_ObjectHideFlags: 1
@@ -122,4 +122,4 @@ MonoBehaviour:
   skyboxMaterial: {fileID: 2100000, guid: c7cc27999a05140e99943045c66bc906, type: 2}
   topColor: {r: 0, g: 0, b: 0, a: 0}
   botColor: {r: 0, g: 0, b: 0, a: 0}
-  colorChangeDelay: 0.0027
+  colorChangeDelay: 0.014
