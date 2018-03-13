@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using Lean.Touch;
 using UnityEngine;
 
 /// <summary>
@@ -18,84 +19,111 @@ public class LevelController : MonoBehaviour
     [SerializeField] private Ease m_RotationEaseType = Ease.OutQuad;
     [SerializeField] private float m_RotationLength = 0.4f;
 
-    [Header("Dragging")]
+    [Header ("Dragging")]
     [SerializeField] public bool m_CanRotate = true;
     [SerializeField] private float m_BaseAngle = 0.0f;
     [SerializeField] bool m_Dragging;
     [SerializeField] bool m_CanDrag;
     [SerializeField] bool m_StartedDragging;
-    
-    /// <summary>
-    /// Start is called on the frame when a script is enabled just before
-    /// any of the Update methods is called the first time.
-    /// </summary>
-    void Start()
+    private Camera m_Camera;
+
+    [Header ("Lean Touch")]
+    public bool IgnoreGuiFingers = true;
+    public int RequiredFingerCount;
+    public LeanSelectable RequiredSelectable;
+
+    protected virtual void OnEnable ()
     {
         // Initialize values on start because this object can be spawned dynamically
         Game_Events.Instance.OnPlayerTriggerButtonEnter += OnPlayerTriggerButtonEnter;
         Game_Events.Instance.OnPlayerTriggerButtonExit += OnPlayerTriggerButtonExit;
         Game_Events.Instance.TriggerButtonAnimationFinished += TriggerButtonAnimationFinished;
 
+        // Lean Touch
+        LeanTouch.OnFingerDown += OnFingerDown;
+        LeanTouch.OnFingerSet += OnFingerSet;
+        LeanTouch.OnFingerUp += OnFingerUp;
+        LeanTouch.OnFingerTap += OnFingerTap;
+        LeanTouch.OnFingerSwipe += OnFingerSwipe;
+    }
+
+    protected virtual void OnDisable ()
+    {
+        // Unhook all events
+        Game_Events.Instance.OnPlayerTriggerButtonEnter -= OnPlayerTriggerButtonEnter;
+        Game_Events.Instance.OnPlayerTriggerButtonExit -= OnPlayerTriggerButtonExit;
+        Game_Events.Instance.TriggerButtonAnimationFinished -= TriggerButtonAnimationFinished;
+
+        // Lean Touch
+        LeanTouch.OnFingerDown -= OnFingerDown;
+        LeanTouch.OnFingerSet -= OnFingerSet;
+        LeanTouch.OnFingerUp -= OnFingerUp;
+        LeanTouch.OnFingerTap -= OnFingerTap;
+        LeanTouch.OnFingerSwipe -= OnFingerSwipe;
+    }
+
+    /// <summary>
+    /// Start is called on the frame when a script is enabled just before
+    /// any of the Update methods is called the first time.
+    /// </summary>
+    void Start ()
+    {
         m_Camera = Camera.main;
 
         if (null == m_Camera)
         {
-            m_Camera = FindObjectOfType<Camera>();
+            m_Camera = FindObjectOfType<Camera> ();
         }
+
+        m_CanDrag = true;
     }
 
-    void Update()
+    void Update ()
     {
-        //         // Don't do anything if the game's curently paused
-        // if (GameManager.GetState() != GameState.Play || !m_Player || !m_RegisterInput)
-        // {
-        //     return;
-        // }
+        if (GameManager.GetState () != GameState.Play || !m_Player || !m_RegisterInput)
+        {
+            return;
+        }
 
-        //         if (
-        //             // Not currently rotating
-        //             m_CanRotate
-        //             // Player can move
-        //             &&
-        //             (m_Player.CanMove)
-        //             // Not currently colliding with anything
-        //             &&
-        //             (m_Player.m_CollisionInfo.above || m_Player.m_CollisionInfo.right || m_Player.m_CollisionInfo.below || m_Player.m_CollisionInfo.left)
-        //         )
-        //         {
-        // #if UNITY_STANDALONE || UNITY_EDITOR
-        //             if (Input.GetKey(KeyCode.E) || MobileInputController.Instance.SwipeRight)
-        //             {
-        //                 StartCoroutine(Rotate((m_InvertRotation) ? false : true));
-        //             }
-        //             else if (Input.GetKey(KeyCode.Q) || MobileInputController.Instance.SwipeLeft)
-        //             {
-        //                 StartCoroutine(Rotate((m_InvertRotation) ? true : false));
-        //             }
-        // #elif UNITY_IOS || UNITY_ANDROID
-        //             if (MobileInputController.Instance.SwipeRight)
-        //             {
-        //                 StartCoroutine(Rotate((m_InvertRotation) ? false : true));
-        //             }
-        //             else if (MobileInputController.Instance.SwipeLeft)
-        //             {
-        //                 StartCoroutine(Rotate((m_InvertRotation) ? true : false));
-        //             }
-        // #endif
-        //         }
+        if (!m_StartedDragging)
+        {
+            return;
+        }
+
+        if (!m_Dragging && m_CanDrag)
+        {
+            return;
+        }
+
+        if (m_Player.IsMoving)
+        {
+            return;
+        }
+
+        // var fingers = LeanTouch.GetFingers (IgnoreGuiFingers, RequiredFingerCount, RequiredSelectable);
+
+        if (LeanTouch.Fingers.Count > 0)
+        {
+            var f = LeanTouch.Fingers[0];
+
+            Vector2 pos = m_Camera.WorldToScreenPoint (transform.position);
+            pos = f.ScreenPosition - pos;
+            float ang = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
+            transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
+        }                
 
     }
 
     /// <summary>
     /// Rotates the level
     /// </summary>
-    public IEnumerator Rotate(bool _shouldRotateRight, bool _override = false, float _overrideAngle = 0)
+    public IEnumerator Rotate (bool _shouldRotateRight, bool _override = false, float _overrideAngle = 0)
     {
-        GameManager.Instance.IncrementMoveCount();
+        GameManager.Instance.IncrementMoveCount ();
 
         m_Player.CanMove = false;
 
-        m_Player.ProcessCollisions();
+        m_Player.ProcessCollisions ();
 
         m_CanRotate = false;
 
@@ -104,7 +132,7 @@ public class LevelController : MonoBehaviour
         if (_override)
         {
             eulerRotation.z = _overrideAngle;
-            Debug.LogFormat("Overriding, new angle is: {0}", _overrideAngle);
+            Debug.LogFormat ("Overriding, new angle is: {0}", _overrideAngle);
         }
         else
         {
@@ -121,13 +149,13 @@ public class LevelController : MonoBehaviour
         }
 
         // Rotate the transform
-        transform.DORotate(eulerRotation, m_RotationLength).SetEase(m_RotationEaseType);
+        transform.DORotate (eulerRotation, m_RotationLength).SetEase (m_RotationEaseType);
 
-        yield return new WaitForSeconds(m_RotationLength);
+        yield return new WaitForSeconds (m_RotationLength);
 
         m_CanRotate = true;
 
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds (0.05f);
 
         m_Player.CanMove = true;
 
@@ -138,7 +166,7 @@ public class LevelController : MonoBehaviour
         m_Dragging = false;
     }
 
-    public void RoundToNearestNinenty(float _currentAngle)
+    public void RoundToNearestNinenty (float _currentAngle)
     {
         // if (MobileInputController.Instance.SwipeRight || MobileInputController.Instance.SwipeLeft)
         // {
@@ -156,7 +184,7 @@ public class LevelController : MonoBehaviour
         //     return;
         // }
 
-        Debug.LogFormat("Rounding to nearest ninety - Current angle: {0}", _currentAngle);
+        Debug.LogFormat ("Rounding to nearest ninety - Current angle: {0}", _currentAngle);
 
         // RIGHT SIDE ANGLES
         if (_currentAngle > -45 && _currentAngle <= 45)
@@ -197,14 +225,31 @@ public class LevelController : MonoBehaviour
         }
 
         // LEFT SIDE ANGLES
-        StartCoroutine(Rotate(false, true, _currentAngle));
+        StartCoroutine (Rotate (false, true, _currentAngle));
     }
 
-    private Camera m_Camera;
-
-    void OnMouseDown()
+    public void OnPlayerTriggerButtonEnter (Vector3 _position)
     {
-        if (GameManager.GetState() != GameState.Play || !m_Player || !m_RegisterInput)
+        m_CanRotate = false;
+        m_RegisterInput = false;
+        m_CanDrag = false;
+    }
+
+    public void OnPlayerTriggerButtonExit ()
+    {
+
+    }
+
+    public void TriggerButtonAnimationFinished ()
+    {
+        m_CanRotate = true;
+        m_RegisterInput = true;
+        m_CanDrag = true;
+    }
+
+    public void OnFingerDown (LeanFinger finger)
+    {
+        if (GameManager.GetState () != GameState.Play || !m_Player || !m_RegisterInput)
         {
             return;
         }
@@ -219,56 +264,25 @@ public class LevelController : MonoBehaviour
             return;
         }
 
-        Debug.LogFormat(">>>>>>>>>>>>>>>>>>>>> MOUSE DOWN");
-        Vector3 pos = m_Camera.WorldToScreenPoint(transform.position);
-        pos = Input.mousePosition - pos;
-        m_BaseAngle = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg;
-        Debug.LogFormat("Initial Base Angle: {0} - Position: {1}", m_BaseAngle, pos);
-        m_BaseAngle -= Mathf.Atan2(transform.right.y, transform.right.x) * Mathf.Rad2Deg;
-        Debug.LogFormat("Initial Base Angle: {0}", m_BaseAngle);
-
-        Game_Events.Instance.Event_ToggleDragging(true);
+        Game_Events.Instance.Event_ToggleDragging (true);
 
         m_Dragging = true;
         m_CanDrag = false;
         m_StartedDragging = true;
+
+        Vector2 pos = m_Camera.WorldToScreenPoint (transform.position);
+        pos = finger.ScreenPosition - pos;
+        m_BaseAngle = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg;
+        m_BaseAngle -= Mathf.Atan2 (transform.right.y, transform.right.x) * Mathf.Rad2Deg;
     }
 
-    void OnMouseUp()
+    public void OnFingerSet (LeanFinger finger)
     {
-        if (GameManager.GetState() != GameState.Play || !m_Player || !m_RegisterInput)
-        {
-            return;
-        }
-        
-        if (!m_StartedDragging)
+        if (GameManager.GetState () != GameState.Play || !m_Player || !m_RegisterInput)
         {
             return;
         }
 
-        if (m_Player.IsMoving)
-        {
-            return;
-        }
-
-        Debug.LogFormat(">>>>>>>>>>>>>>>>>>>>> MOUSE UP");
-        Game_Events.Instance.Event_ToggleDragging(false);
-
-        Vector3 pos = m_Camera.WorldToScreenPoint(transform.position);
-        pos = Input.mousePosition - pos;
-        float ang = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
-
-        RoundToNearestNinenty(ang);
-        m_StartedDragging = false;
-    }
-
-    void OnMouseDrag()
-    {
-        if (GameManager.GetState() != GameState.Play || !m_Player || !m_RegisterInput)
-        {
-            return;
-        }
-        
         if (!m_StartedDragging)
         {
             return;
@@ -284,29 +298,47 @@ public class LevelController : MonoBehaviour
             return;
         }
 
-        Vector3 pos = m_Camera.WorldToScreenPoint(transform.position);
-        pos = Input.mousePosition - pos;
-        float ang = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
-        transform.rotation = Quaternion.AngleAxis(ang, Vector3.forward);
+        Vector2 pos = m_Camera.WorldToScreenPoint (transform.position);
+        pos = finger.ScreenPosition - pos;
+        float ang = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
+        transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
     }
 
-    public void OnPlayerTriggerButtonEnter(Vector3 _position)
+    public void OnFingerUp (LeanFinger finger)
     {
-        m_CanRotate = false;
-        m_RegisterInput = false;
-        m_CanDrag = false;
+        if (GameManager.GetState () != GameState.Play || !m_Player || !m_RegisterInput)
+        {
+            return;
+        }
+
+        if (!m_StartedDragging)
+        {
+            return;
+        }
+
+        if (m_Player.IsMoving)
+        {
+            return;
+        }
+
+        Game_Events.Instance.Event_ToggleDragging (false);
+
+        Vector2 pos = m_Camera.WorldToScreenPoint (transform.position);
+        pos = finger.ScreenPosition - pos;
+        float ang = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
+
+        RoundToNearestNinenty (ang);
+        m_StartedDragging = false;
     }
 
-    public void OnPlayerTriggerButtonExit()
+    public void OnFingerTap (LeanFinger finger)
     {
-
+        // Debug.Log ("Finger " + finger.Index + " tapped the screen");
     }
 
-    public void TriggerButtonAnimationFinished()
+    public void OnFingerSwipe (LeanFinger finger)
     {
-        m_CanRotate = true;
-        m_RegisterInput = true;
-        m_CanDrag = true;
+        Debug.Log ("Finger " + finger.Index + " swiped the screen");
     }
 
 }
