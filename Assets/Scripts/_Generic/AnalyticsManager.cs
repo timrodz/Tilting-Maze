@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if !UNITY_EDITOR && UNITY_ANDROID || UNITY_IOS
 using UnityEngine.Analytics;
+#endif
 
 public enum CustomEvent
 {
@@ -32,7 +34,7 @@ public class AnalyticsManager
 
     public void RegisterCustomEventLevelComplete(int moveCount, float levelTime)
     {
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR && UNITY_ANDROID || UNITY_IOS
         Debug.Log("==== Analytics - Registering level complete - Level ID: " + GameManager.Instance.GetLevelID().ToString() + " - Moves: " + moveCount.ToString() + " - time: " + levelTime.ToString());
 
         Analytics.CustomEvent("Level complete", new Dictionary<string, object>
@@ -45,7 +47,7 @@ public class AnalyticsManager
 
     public void RegisterCustomEventSwipe(CustomEvent customEvent)
     {
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR && UNITY_ANDROID || UNITY_IOS
         Debug.Log("==== Analytics - Registering swipe: " + customEvent.ToString());
 
         switch (customEvent)
@@ -65,7 +67,7 @@ public class AnalyticsManager
 
     public void RegisterCustomEventTriggerEnter(string gameObject)
     {
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR && UNITY_ANDROID || UNITY_IOS
         Debug.Log("==== Analytics - Registering Trigger enter: " + gameObject);
 
         Analytics.CustomEvent("Trigger Enter", new Dictionary<string, object>
@@ -77,7 +79,7 @@ public class AnalyticsManager
 
     public void RegisterCustomEventTriggerExit(string gameObject)
     {
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR && UNITY_ANDROID || UNITY_IOS
         Debug.Log("==== Analytics - Registering Trigger exit: " + gameObject);
 
         Analytics.CustomEvent("Trigger Exit", new Dictionary<string, object>

@@ -13,24 +13,21 @@ using UnityEngine;
 /// </summary>
 public class LevelController : MonoBehaviour
 {
+    private Camera m_Camera;
     [HideInInspector][SerializeField] public PlayerController2D m_Player;
 
-    [SerializeField] public bool m_RegisterInput = true;
+    [Header ("Rotation variables")]
     [SerializeField] private Ease m_RotationEaseType = Ease.OutQuad;
     [SerializeField] private float m_RotationLength = 0.4f;
 
     [Header ("Dragging")]
+    [SerializeField] public bool m_CanRegisterInput = true;
     [SerializeField] public bool m_CanRotate = true;
     [SerializeField] private float m_BaseAngle = 0.0f;
-    [SerializeField] bool m_Dragging;
-    [SerializeField] bool m_CanDrag;
-    [SerializeField] bool m_StartedDragging;
-    private Camera m_Camera;
-
-    [Header ("Lean Touch")]
-    public bool IgnoreGuiFingers = true;
-    public int RequiredFingerCount;
-    public LeanSelectable RequiredSelectable;
+    [SerializeField] bool m_IsDragging = false;
+    [SerializeField] bool m_CanDrag = true;
+    [SerializeField] bool m_StartedDragging = false;
+    [SerializeField] private float m_DragTime = 0.0f;
 
     protected virtual void OnEnable ()
     {
@@ -74,13 +71,11 @@ public class LevelController : MonoBehaviour
         {
             m_Camera = FindObjectOfType<Camera> ();
         }
-
-        m_CanDrag = true;
     }
 
     void Update ()
     {
-        if (GameManager.GetState () != GameState.Play || !m_Player || !m_RegisterInput)
+        if (GameManager.GetState () != GameState.Play || !m_Player || !m_CanRegisterInput)
         {
             return;
         }
@@ -90,7 +85,7 @@ public class LevelController : MonoBehaviour
             return;
         }
 
-        if (!m_Dragging && m_CanDrag)
+        if (!m_IsDragging && m_CanDrag)
         {
             return;
         }
@@ -100,17 +95,17 @@ public class LevelController : MonoBehaviour
             return;
         }
 
-        // var fingers = LeanTouch.GetFingers (IgnoreGuiFingers, RequiredFingerCount, RequiredSelectable);
-
         if (LeanTouch.Fingers.Count > 0)
         {
+            m_DragTime += Time.deltaTime;
+
             var f = LeanTouch.Fingers[0];
 
             Vector2 pos = m_Camera.WorldToScreenPoint (transform.position);
             pos = f.ScreenPosition - pos;
             float ang = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
             transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
-        }                
+        }
 
     }
 
@@ -132,7 +127,6 @@ public class LevelController : MonoBehaviour
         if (_override)
         {
             eulerRotation.z = _overrideAngle;
-            Debug.LogFormat ("Overriding, new angle is: {0}", _overrideAngle);
         }
         else
         {
@@ -159,14 +153,12 @@ public class LevelController : MonoBehaviour
 
         m_Player.CanMove = true;
 
-        // yield return new WaitForSeconds (0.15f);
-
         m_BaseAngle = eulerRotation.z;
         m_CanDrag = true;
-        m_Dragging = false;
+        m_IsDragging = false;
     }
 
-    public void RoundToNearestNinenty (float _currentAngle)
+    public float GetNearestNinetyDegreeAngle (float _currentAngle, float _dragTime, LeanFinger _fingerData)
     {
         // if (MobileInputController.Instance.SwipeRight || MobileInputController.Instance.SwipeLeft)
         // {
@@ -183,10 +175,11 @@ public class LevelController : MonoBehaviour
 
         //     return;
         // }
+        
+        // If the delta is higher than -50, the user has definitely swiped.
 
-        Debug.LogFormat ("Rounding to nearest ninety - Current angle: {0}", _currentAngle);
 
-        // RIGHT SIDE ANGLES
+        // With the level's current rotation values, calculate the degree closest to 90 of it.
         if (_currentAngle > -45 && _currentAngle <= 45)
         {
             _currentAngle = 0;
@@ -224,14 +217,13 @@ public class LevelController : MonoBehaviour
             _currentAngle = -90;
         }
 
-        // LEFT SIDE ANGLES
-        StartCoroutine (Rotate (false, true, _currentAngle));
+        return _currentAngle;
     }
 
     public void OnPlayerTriggerButtonEnter (Vector3 _position)
     {
         m_CanRotate = false;
-        m_RegisterInput = false;
+        m_CanRegisterInput = false;
         m_CanDrag = false;
     }
 
@@ -243,13 +235,13 @@ public class LevelController : MonoBehaviour
     public void TriggerButtonAnimationFinished ()
     {
         m_CanRotate = true;
-        m_RegisterInput = true;
+        m_CanRegisterInput = true;
         m_CanDrag = true;
     }
 
-    public void OnFingerDown (LeanFinger finger)
+    public void OnFingerDown (LeanFinger _finger)
     {
-        if (GameManager.GetState () != GameState.Play || !m_Player || !m_RegisterInput)
+        if (GameManager.GetState () != GameState.Play || !m_Player || !m_CanRegisterInput)
         {
             return;
         }
@@ -264,49 +256,49 @@ public class LevelController : MonoBehaviour
             return;
         }
 
+        // Dragging states
         Game_Events.Instance.Event_ToggleDragging (true);
-
-        m_Dragging = true;
+        m_IsDragging = true;
         m_CanDrag = false;
         m_StartedDragging = true;
 
         Vector2 pos = m_Camera.WorldToScreenPoint (transform.position);
-        pos = finger.ScreenPosition - pos;
+        pos = _finger.ScreenPosition - pos;
         m_BaseAngle = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg;
         m_BaseAngle -= Mathf.Atan2 (transform.right.y, transform.right.x) * Mathf.Rad2Deg;
     }
 
-    public void OnFingerSet (LeanFinger finger)
+    public void OnFingerSet (LeanFinger _finger)
     {
-        if (GameManager.GetState () != GameState.Play || !m_Player || !m_RegisterInput)
-        {
-            return;
-        }
+        // if (GameManager.GetState () != GameState.Play || !m_Player || !m_CanRegisterInput)
+        // {
+        //     return;
+        // }
 
-        if (!m_StartedDragging)
-        {
-            return;
-        }
+        // if (!m_StartedDragging)
+        // {
+        //     return;
+        // }
 
-        if (!m_Dragging && m_CanDrag)
-        {
-            return;
-        }
+        // if (!m_IsDragging && m_CanDrag)
+        // {
+        //     return;
+        // }
 
-        if (m_Player.IsMoving)
-        {
-            return;
-        }
+        // if (m_Player.IsMoving)
+        // {
+        //     return;
+        // }
 
-        Vector2 pos = m_Camera.WorldToScreenPoint (transform.position);
-        pos = finger.ScreenPosition - pos;
-        float ang = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
-        transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
+        // Vector2 pos = m_Camera.WorldToScreenPoint (transform.position);
+        // pos = finger.ScreenPosition - pos;
+        // float ang = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
+        // transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
     }
 
-    public void OnFingerUp (LeanFinger finger)
+    public void OnFingerUp (LeanFinger _finger)
     {
-        if (GameManager.GetState () != GameState.Play || !m_Player || !m_RegisterInput)
+        if (GameManager.GetState () != GameState.Play || !m_Player || !m_CanRegisterInput)
         {
             return;
         }
@@ -324,21 +316,27 @@ public class LevelController : MonoBehaviour
         Game_Events.Instance.Event_ToggleDragging (false);
 
         Vector2 pos = m_Camera.WorldToScreenPoint (transform.position);
-        pos = finger.ScreenPosition - pos;
+        pos = _finger.ScreenPosition - pos;
         float ang = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
 
-        RoundToNearestNinenty (ang);
+        float roundedAngle = GetNearestNinetyDegreeAngle (ang, m_DragTime, _finger);
+
+        Debug.LogFormat (">> Base angle: ({0:0.00}), Current angle: ({1:0.00}), New angle: ({2:0.00}) | Drag time: ({3:0.00}), Swipe delta: ({4})", m_BaseAngle, ang, roundedAngle, m_DragTime, _finger.SwipeScreenDelta);
+
+        StartCoroutine (Rotate (false, true, roundedAngle));
+
         m_StartedDragging = false;
+        m_DragTime = 0.0f;
     }
 
-    public void OnFingerTap (LeanFinger finger)
+    public void OnFingerTap (LeanFinger _finger)
     {
         // Debug.Log ("Finger " + finger.Index + " tapped the screen");
     }
 
-    public void OnFingerSwipe (LeanFinger finger)
+    public void OnFingerSwipe (LeanFinger _finger)
     {
-        Debug.Log ("Finger " + finger.Index + " swiped the screen");
+        // Debug.Log ("Finger " + _finger.Index + " swiped the screen");
     }
 
 }

@@ -66,7 +66,7 @@ public class Interactable : MonoBehaviour
     /// <param name="other">The other Collider2D involved in this collision.</param>
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {   
-        Debug.LogFormat("-> OnTriggerEnter2D: ({0})::({1})", this.gameObject.name, other.gameObject.name);
+        Debug.LogFormat("-> Interactable::OnTriggerEnter2D: ({0})::({1})", this.gameObject.name, other.gameObject.name);
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public class Interactable : MonoBehaviour
     /// <param name="other">The other Collider2D involved in this collision.</param>
     protected virtual void OnTriggerExit2D(Collider2D other)
     {
-        Debug.LogFormat("-> OnTriggerExit2D: ({0})::({1})", this.gameObject.name, other.gameObject.name);
+        Debug.LogFormat("-> Interactable::OnTriggerExit2D: ({0})::({1})", this.gameObject.name, other.gameObject.name);
     }
     
     /// <summary>

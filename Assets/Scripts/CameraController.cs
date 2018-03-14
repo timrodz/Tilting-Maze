@@ -18,8 +18,8 @@ public class CameraController : MonoBehaviour
     private Camera m_Camera;
 
     [Header("Field Of View tap controls")]
-    private float m_FieldOfView;
     [SerializeField] private float m_FieldOfViewOffset = 2.5f;
+    private float m_FieldOfView;
 
     /// <summary>
     /// Awake is called when the script instance is being loaded.
@@ -111,11 +111,11 @@ public class CameraController : MonoBehaviour
     {
         if (_state)
         {
-            m_Camera.DOFieldOfView(m_FieldOfView + m_FieldOfViewOffset, 0.25f);
+            m_Camera.DOFieldOfView(m_FieldOfView + m_FieldOfViewOffset, 0.05f);
         }
         else
         {
-            m_Camera.DOFieldOfView(m_FieldOfView, 0.15f);
+            m_Camera.DOFieldOfView(m_FieldOfView, 0.25f);
         }
     }
 

@@ -386,7 +386,7 @@ Prefab:
     - target: {fileID: 114324891271413294, guid: fc496706dd61a4b4b8a07f8881618829,
         type: 2}
       propertyPath: m_FieldOfViewOffset
-      value: 3
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 92076357173077016, guid: fc496706dd61a4b4b8a07f8881618829, type: 2}
@@ -624,9 +624,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967291
   RecordFingers: 1
-  RecordThreshold: 5
-  RecordLimit: 10
-  SimulateMultiFingers: 1
+  RecordThreshold: 1
+  RecordLimit: 1
+  SimulateMultiFingers: 0
   PinchTwistKey: 306
   MultiDragKey: 308
   FingerTexture: {fileID: 2800000, guid: 25c48be3a87ea0f489a6d41c9c9a2194, type: 3}
@@ -975,6 +975,19 @@ Prefab:
         type: 2}
       propertyPath: m_InvertRotation
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114321497195597250, guid: 349ba7b3840514dd2ac36797da6c1f0b,
+        type: 2}
+      propertyPath: m_CanDrag
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4903844967249498, guid: 349ba7b3840514dd2ac36797da6c1f0b, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4903844967249498, guid: 349ba7b3840514dd2ac36797da6c1f0b, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 349ba7b3840514dd2ac36797da6c1f0b, type: 2}

@@ -248,7 +248,7 @@ public class PlayerController2D : Controller2D
 
         }
 
-        Debug.LogFormat("Can player move: {0}", CanMove);
+        // Debug.LogFormat("Can player move: {0}", CanMove);
     }
 
     void OnDrawGizmos()
