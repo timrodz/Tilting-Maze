@@ -6,7 +6,6 @@ using UnityEngine;
 
 public static class Utils
 {
-
     /// <summary>
     /// Finds numbers in a string (Level-1) and increments it (Level-2)
     /// </summary>
@@ -48,16 +47,30 @@ public static class Utils
         return (num.ToString());
     }
 
-    public static void Fade(CanvasGroup _canvasGroup, bool _fadeIn, float _duration)
+    public static void Fade(CanvasGroup _canvasGroup, bool _fadeIn = true, float _duration = 0.35f)
     {
         if (_fadeIn)
         {
-            _canvasGroup.DOFade(1, _duration);
+            if (_duration == 0)
+            {
+                _canvasGroup.alpha = 1;
+            }
+            else
+            {
+                _canvasGroup.DOFade(1, _duration);
+            }
             _canvasGroup.blocksRaycasts = true;
         }
         else
         {
-            _canvasGroup.DOFade(0, _duration);
+            if (_duration == 0)
+            {
+                _canvasGroup.alpha = 0;
+            }
+            else
+            {
+                _canvasGroup.DOFade(0, _duration);
+            }
             _canvasGroup.blocksRaycasts = false;
         }
 
@@ -69,18 +82,21 @@ public static class Utils
 public class AnimationSettings
 {
     [Range(0.0f, 2.0f)]
-    [SerializeField] public float duration = 1.0f;
+    public float duration = 1.0f;
     [Range(0.0f, 4.0f)]
-    [SerializeField] public float delay = 0.0f;
-    [SerializeField] public Ease ease = Ease.OutQuad;
+    public float delay = 0.0f;
+    public Ease ease = Ease.OutQuad;
+    public bool animateOnStart = false;
+    public bool loop = false;
+    public LoopType loopType;
 }
 
 [System.Serializable]
 public enum EndAction
-    {
-        None,
-        Destroy
-    }
+{
+    None,
+    Destroy
+}
 
 // -------------------------------------------------------------------------------------------
 [System.SerializableAttribute]
@@ -91,4 +107,11 @@ public enum GameState
     Play,
     Paused,
     LevelComplete,
+}
+
+public enum SceneNames
+{
+    MAIN_MENU = 0,
+    LEVEL_SELECT = 1,
+    GAME = 2
 }

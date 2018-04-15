@@ -129,5 +129,8 @@ public enum Direction
     Forward,
     Back,
     One,
-    Zero
+    Zero,
+    Horizontal,
+    Vertical,
+    Both,
 };

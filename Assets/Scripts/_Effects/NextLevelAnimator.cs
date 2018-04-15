@@ -87,7 +87,7 @@ public class NextLevelAnimator : MonoBehaviour
 
     public void OnLevelComplete(int _levelID)
     {
-        string result = (_levelID == -1) ? ("<size=60>More levels to come!") : ((_levelID + 1).ToString());
+        string result = (_levelID == -1) ? ("<size=40>Thank you for playing squared cycles. more levels are to come!\n\n<size=24>Follow @timrodz and @squaredcycles to learn more.") : ((_levelID + 1).ToString());
 
         StartCoroutine(Animate(result));
     }

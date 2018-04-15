@@ -5,9 +5,15 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/_Scenes/Drag-to-rotate.unity
-    guid: 287974f96489ded42b34416052214941
   - enabled: 1
+    path: Assets/_Scenes/Main_Menu.unity
+    guid: 06dd1239334f74e37a511e27625e33ef
+  - enabled: 1
+    path: Assets/_Scenes/Level_Select.unity
+    guid: 823d55113f0b548ba96dfbe719f843a7
+  - enabled: 0
     path: Assets/_Scenes/Level-0.unity
     guid: e8c3b53bc316d4b3db9664cd10251c9a
+  - enabled: 1
+    path: Assets/_Scenes/Game_NoGM.unity
+    guid: 4839ca85ab2524d62a45b82df23efbed

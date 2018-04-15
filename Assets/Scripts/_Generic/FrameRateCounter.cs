@@ -20,7 +20,7 @@ public class FrameRateCounter : MonoBehaviour
 
         // if (!Debug.isDebugBuild)
         // {
-            Destroy(this.gameObject);
+        Destroy(this.gameObject);
         // }
     }
 

@@ -31,6 +31,7 @@ public class Game_Events : MonoBehaviour
     public event OnPlayerTriggerButtonExitDelegate OnPlayerTriggerButtonExit;
     public event TriggerButtonAnimationFinishedDelegate TriggerButtonAnimationFinished;
     public event ToggleDraggingDelegate ToggleDragging;
+    public event DisplaySubtitlesDelegate DisplaySubtitles;
 
     // Delegates
     public delegate void OnLevelCompleteDelegate(int _levelID);
@@ -38,6 +39,7 @@ public class Game_Events : MonoBehaviour
     public delegate void OnPlayerTriggerButtonExitDelegate();
     public delegate void TriggerButtonAnimationFinishedDelegate();
     public delegate void ToggleDraggingDelegate(bool _state);
+    public delegate void DisplaySubtitlesDelegate(SubtitleTextOptions _options);
 
     public void Event_LevelComplete(int _levelID)
     {
@@ -63,6 +65,11 @@ public class Game_Events : MonoBehaviour
     {
         ToggleDragging(_state);
         // Debug.LogFormat("Dragging: {0}", _state);
+    }
+    
+    public void Event_DisplaySubtitles(SubtitleTextOptions _options)
+    {
+        DisplaySubtitles(_options);
     }
 
 }

@@ -9,9 +9,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -667331979, guid: 89f0137620f6af44b9ba852b4190e64e, type: 3}
-  m_Name: Sanchez Regular
+  m_Name: Sanchez Regular Outline
   m_EditorClassIdentifier: 
-  hashCode: 1483671218
+  hashCode: 1019143090
   material: {fileID: 21164514368016440}
   materialHashCode: -627567623
   fontAssetType: 1
@@ -940,7 +940,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: Sanchez Regular Material
   m_Shader: {fileID: 4800000, guid: cafd18099dfc0114896e0a8b277b81b6, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: OUTLINE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -995,7 +995,7 @@ Material:
     - _OutlineSoftness: 0
     - _OutlineUVSpeedX: 0
     - _OutlineUVSpeedY: 0
-    - _OutlineWidth: 0.102
+    - _OutlineWidth: 0.15
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
     - _ScaleRatioA: 0.8333333

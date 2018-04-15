@@ -226,6 +226,14 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
             AudioManager.PlayEffect(ClipType.Move_R);
         }
     }
+    
+    // -- Static variables
+    
+    public static void LoadScene(SceneNames _name = SceneNames.MAIN_MENU, LoadSceneMode _mode = LoadSceneMode.Single)
+    {
+        SetState(GameState.LoadingLevel);
+        SceneManager.LoadScene((int)_name, LoadSceneMode.Single);
+    }
 
     /// <summary>
     /// Sets the game state
@@ -240,6 +248,11 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
     public static GameState GetState()
     {
         return (GameManager.Instance.m_State);
+    }
+    
+    public static GameState GetLastState()
+    {
+        return (GameManager.Instance.m_LastState);
     }
 
     public void SetLevelID(int levelID)
