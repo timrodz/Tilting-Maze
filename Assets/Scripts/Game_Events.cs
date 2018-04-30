@@ -64,7 +64,6 @@ public class Game_Events : MonoBehaviour
     public void Event_ToggleDragging(bool _state)
     {
         ToggleDragging(_state);
-        // Debug.LogFormat("Dragging: {0}", _state);
     }
     
     public void Event_DisplaySubtitles(SubtitleTextOptions _options)

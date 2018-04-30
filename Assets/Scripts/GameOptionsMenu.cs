@@ -33,10 +33,8 @@ public class GameOptionsMenu : MonoBehaviour
 
 	public void TogglePause()
 	{
-		m_IsPaused ^= true;
-
+		m_IsPaused = !m_IsPaused;
 		Debug.LogFormat("Pause state: {0}", m_IsPaused);
-
 		if (m_IsPaused)
 		{
 			Pause();
@@ -46,13 +44,13 @@ public class GameOptionsMenu : MonoBehaviour
 			GameManager.SetState(GameManager.GetLastState());
 			Utils.Fade(m_CanvasGroup, false, 0.35f);
 		}
+		
 	}
 
 	private void Pause()
 	{
 		GameManager.SetState(GameState.Paused);
 		Utils.Fade(m_CanvasGroup, true, 0.35f);
-		
 	}
 	
 	private void HeadBackToMenu()

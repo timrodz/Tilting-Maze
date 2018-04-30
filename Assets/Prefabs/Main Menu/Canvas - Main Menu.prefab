@@ -997,6 +997,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddceda88c41df4d7787d1003b6c96375, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loadGame: 1
   m_ButtonPlay: {fileID: 114162063687048168}
   m_ButtonSettings: {fileID: 114310505375435810}
   m_ButtonAbout: {fileID: 114246568804749238}
