@@ -121,9 +121,11 @@ public class LevelController : MonoBehaviour
     }
 
     /// <summary>
-    /// Rotates the level
+    /// Coroutine that rotates the Transform
     /// </summary>
-    public IEnumerator Rotate(bool _shouldRotateRight, bool _override = false, float _overrideAngle = 0)
+    /// <param name="_forwardAngle">The forward rotation angle</param>
+    /// <returns>IEnumerator</returns>
+    public IEnumerator Rotate(float _forwardAngle = 0)
     {
         GameManager.Instance.IncrementMoveCount();
 
@@ -135,23 +137,7 @@ public class LevelController : MonoBehaviour
 
         Vector3 eulerRotation = transform.eulerAngles;
 
-        if (_override)
-        {
-            eulerRotation.z = _overrideAngle;
-        }
-        else
-        {
-            if (_shouldRotateRight)
-            {
-                eulerRotation.z -= 90;
-                // AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeRight);
-            }
-            else
-            {
-                eulerRotation.z += 90;
-                // AnalyticsManager.Instance.RegisterCustomEventSwipe(eCustomEvent.SwipeLeft);
-            }
-        }
+        eulerRotation.z = _forwardAngle;
 
         // Rotate the transform
         transform.DORotate(eulerRotation, m_RotationLength).SetEase(m_RotationEaseType);
@@ -162,72 +148,168 @@ public class LevelController : MonoBehaviour
 
         yield return new WaitForSeconds(0.05f);
 
-        m_Player.CanMove = true;
-
-        m_BaseAngle = eulerRotation.z;
-        m_CanDrag = true;
-        m_IsDragging = false;
+        ResetStates();
     }
 
-    public float GetNearestNinetyDegreeAngle(float _currentAngle, float _dragTime, LeanFinger _fingerData)
+    /// <summary>
+    /// Gets the next angle based on this Transform's current eulerAngles
+    /// </summary>
+    /// <param name="_baseAngle">Base transform angles (Set up when the player starts dragging)</param>
+    /// <param name="_currentAngle">Current Transform angles</param>
+    /// <param name="_dragTime">Total dragging time</param>
+    /// <param name="_fingerData">Gesture information</param>
+    /// <returns>Float</returns>
+    private float GetNextRotationAngle(float _baseAngle, float _currentAngle, float _dragTime, LeanFinger _fingerData)
     {
-        // if (MobileInputController.Instance.SwipeRight || MobileInputController.Instance.SwipeLeft)
-        // {
-        //     if (MobileInputController.Instance.SwipeRight)
-        //     {
-        //         StartCoroutine(Rotate(true));
-        //     }
-        //     else if (MobileInputController.Instance.SwipeLeft)
-        //     {
-        //         StartCoroutine(Rotate(false));
-        //     }
-
-        //     Debug.LogFormat("Rounding to nearest ninety but swiping right/left");
-
-        //     return;
-        // }
-
-        // If the delta is higher than -50, the user has definitely swiped.
+        bool isNegative = false;
+        int angleMultiplier = 0;
 
         // With the level's current rotation values, calculate the degree closest to 90 of it.
-        if (_currentAngle > -45 && _currentAngle <= 45)
+        // The following are cartesian units with an offset of 45 degrees each.
+        if ((_currentAngle > -45 || _currentAngle > 315) && _currentAngle <= 45)
         {
-            _currentAngle = 0;
+            angleMultiplier = 0;
         }
         if (_currentAngle > 45 && _currentAngle <= 135)
         {
-            _currentAngle = 90;
+            angleMultiplier = 1;
         }
         else if (_currentAngle > 135 && _currentAngle <= 225)
         {
-            _currentAngle = 180;
+            angleMultiplier = 2;
         }
         else if (_currentAngle > 225 && _currentAngle <= 315)
         {
-            _currentAngle = 270;
+            angleMultiplier = 3;
         }
         else if (_currentAngle < -360 || _currentAngle > 360)
         {
-            _currentAngle = 0;
+            isNegative = true;
+            angleMultiplier = 0;
         }
-        else if (_currentAngle >= -360 && _currentAngle < -270)
+        else if (_currentAngle >= -315 && _currentAngle < -225)
         {
-            _currentAngle = -270;
+            isNegative = true;
+            angleMultiplier = -3;
         }
-        else if (_currentAngle >= -270 && _currentAngle < -180)
+        else if (_currentAngle >= -225 && _currentAngle < -135)
         {
-            _currentAngle = -180;
-        }
-        else if (_currentAngle >= -180 && _currentAngle < -135)
-        {
-            _currentAngle = -180;
+            isNegative = true;
+            angleMultiplier = -2;
         }
         else if (_currentAngle >= -135 && _currentAngle < -45)
         {
-            _currentAngle = -90;
+            isNegative = true;
+            angleMultiplier = -1;
         }
 
+        // Very small drag time, rotate anyways
+        if (_dragTime < 0.3f)
+        {
+            Debug.LogFormat("Current Multiplier: {0}, Angle: {1}", angleMultiplier, _currentAngle);
+
+            int direction = (int) Mathf.Sign(_fingerData.SwipeScreenDelta.x);
+            SmoothAngleMultiplier(ref angleMultiplier, _currentAngle, _dragTime, direction, isNegative);
+        }
+        else
+        {
+            Debug.LogFormat("Outcome: {0}", angleMultiplier);
+        }
+
+        _currentAngle = 90 * angleMultiplier;
+
         return _currentAngle;
+    }
+
+    /// <summary>
+    /// Attempts to smooth the next angle depending on how fast the player swipes
+    /// This method is called from GetNearestNinetyDegreeAngle
+    /// 
+    /// TODO: Test on iOS devices
+    /// </summary>
+    /// <param name="_multiplier">Angle multiplier - Passed by reference</param>
+    /// <param name="_angle">Current angle of the trasnform</param>
+    /// <param name="_dragTime">Total dragging time</param>
+    /// <param name="_direction">Direction of the swipe</param>
+    /// <param name="_isMultiplierNegative">Whether or not the multiplier was originally negative</param>
+    /// <returns>Int</returns>
+    private void SmoothAngleMultiplier(ref int _multiplier, float _angle, float _dragTime, int _direction, bool _isMultiplierNegative)
+    {
+        float calculatedAngle = 90 * (_multiplier == 0 ? (_direction > 0 ? 1 : -1) : _multiplier);
+        float x = Mathf.Abs(calculatedAngle) - Mathf.Abs(_angle);
+
+        string res = ">>>>";
+
+        bool check = false;
+        if (_direction > 0)
+        {
+            if (_multiplier >= 0)
+            {
+                check = x > 45 || _angle > calculatedAngle;
+                res += string.Format("[Mult>=0/Check:{0}/", check);
+            }
+            else
+            {
+                check = x < 45;
+                _isMultiplierNegative = false;
+
+                res += string.Format("[Check:{0}/Multiplier:{1}/", check, _multiplier);
+
+                if (_angle > calculatedAngle)
+                {
+                    _multiplier++;
+                    check = false;
+                    res += "_angle > calculatedAngle/";
+                }
+            }
+        }
+        else if (_direction < 0)
+        {
+            if (_multiplier <= 0)
+            {
+                check = x > 45 || _angle < calculatedAngle;
+                res += string.Format("[Mult<=0/Check:{0}/", check);
+            }
+            else
+            {
+                check = x < 45;
+
+                _isMultiplierNegative = false;
+
+                res += string.Format("[Check:{0}/Multiplier:{1}/", check, _multiplier);
+
+                if (_angle > calculatedAngle)
+                {
+                    _multiplier--;
+                    check = false;
+                    res += "_angle > calculatedAngle/";
+                }
+            }
+        }
+
+        if (check)
+        {
+                _multiplier = _multiplier + (1 * _direction);
+            // if (_multiplier >= 0 && !_isMultiplierNegative)
+            // {
+            // }
+            // else if (_multiplier <= 0 && _isMultiplierNegative)
+            // {
+            //     _multiplier = _multiplier - (1 * _direction);
+            // }
+
+            // Debug.LogFormat("Smoothed Multiplier | Angle: {0}, x: {1}, Multiplier: {2}, Direction: {3}", calculatedAngle, x, _multiplier, _direction);
+        }
+
+        res += string.Format("/Multiplier:{0}/Direction:{1}/IsNegative:{2}]", _multiplier, _direction, _isMultiplierNegative);
+        Debug.Log(res);
+    }
+
+    private void ResetStates()
+    {
+        m_Player.CanMove = true;
+        m_CanDrag = true;
+        m_IsDragging = false;
     }
 
     public void OnPlayerTriggerButtonEnter(Vector3 _position)
@@ -272,39 +354,13 @@ public class LevelController : MonoBehaviour
         m_CanDrag = false;
         m_StartedDragging = true;
 
+        // Capture the initial rotation values
         Vector2 pos = m_Camera.WorldToScreenPoint(transform.position);
         pos = _finger.ScreenPosition - pos;
         m_BaseAngle = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg;
         m_BaseAngle -= Mathf.Atan2(transform.right.y, transform.right.x) * Mathf.Rad2Deg;
     }
-
-    public void OnFingerSet(LeanFinger _finger)
-    {
-        // if (GameManager.GetState () != GameState.Play || !m_Player || !m_CanRegisterInput)
-        // {
-        //     return;
-        // }
-
-        // if (!m_StartedDragging)
-        // {
-        //     return;
-        // }
-
-        // if (!m_IsDragging && m_CanDrag)
-        // {
-        //     return;
-        // }
-
-        // if (m_Player.IsMoving)
-        // {
-        //     return;
-        // }
-
-        // Vector2 pos = m_Camera.WorldToScreenPoint (transform.position);
-        // pos = finger.ScreenPosition - pos;
-        // float ang = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
-        // transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
-    }
+    public void OnFingerSet(LeanFinger _finger) { }
 
     public void OnFingerUp(LeanFinger _finger)
     {
@@ -325,15 +381,22 @@ public class LevelController : MonoBehaviour
 
         Game_Events.Instance.Event_ToggleDragging(false);
 
-        Vector2 pos = m_Camera.WorldToScreenPoint(transform.position);
-        pos = _finger.ScreenPosition - pos;
-        float ang = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
+        if (_finger.SwipeScreenDelta.magnitude > 0.0f)
+        {
+            Vector2 pos = m_Camera.WorldToScreenPoint(transform.position);
+            pos = _finger.ScreenPosition - pos;
+            float ang = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
 
-        float roundedAngle = GetNearestNinetyDegreeAngle(ang, m_DragTime, _finger);
+            float newAngle = GetNextRotationAngle(m_BaseAngle, ang, m_DragTime, _finger);
 
-        Debug.LogFormat(">> [Base: ({0:0.00}) | Current: ({1:0.00}) | New: ({2:0.00})] - [Drag: ({3:0.00}), Swipe delta: ({4})]", m_BaseAngle, ang, roundedAngle, m_DragTime, _finger.SwipeScreenDelta);
+            StartCoroutine(Rotate(newAngle));
 
-        StartCoroutine(Rotate(false, true, roundedAngle));
+            Debug.LogFormat(">> [Base: ({0:0.00}) | Current: ({1:0.00}) | New: ({2:0.00})] - [Drag: ({3:0.00}), Swipe delta: ({4})]", m_BaseAngle, ang, newAngle, m_DragTime, _finger.SwipeScreenDelta);
+        }
+        else
+        {
+            ResetStates();
+        }
 
         m_StartedDragging = false;
         m_DragTime = 0.0f;
