@@ -204,7 +204,7 @@ public class LevelController : MonoBehaviour
         }
 
         // Very small drag time, rotate anyways
-        if (_dragTime < 0.3f)
+        if (_dragTime < 0.2f)
         {
             Debug.LogFormat("Current Multiplier: {0}, Angle: {1}", angleMultiplier, _currentAngle);
 
@@ -241,21 +241,30 @@ public class LevelController : MonoBehaviour
         string res = ">>>>";
 
         bool check = false;
+        bool angleCheck = false;
         if (_direction > 0)
         {
-            if (_multiplier >= 0)
+            if (_multiplier > 0)
             {
                 check = x > 45 || _angle > calculatedAngle;
                 res += string.Format("[Mult>=0/Check:{0}/", check);
             }
             else
             {
-                check = x < 45;
                 _isMultiplierNegative = false;
+                
+                angleCheck = (_angle >= 0) ? (_angle < calculatedAngle) : (_angle > calculatedAngle);
 
-                res += string.Format("[Check:{0}/Multiplier:{1}/", check, _multiplier);
+                check = x < 45;
 
-                if (_angle > calculatedAngle)
+                if (!angleCheck)
+                {
+                    check &= (x > 0);
+                }
+
+                res += string.Format("[Check:{0}/Multiplier:{1}||", check, _multiplier);
+                
+                if (angleCheck)
                 {
                     _multiplier++;
                     check = false;
@@ -265,20 +274,22 @@ public class LevelController : MonoBehaviour
         }
         else if (_direction < 0)
         {
-            if (_multiplier <= 0)
+            if (_multiplier < 0)
             {
                 check = x > 45 || _angle < calculatedAngle;
                 res += string.Format("[Mult<=0/Check:{0}/", check);
             }
             else
             {
+                _isMultiplierNegative = false;
+                
+                angleCheck = (_angle >= 0) ? (_angle < calculatedAngle) : (_angle > calculatedAngle);
+                
                 check = x < 45;
 
-                _isMultiplierNegative = false;
+                res += string.Format("[Check:{0}/Multiplier:{1}||", check, _multiplier);
 
-                res += string.Format("[Check:{0}/Multiplier:{1}/", check, _multiplier);
-
-                if (_angle > calculatedAngle)
+                if (angleCheck)
                 {
                     _multiplier--;
                     check = false;
@@ -289,7 +300,7 @@ public class LevelController : MonoBehaviour
 
         if (check)
         {
-                _multiplier = _multiplier + (1 * _direction);
+            _multiplier = _multiplier + (1 * _direction);
             // if (_multiplier >= 0 && !_isMultiplierNegative)
             // {
             // }
@@ -301,7 +312,7 @@ public class LevelController : MonoBehaviour
             // Debug.LogFormat("Smoothed Multiplier | Angle: {0}, x: {1}, Multiplier: {2}, Direction: {3}", calculatedAngle, x, _multiplier, _direction);
         }
 
-        res += string.Format("/Multiplier:{0}/Direction:{1}/IsNegative:{2}]", _multiplier, _direction, _isMultiplierNegative);
+        res += string.Format("Multiplier:{0}/Direction:{1}/IsNegative:{2}]", _multiplier, _direction, _isMultiplierNegative);
         Debug.Log(res);
     }
 
@@ -338,12 +349,7 @@ public class LevelController : MonoBehaviour
             return;
         }
 
-        if (!m_CanDrag)
-        {
-            return;
-        }
-
-        if (m_Player.IsMoving)
+        if (!m_CanDrag || m_Player.IsMoving)
         {
             return;
         }
