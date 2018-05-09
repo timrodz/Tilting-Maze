@@ -81,14 +81,14 @@ public static class Utils
 [System.Serializable]
 public class AnimationSettings
 {
-    [Range(0.0f, 2.0f)]
+    [Range(0.0f, 4.0f)]
     public float duration = 1.0f;
     [Range(0.0f, 4.0f)]
     public float delay = 0.0f;
     public Ease ease = Ease.OutQuad;
     public bool animateOnStart = false;
     public bool loop = false;
-    public LoopType loopType;
+    public LoopType loopType = LoopType.Yoyo;
 }
 
 [System.Serializable]
