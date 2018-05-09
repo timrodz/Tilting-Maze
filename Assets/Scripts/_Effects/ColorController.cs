@@ -6,7 +6,7 @@ public class ColorController : MonoBehaviour
 {
     public Material material;
     public Color color;
-    [RangeAttribute(0.01f, 0.05f)]
+    [RangeAttribute (0.01f, 0.05f)]
     public float colorChangeDelay = 0;
 
     public string colorString = "";
@@ -14,38 +14,31 @@ public class ColorController : MonoBehaviour
     private HSBColor colorHSB;
 
     // Use this for initialization
-    void Start()
+    void Start ()
     {
-
         if (!material || colorString == "")
         {
-            Destroy(this);
+            Destroy (this);
         }
 
-        // color = Color.red;
-        color = material.GetColor("_" + colorString);
+        color = material.GetColor ("_" + colorString);
 
-        colorHSB = new HSBColor(color);
-
+        colorHSB = new HSBColor (color);
     }
 
     /// <summary>
     /// Update is called every frame, if the MonoBehaviour is enabled.
     /// </summary>
-    void Update()
+    void Update ()
     {
-
-        ChangeColors();
-
+        ChangeColors ();
     }
 
-    public void ChangeColors()
+    public void ChangeColors ()
     {
+        color = HSBColor.ToColor (new HSBColor (Mathf.PingPong (Time.time * colorChangeDelay, 1), colorHSB.s, colorHSB.b));
 
-        color = HSBColor.ToColor(new HSBColor(Mathf.PingPong(Time.time * colorChangeDelay, 1), colorHSB.s, colorHSB.b));
-
-        material.SetColor("_" + colorString, color);
-
+        material.SetColor ("_" + colorString, color);
     }
 
 }

@@ -11,20 +11,20 @@ public static class Utils
     /// </summary>
     /// <param name="_stringToFind"> The string to find </param>
     /// <returns> the incremented string </returns>
-    public static string FindStringAndIncrementNumber(string _stringToFind)
+    public static string FindStringAndIncrementNumber (string _stringToFind)
     {
         // Find the first parentheses and delete everything
         // that follows after it
-        int index = _stringToFind.IndexOf('-');
+        int index = _stringToFind.IndexOf ('-');
 
         // Find all numbers in the string and store it
-        string number = Regex.Match(_stringToFind, @"\d+").Value;
+        string number = Regex.Match (_stringToFind, @"\d+").Value;
 
         // parse the number from the string and add 1 to it
-        int num = int.Parse(number) + 1;
+        int num = int.Parse (number) + 1;
 
         // Remove the number at the top
-        _stringToFind = _stringToFind.Remove(index + 1);
+        _stringToFind = _stringToFind.Remove (index + 1);
 
         _stringToFind += (num);
 
@@ -36,18 +36,18 @@ public static class Utils
     /// </summary>
     /// <param name="_stringToFind"> The string to find </param>
     /// <returns> the incremented string </returns>
-    public static string FindStringAndReturnIncrementedNumber(string _stringToFind)
+    public static string FindStringAndReturnIncrementedNumber (string _stringToFind)
     {
         // Find all numbers in the string and store it
-        string number = Regex.Match(_stringToFind, @"\d+").Value;
+        string number = Regex.Match (_stringToFind, @"\d+").Value;
 
         // parse the number from the string and add 1 to it
-        int num = int.Parse(number) + 1;
+        int num = int.Parse (number) + 1;
 
-        return (num.ToString());
+        return (num.ToString ());
     }
 
-    public static void Fade(CanvasGroup _canvasGroup, bool _fadeIn = true, float _duration = 0.35f)
+    public static void Fade (CanvasGroup _canvasGroup, bool _fadeIn = true, float _duration = 0.35f)
     {
         if (_fadeIn)
         {
@@ -57,7 +57,7 @@ public static class Utils
             }
             else
             {
-                _canvasGroup.DOFade(1, _duration);
+                _canvasGroup.DOFade (1, _duration);
             }
             _canvasGroup.blocksRaycasts = true;
         }
@@ -69,7 +69,7 @@ public static class Utils
             }
             else
             {
-                _canvasGroup.DOFade(0, _duration);
+                _canvasGroup.DOFade (0, _duration);
             }
             _canvasGroup.blocksRaycasts = false;
         }
@@ -81,9 +81,9 @@ public static class Utils
 [System.Serializable]
 public class AnimationSettings
 {
-    [Range(0.0f, 4.0f)]
+    [Range (0.0f, 4.0f)]
     public float duration = 1.0f;
-    [Range(0.0f, 4.0f)]
+    [Range (0.0f, 4.0f)]
     public float delay = 0.0f;
     public Ease ease = Ease.OutQuad;
     public bool animateOnStart = false;

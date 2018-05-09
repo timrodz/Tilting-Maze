@@ -2,7 +2,7 @@
 
 public static class VectorDirection
 {
-    public static Vector3 DetermineDirection(Direction dir)
+    public static Vector3 DetermineDirection (Direction dir)
     {
         Vector3 resultingVector;
 
@@ -34,13 +34,12 @@ public static class VectorDirection
                 resultingVector = Vector3.zero;
                 break;
         }
-        
-        
+
         return resultingVector;
 
     }
 
-    public static Vector3 DetermineOppositeDirection(Direction dir)
+    public static Vector3 DetermineOppositeDirection (Direction dir)
     {
 
         Vector3 resultingVector;
@@ -78,7 +77,7 @@ public static class VectorDirection
 
     }
 
-    public static Vector3 DeterminePerpendicularDirection(Direction dir)
+    public static Vector3 DeterminePerpendicularDirection (Direction dir)
     {
 
         Vector3 resultingVector;

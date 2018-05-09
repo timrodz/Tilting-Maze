@@ -5,18 +5,18 @@ public class MovableBarrier
 {
     [SerializeField] private GameObject m_GameObject;
     [SerializeField] private Direction m_MovementDirection;
-    [RangeAttribute(1, 12)] [SerializeField] private int m_MovementDistance = 1;
+    [RangeAttribute (1, 12)][SerializeField] private int m_MovementDistance = 1;
     [SerializeField] private bool m_ShouldDeleteFromList = false;
     [SerializeField] private AnimationSettings m_AnimationSettings;
-    
+
     [HideInInspector][SerializeField] private Vector3 m_OriginalPosition;
     [HideInInspector][SerializeField] private Vector3 m_FinalPosition;
     [HideInInspector][SerializeField] private Vector3 m_FinalDirection;
     [HideInInspector][SerializeField] private bool m_HasMoved;
 
-    public MovableBarrier() { }
+    public MovableBarrier () { }
 
-    public MovableBarrier(GameObject gameObject, Direction movementDirection, int movementDistance)
+    public MovableBarrier (GameObject gameObject, Direction movementDirection, int movementDistance)
     {
         this.m_GameObject = gameObject;
         this.m_MovementDirection = movementDirection;
@@ -24,12 +24,12 @@ public class MovableBarrier
         this.m_OriginalPosition = gameObject.transform.position;
     }
 
-    public void Setup()
+    public void Setup ()
     {
-        m_FinalDirection = Transform.TransformDirection(MovementDirection * MovementDistance);
-        
-        OriginalPosition = new Vector3(Transform.position.x, Transform.position.y, 0);
-        
+        m_FinalDirection = Transform.TransformDirection (MovementDirection * MovementDistance);
+
+        OriginalPosition = new Vector3 (Transform.position.x, Transform.position.y, 0);
+
         FinalPosition = OriginalPosition + FinalDirection;
     }
 
@@ -56,15 +56,15 @@ public class MovableBarrier
             return (m_GameObject.transform);
         }
     }
-    
+
     public Vector3 MovementDirection
     {
         get
         {
-            return (VectorDirection.DetermineDirection(m_MovementDirection));
+            return (VectorDirection.DetermineDirection (m_MovementDirection));
         }
     }
-    
+
     public int MovementDistance
     {
         get
@@ -176,7 +176,7 @@ public class MovableBarrier
     /// Called when the script is loaded or a value is changed in the
     /// inspector (Called in the editor only).
     /// </summary>
-    void OnValidate()
+    void OnValidate ()
     {
         if (m_MovementDistance < 1)
         {

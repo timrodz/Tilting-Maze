@@ -10,14 +10,14 @@ public class MainMenu : MonoBehaviour
 	[SerializeField] private Button m_ButtonAbout;
 
 	// Use this for initialization
-	void OnEnable()
+	void OnEnable ()
 	{
-		m_ButtonPlay.onClick.AddListener(LoadLevelSelect);
+		m_ButtonPlay.onClick.AddListener (LoadLevelSelect);
 	}
 
-	private void LoadLevelSelect()
+	private void LoadLevelSelect ()
 	{
 		// TODO: Remove this when development is done
-		GameManager.LoadScene(Debug.isDebugBuild ? SceneNames.GAME : SceneNames.LEVEL_SELECT);
+		GameManager.LoadScene (Debug.isDebugBuild ? SceneNames.GAME : SceneNames.LEVEL_SELECT);
 	}
 }

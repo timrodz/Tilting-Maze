@@ -20,7 +20,7 @@ public class SubtitleTextDisplay : MonoBehaviour
 	private bool m_CanHideSubtitles = false;
 	private bool m_HasClicked = false;
 
-	void Awake()
+	void Awake ()
 	{
 		m_TextAbove.text = m_TextBelow.text = "";
 	}
@@ -28,16 +28,16 @@ public class SubtitleTextDisplay : MonoBehaviour
 	/// <summary>
 	/// This function is called when the object becomes enabled and active.
 	/// </summary>
-	void OnEnable()
+	void OnEnable ()
 	{
-		Game_Events.Instance.DisplaySubtitles += DisplaySubtitles;
+		GameEvents.Instance.DisplaySubtitles += DisplaySubtitles;
 		LeanTouch.OnFingerDown += OnFingerDown;
 	}
 
 	/// <summary>
 	/// Update is called every frame, if the MonoBehaviour is enabled.
 	/// </summary>
-	void Update()
+	void Update ()
 	{
 		if (m_CanUpdateTimeElapsed)
 		{
@@ -51,62 +51,66 @@ public class SubtitleTextDisplay : MonoBehaviour
 
 				if (m_HasClicked)
 				{
-					Hide();
+					Hide ();
 					m_HasClicked = false;
 				}
 			}
 		}
 	}
 
-	public void DisplaySubtitles(SubtitleTextOptions _options)
+	public void DisplaySubtitles (SubtitleTextOptions _options)
 	{
 		m_Options = _options;
-		Debug.LogFormat("SUBTITLES: {0}-{1}", m_Options.TextAbove, m_Options.TextBelow);
+
+		if (_options.TextAbove != "" || _options.TextAbove != "")
+		{
+			Print.LogFormat ("SUBTITLES: {0}-{1}", m_Options.TextAbove, m_Options.TextBelow);
+		}
 
 		// Displaying subtitles above
 		if (m_Options.TextAbove.Length > 0)
 		{
-			ShowAbove();
+			ShowAbove ();
 		}
 		// Display subtitles below
 		if (m_Options.TextBelow.Length > 0)
 		{
-			ShowBelow();
+			ShowBelow ();
 		}
 
 		m_CanUpdateTimeElapsed = true;
 		m_TimeElapsed = 0.0f;
 	}
 
-	private void ShowAbove()
+	private void ShowAbove ()
 	{
 		m_TextAbove.text = m_Options.TextAbove;
-		m_TextAbove.DOFade(0, 0.5f).From().SetDelay(m_Options.DelayAbove);
+		m_TextAbove.DOFade (0, 0.5f).From ().SetDelay (m_Options.DelayAbove);
 	}
 
-	private void ShowBelow()
+	private void ShowBelow ()
 	{
 		m_TextBelow.text = m_Options.TextBelow;
-		m_TextBelow.DOFade(0, 0.5f).From().SetDelay(m_Options.DelayBelow);
+		m_TextBelow.DOFade (0, 0.5f).From ().SetDelay (m_Options.DelayBelow);
 	}
 
-	private void OnFingerDown(LeanFinger _finger)
+	private void OnFingerDown (LeanFinger _finger)
 	{
 		m_HasClicked = true;
-		
+
 		// Hide if finger is put down after 'x' seconds.
-		Hide();
+		Hide ();
 	}
 
-	private void Hide()
+	private void Hide ()
 	{
 		// Do not hide subtitles before 'x' amount of seconds have passed.
 		if (!m_CanHideSubtitles)
 		{
 			return;
 		}
-		m_TextBelow.DOFade(0, 0.5f);
-		m_TextAbove.DOFade(0, 0.5f);
+		m_TextBelow.DOFade (0, 0.5f);
+		m_TextAbove.DOFade (0, 0.5f);
 		m_CanHideSubtitles = false;
 	}
 }

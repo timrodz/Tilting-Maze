@@ -14,13 +14,13 @@ using UnityEngine;
 public class TriggerButton : Interactable
 {
 
-    [Header("Visual debugging")]
+    [Header ("Visual debugging")]
     [SerializeField] private Color m_GizmosColor = Color.white;
 
-    [Header("Barrier related")]
+    [Header ("Barrier related")]
     // [SerializeField] private AnimationSettings m_AnimationSettings;
     [SerializeField] public EndAction m_TriggerEndAction = EndAction.None;
-    [SerializeField] private List<MovableBarrier> m_BarrierList = new List<MovableBarrier>(1);
+    [SerializeField] private List<MovableBarrier> m_BarrierList = new List<MovableBarrier> (1);
 
     private Sequence m_AnimationSequence;
 
@@ -28,12 +28,12 @@ public class TriggerButton : Interactable
     /// Start is called on the frame when a script is enabled just before
     /// any of the Update methods is called the first time.
     /// </summary>
-    void Start()
+    void Start ()
     {
-        InitializeBarrierPositions();
+        InitializeBarrierPositions ();
     }
 
-    void InitializeBarrierPositions()
+    void InitializeBarrierPositions ()
     {
         foreach (MovableBarrier barrier in m_BarrierList)
         {
@@ -42,8 +42,8 @@ public class TriggerButton : Interactable
             {
                 continue;
             }
-            
-            barrier.Setup();
+
+            barrier.Setup ();
         }
     }
 
@@ -52,25 +52,25 @@ public class TriggerButton : Interactable
     /// object (2D physics only).
     /// </summary>
     /// <param name="other">The other Collider2D involved in this collision.</param>
-    protected override void OnTriggerEnter2D(Collider2D other)
+    protected override void OnTriggerEnter2D (Collider2D other)
     {
-        if (GameManager.GetState() != GameState.Play)
+        if (GameManager.GetState () != GameState.Play)
         {
             return;
         }
 
-        if (!other.CompareTag("Player"))
+        if (!other.CompareTag ("Player"))
         {
             return;
         }
 
-        base.OnTriggerEnter2D(other);
+        base.OnTriggerEnter2D (other);
 
-        Game_Events.Instance.Event_PlayerTriggerEnter(transform.position);
+        GameEvents.Instance.Event_PlayerTriggerEnter (transform.position);
 
-        AudioManager.PlayEffect(ClipType.Trigger_Button);
+        AudioManager.PlayEffect (ClipType.Trigger_Button);
 
-        AnimateBarriers();
+        AnimateBarriers ();
 
     }
 
@@ -79,22 +79,22 @@ public class TriggerButton : Interactable
     /// this object (2D physics only).
     /// </summary>
     /// <param name="other">The other Collider2D involved in this collision.</param>
-    protected override void OnTriggerExit2D(Collider2D other)
+    protected override void OnTriggerExit2D (Collider2D other)
     {
         if (m_TriggerEndAction != EndAction.Destroy)
         {
-            Game_Events.Instance.Event_PlayerTriggerExit();
+            GameEvents.Instance.Event_PlayerTriggerExit ();
         }
     }
 
-    private void AnimateBarriers()
+    private void AnimateBarriers ()
     {
         if (null != m_AnimationSequence)
         {
-            m_AnimationSequence.Kill();
+            m_AnimationSequence.Kill ();
         }
 
-        m_AnimationSequence = DOTween.Sequence();
+        m_AnimationSequence = DOTween.Sequence ();
 
         foreach (MovableBarrier barrier in m_BarrierList)
         {
@@ -102,11 +102,11 @@ public class TriggerButton : Interactable
             {
                 continue;
             }
-            
+
             Vector3 targetPosition = (!barrier.HasMoved) ? barrier.FinalPosition : barrier.OriginalPosition;
-            
-            m_AnimationSequence.Append(
-                barrier.Transform.DOLocalMove(targetPosition, barrier.AnimationSettings.duration).SetEase(barrier.AnimationSettings.ease).SetDelay(barrier.AnimationSettings.delay).OnComplete(() =>
+
+            m_AnimationSequence.Append (
+                barrier.Transform.DOLocalMove (targetPosition, barrier.AnimationSettings.duration).SetEase (barrier.AnimationSettings.ease).SetDelay (barrier.AnimationSettings.delay).OnComplete (() =>
                 {
                     if (m_TriggerEndAction == EndAction.None)
                     {
@@ -116,15 +116,15 @@ public class TriggerButton : Interactable
             );
         }
 
-        m_AnimationSequence.OnComplete(() =>
+        m_AnimationSequence.OnComplete (() =>
         {
-            Debug.LogFormat("Button {0} - Animation finished", this.name);
+            Print.LogFormat ("Button {0} - Animation finished", this.name);
 
-            Game_Events.Instance.Event_TriggerButtonAnimationFinished();
+            GameEvents.Instance.Event_TriggerButtonAnimationFinished ();
 
             if (m_TriggerEndAction == EndAction.Destroy)
             {
-                Destroy(this.gameObject);
+                Destroy (this.gameObject);
             }
         });
     }
@@ -132,33 +132,33 @@ public class TriggerButton : Interactable
     /// <summary>
     /// Callback to draw gizmos that are pickable and always drawn.
     /// </summary>
-    void OnDrawGizmos()
+    void OnDrawGizmos ()
     {
         // Aiming to make the gizmos rotate with the level's rotation - Not important
         // Matrix4x4 matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
         // Gizmos.matrix = matrix;
-        
+
         Gizmos.color = m_GizmosColor;
 
         // Draw a wire sphere on top of the button
-        Gizmos.DrawWireSphere(transform.position + Vector3.back, 0.49f);
-        
+        Gizmos.DrawWireSphere (transform.position + Vector3.back, 0.49f);
+
         foreach (MovableBarrier barrier in m_BarrierList)
         {
             if (null == barrier.GameObject)
             {
                 continue;
             }
-            
+
             // Draws an arrow from the center of the barrier to the target position
-            DrawArrow.ForGizmo2D(barrier.Position, barrier.FinalDirection, m_GizmosColor);
-            
+            DrawArrow.ForGizmo2D (barrier.Position, barrier.FinalDirection, m_GizmosColor);
+
             // Matrix4x4 rotationMatrix = Matrix4x4.TRS(barrier.Position, transform.parent.rotation, transform.lossyScale);
             // Gizmos.matrix = rotationMatrix;
 
             // Draws a cube around the initial and final positions of the barrier
-            Gizmos.DrawWireCube(barrier.Position, barrier.Scale);
-            Gizmos.DrawWireCube(barrier.FinalPosition, barrier.Scale);
+            Gizmos.DrawWireCube (barrier.Position, barrier.Scale);
+            Gizmos.DrawWireCube (barrier.FinalPosition, barrier.Scale);
         }
     }
 
@@ -166,9 +166,9 @@ public class TriggerButton : Interactable
     /// Called when the script is loaded or a value is changed in the
     /// inspector (Called in the editor only).
     /// </summary>
-    void OnValidate()
+    void OnValidate ()
     {
-        InitializeBarrierPositions();
+        InitializeBarrierPositions ();
     }
 
 }

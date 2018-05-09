@@ -9,19 +9,19 @@ public class LevelGoal : Interactable
     /// object (2D physics only).
     /// </summary>
     /// <param name="other">The other Collider2D involved in this collision.</param>
-    protected override void OnTriggerEnter2D(Collider2D other)
+    protected override void OnTriggerEnter2D (Collider2D other)
     {
-        if (GameManager.GetState() != GameState.Play)
+        if (GameManager.GetState () != GameState.Play)
         {
             return;
         }
-        
-        if (!other.CompareTag("Player"))
+
+        if (!other.CompareTag ("Player"))
         {
             return;
         }
-        
-        base.OnTriggerEnter2D(other);
-        GameManager.CompleteLevel();
+
+        base.OnTriggerEnter2D (other);
+        GameManager.CompleteLevel ();
     }
 }

@@ -10,6 +10,6 @@ public class Scaler : EffectBase
 
 	public override void PlaySequence ()
 	{
-		m_Sequence.Append(m_Rect.DOScale (m_OriginalScale + (Vector3)ScaleOffset, m_Settings.duration).SetEase (m_Settings.ease).SetLoops (m_Settings.loop ? -1 : 0, m_Settings.loopType));
+		m_Sequence.Append (m_Rect.DOScale (m_OriginalScale + (Vector3) ScaleOffset, m_Settings.duration).SetEase (m_Settings.ease).SetLoops (m_Settings.loop ? -1 : 0, m_Settings.loopType));
 	}
 }

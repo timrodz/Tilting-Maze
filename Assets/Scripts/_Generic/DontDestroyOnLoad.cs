@@ -2,8 +2,8 @@
 
 public class DontDestroyOnLoad : MonoBehaviour
 {
-    void Awake()
+    void Awake ()
     {
-        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad (gameObject);
     }
 }

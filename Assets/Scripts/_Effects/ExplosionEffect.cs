@@ -10,12 +10,6 @@ public class ExplosionEffect : EffectBase
 	[SerializeField] private Image m_SquareImage;
 	[SerializeField] private Image m_SquareLinesImage;
 
-	// Use this for initialization
-	protected override void Start()
-	{
-
-	}
-
 	public void CreateEffect(Vector2 _position)
 	{
 		m_Rect.anchoredPosition = _position;
@@ -25,7 +19,7 @@ public class ExplosionEffect : EffectBase
 
 	public override void PlaySequence()
 	{
-		Debug.LogFormat("Position: {0}", m_Rect.anchoredPosition);
+		Print.LogFormat("Position: {0}", m_Rect.anchoredPosition);
 		float dur = m_Settings.duration / 2.0f;
 
 		// -- Animate the square

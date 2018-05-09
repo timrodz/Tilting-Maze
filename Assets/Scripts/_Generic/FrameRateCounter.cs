@@ -13,23 +13,23 @@ public class FrameRateCounter : MonoBehaviour
     [SerializeField] private float m_FramesPerSecond = 0.0f;
     [SerializeField] private float m_UpdateRate = 4.0f; // 4 updates per sec.
 
-    void Awake()
+    void Awake ()
     {
         QualitySettings.vSyncCount = 0;
-        SetFrameRate();
+        SetFrameRate ();
 
         // if (!Debug.isDebugBuild)
         // {
-        Destroy(this.gameObject);
+        Destroy (this.gameObject);
         // }
     }
 
-    public void SetFrameRate()
+    public void SetFrameRate ()
     {
         Application.targetFrameRate = (int) m_Slider.value;
     }
 
-    void Update()
+    void Update ()
     {
         m_FrameCount++;
 
@@ -45,15 +45,15 @@ public class FrameRateCounter : MonoBehaviour
             {
                 if (m_FramesPerSecond > 30)
                 {
-                    m_Text.text = "FPS: <#FBFF00>" + m_FramesPerSecond.ToString();
+                    m_Text.text = "FPS: <#FBFF00>" + m_FramesPerSecond.ToString ();
                 }
                 else if (m_FramesPerSecond < 30 && m_FramesPerSecond > 10)
                 {
-                    m_Text.text = "FPS: <#FFA400>" + m_FramesPerSecond.ToString();
+                    m_Text.text = "FPS: <#FFA400>" + m_FramesPerSecond.ToString ();
                 }
                 else
                 {
-                    m_Text.text = "FPS: <#FF4F00>" + m_FramesPerSecond.ToString();
+                    m_Text.text = "FPS: <#FF4F00>" + m_FramesPerSecond.ToString ();
                 }
             }
 
@@ -64,7 +64,7 @@ public class FrameRateCounter : MonoBehaviour
     /// Called when the script is loaded or a value is changed in the
     /// inspector (Called in the editor only).
     /// </summary>
-    void OnValidate()
+    void OnValidate ()
     {
         if (DRAW_FPS_TOGGLE)
         {
