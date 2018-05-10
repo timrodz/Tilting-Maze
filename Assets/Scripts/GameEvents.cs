@@ -2,7 +2,6 @@
 
 public class GameEvents : MonoBehaviour
 {
-
     private static GameEvents _instance;
 
     public static GameEvents Instance
@@ -25,35 +24,63 @@ public class GameEvents : MonoBehaviour
         }
     }
 
-    // All events used by this model
-    public event OnLevelCompleteDelegate OnLevelComplete;
-    public event OnPlayerTriggerButtonEnterDelegate OnPlayerTriggerButtonEnter;
-    public event OnPlayerTriggerButtonExitDelegate OnPlayerTriggerButtonExit;
+    // -------------------------------------------------------------------------------------------
+    // -- All events used by this model
+    // Level
+    public event LevelCompleteDelegate LevelComplete;
+    public event NewLevelLoadedDelegate NewLevelLoaded;
+
+    // Player
+    public event PlayerTriggerButtonEnterDelegate PlayerTriggerButtonEnter;
+    public event PlayerTriggerButtonExitDelegate PlayerTriggerButtonExit;
     public event TriggerButtonAnimationFinishedDelegate TriggerButtonAnimationFinished;
+    public event PlayerCollisionDelegate PlayerCollision;
+
+    // Input
     public event ToggleDraggingDelegate ToggleDragging;
+
+    // UI
     public event DisplaySubtitlesDelegate DisplaySubtitles;
 
-    // Delegates
-    public delegate void OnLevelCompleteDelegate (int _levelID);
-    public delegate void OnPlayerTriggerButtonEnterDelegate (Vector3 _position);
-    public delegate void OnPlayerTriggerButtonExitDelegate ();
+    // -------------------------------------------------------------------------------------------
+    // --Delegates
+    // Level
+    public delegate void LevelCompleteDelegate (int _levelID);
+    public delegate void NewLevelLoadedDelegate ();
+
+    // Player
+    public delegate void PlayerTriggerButtonEnterDelegate (Vector3 _position);
+    public delegate void PlayerTriggerButtonExitDelegate ();
     public delegate void TriggerButtonAnimationFinishedDelegate ();
+    public delegate void PlayerCollisionDelegate ();
+
+    // Input
     public delegate void ToggleDraggingDelegate (bool _state);
+
+    // UI
     public delegate void DisplaySubtitlesDelegate (SubtitleTextOptions _options);
 
+    // -------------------------------------------------------------------------------------------
+    // Level
     public void Event_LevelComplete (int _levelID)
     {
-        OnLevelComplete (_levelID);
+        LevelComplete (_levelID);
     }
 
-    public void Event_PlayerTriggerEnter (Vector3 _position)
+    public void Event_LevelLoaded ()
     {
-        OnPlayerTriggerButtonEnter (_position);
+        NewLevelLoaded ();
+    }
+
+    // Player
+    public void Event_PlayerTriggerButtonEnter (Vector3 _position)
+    {
+        PlayerTriggerButtonEnter (_position);
     }
 
     public void Event_PlayerTriggerExit ()
     {
-        OnPlayerTriggerButtonExit ();
+        PlayerTriggerButtonExit ();
     }
 
     public void Event_TriggerButtonAnimationFinished ()
@@ -61,11 +88,18 @@ public class GameEvents : MonoBehaviour
         TriggerButtonAnimationFinished ();
     }
 
+    public void Event_PlayerCollision ()
+    {
+        PlayerCollision ();
+    }
+
+    // Input
     public void Event_ToggleDragging (bool _state)
     {
         ToggleDragging (_state);
     }
 
+    // UI
     public void Event_DisplaySubtitles (SubtitleTextOptions _options)
     {
         DisplaySubtitles (_options);

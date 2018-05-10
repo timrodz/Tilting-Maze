@@ -231,7 +231,7 @@ GameObject:
   - component: {fileID: 4862882768492632}
   - component: {fileID: 114222198405616278}
   m_Layer: 0
-  m_Name: Level-5
+  m_Name: Level-2 (NEEDS FIX)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3168,7 +3168,8 @@ MonoBehaviour:
     TextAbove: 
     TextBelow: 
     Duration: 3
-    Delay: 0
+    DelayAbove: 0
+    DelayBelow: 0
 --- !u!114 &114393098128961920
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3274,7 +3275,6 @@ MonoBehaviour:
   m_IsProcessingCollision: 0
   firstCollision: 1
   m_CanProcessCollisions: 1
-  button: 0
 --- !u!114 &114666846459762264
 MonoBehaviour:
   m_ObjectHideFlags: 1

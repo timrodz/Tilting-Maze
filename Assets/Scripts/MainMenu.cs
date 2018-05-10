@@ -18,6 +18,6 @@ public class MainMenu : MonoBehaviour
 	private void LoadLevelSelect ()
 	{
 		// TODO: Remove this when development is done
-		GameManager.LoadScene (Debug.isDebugBuild ? SceneNames.GAME : SceneNames.LEVEL_SELECT);
+		GameManager.LoadScene (Debug.isDebugBuild ? SceneName.GAME : SceneName.LEVEL_SELECT);
 	}
 }

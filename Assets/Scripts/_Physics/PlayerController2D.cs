@@ -14,6 +14,7 @@ public class PlayerController2D : Controller2D
     [Header ("Movement")]
     [SerializeField] private float m_JumpUnitHeight = 4;
     [SerializeField] private float m_JumpPeakTime = 0.5f;
+    bool m_HasJustCollided;
 
     [Header ("Gravity and jumping")]
     [HideInInspector][SerializeField] private float m_Gravity;
@@ -35,24 +36,30 @@ public class PlayerController2D : Controller2D
     /// </summary>
     void Awake ()
     {
-        GameEvents.Instance.OnPlayerTriggerButtonEnter += OnPlayerTriggerButtonEnter;
-        GameEvents.Instance.OnPlayerTriggerButtonExit += OnPlayerTriggerButtonExit;
+        InitializePhysics ();
+        CanMove = true;
+    }
+
+    /// <summary>
+    /// This function is called when the object becomes enabled and active.
+    /// </summary>
+    void OnEnable()
+    {
+        GameEvents.Instance.PlayerTriggerButtonEnter += OnPlayerTriggerButtonEnter;
+        GameEvents.Instance.PlayerTriggerButtonExit += OnPlayerTriggerButtonExit;
         GameEvents.Instance.TriggerButtonAnimationFinished += TriggerButtonAnimationFinished;
         GameEvents.Instance.ToggleDragging += ToggleDragging;
-
-        InitializePhysics ();
-
-        CanMove = true;
     }
 
     /// <summary>
     /// This function is called when the behaviour becomes disabled or inactive.
     /// </summary>
-    void OnDisable ()
+    void OnDisable()
     {
-        // Game_Events.Instance.OnPlayerTriggerButtonEnter -= OnPlayerTriggerButtonEnter;
-        // Game_Events.Instance.OnPlayerTriggerButtonExit -= OnPlayerTriggerButtonExit;
-        // Game_Events.Instance.TriggerButtonAnimationFinished -= TriggerButtonAnimationFinished;
+        GameEvents.Instance.PlayerTriggerButtonEnter -= OnPlayerTriggerButtonEnter;
+        GameEvents.Instance.PlayerTriggerButtonExit -= OnPlayerTriggerButtonExit;
+        GameEvents.Instance.TriggerButtonAnimationFinished -= TriggerButtonAnimationFinished;
+        GameEvents.Instance.ToggleDragging -= ToggleDragging;
     }
 
     private void InitializePhysics ()
@@ -62,7 +69,7 @@ public class PlayerController2D : Controller2D
 
     void Update ()
     {
-        if (GameManager.GetState () != GameState.Play)
+        if (GameManager.Instance.State != GameState.Play)
         {
             return;
         }
@@ -85,10 +92,6 @@ public class PlayerController2D : Controller2D
         {
             IsMoving = true;
         }
-        // else
-        // {
-        //     IsMoving = false;
-        // }
 
         // Player just started moving
         if (m_Velocity.y < -2.0f && !m_HasPlayedMovementParticles)
@@ -155,7 +158,7 @@ public class PlayerController2D : Controller2D
         cpm.startSpeed = 3 * m_AirTime;
         m_CollisionParticles.Play ();
 
-        CameraController.Shake ();
+        GameEvents.Instance.Event_PlayerCollision ();
 
         float length = 0.2f;
         float randomX = Random.Range (0.2f, 0.3f);
@@ -171,9 +174,9 @@ public class PlayerController2D : Controller2D
 
         yield return new WaitForSeconds (0.2f);
 
-        if (button)
+        if (m_HasJustCollided)
         {
-            button = false;
+            m_HasJustCollided = false;
         }
         else
         {
@@ -184,11 +187,9 @@ public class PlayerController2D : Controller2D
         m_AirTime = 0;
     }
 
-    [SerializeField] bool button;
-
     public void OnPlayerTriggerButtonEnter (Vector3 _position)
     {
-        button = true;
+        m_HasJustCollided = true;
         // Need the player not to process collisions when the trigger button is entered
         // Also the player should not move and the vertical velocity should be set to 0
 

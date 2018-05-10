@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public static CameraController Instance { get; private set; }
-
     [Header ("Camera Easing")]
     [SerializeField] private Ease m_CameraEase;
 
@@ -26,20 +24,18 @@ public class CameraController : MonoBehaviour
     /// </summary>
     void Awake ()
     {
-        // Check if there is another instance of the same type and destroy it
-        if (Instance != null & Instance != this)
-        {
-            Destroy (gameObject);
-        }
-
-        Instance = this;
-
         m_Camera = Camera.main;
 
         if (null == m_Camera)
         {
             m_Camera = FindObjectOfType<Camera> ();
         }
+
+        m_OriginalPosition = transform.position;
+
+        transform.position = new Vector3 (transform.position.x, transform.position.y, transform.position.z - 7.5f);
+
+        m_FieldOfView = m_Camera.fieldOfView;
     }
 
     /// <summary>
@@ -48,36 +44,19 @@ public class CameraController : MonoBehaviour
     void OnEnable ()
     {
         GameEvents.Instance.ToggleDragging += OnPlayerToggleDrag;
-    }
-
-    private void OnDisable ()
-    {
-        // if (null != Game_Events.Instance)
-        // {
-        //     Game_Events.Instance.ToggleDragging -= OnPlayerToggleDrag;
-        // }
+        GameEvents.Instance.PlayerCollision += Shake;
+        GameEvents.Instance.NewLevelLoaded += ZoomIn;
     }
 
     // Use this for initialization
     void Start ()
     {
-        m_OriginalPosition = transform.position;
-
-        transform.position = new Vector3 (transform.position.x, transform.position.y, transform.position.z - 7.5f);
-
-        ResetPosition ();
-
-        m_FieldOfView = m_Camera.fieldOfView;
+        ZoomIn ();
     }
 
-    public static void Shake ()
+    public void Shake ()
     {
-        if (null == CameraController.Instance)
-        {
-            return;
-        }
-
-        CameraController.Instance.StartCoroutine (CameraController.Instance.ShakeController ());
+        StartCoroutine (ShakeController ());
     }
 
     private IEnumerator ShakeController ()
@@ -89,21 +68,16 @@ public class CameraController : MonoBehaviour
         transform.DOMove (m_OriginalPosition, 0.35f);
     }
 
-    public static void ResetPosition ()
+    public void ZoomIn ()
     {
-        if (null == CameraController.Instance)
-        {
-            return;
-        }
-
-        CameraController.Instance.StartCoroutine (CameraController.Instance.ResetPositionController ());
+        StartCoroutine (ResetPositionController (2));
     }
 
-    private IEnumerator ResetPositionController ()
+    private IEnumerator ResetPositionController (float _delay)
     {
-        transform.DOMove (m_OriginalPosition, 2).SetEase (m_CameraEase);
+        transform.DOMove (m_OriginalPosition, _delay).SetEase (m_CameraEase);
 
-        yield return new WaitForSeconds (2);
+        yield return new WaitForSeconds (_delay);
 
         GameManager.SetState (GameState.Play);
     }
@@ -112,11 +86,11 @@ public class CameraController : MonoBehaviour
     {
         if (_state)
         {
-            m_Camera.DOFieldOfView(m_FieldOfView + m_FieldOfViewOffset, 0.5f);
+            m_Camera.DOFieldOfView (m_FieldOfView + m_FieldOfViewOffset, 0.5f);
         }
         else
         {
-            m_Camera.DOFieldOfView(m_FieldOfView, 0.25f);
+            m_Camera.DOFieldOfView (m_FieldOfView, 0.25f);
         }
     }
 

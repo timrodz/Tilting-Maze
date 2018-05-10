@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿/// <summary>
+/// General utilities
+/// 
+/// Date: 10/05/2018
+/// </summary>
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DG.Tweening;
@@ -78,6 +84,7 @@ public static class Utils
 
 }
 
+// -------------------------------------------------------------------------------------------
 [System.Serializable]
 public class AnimationSettings
 {
@@ -91,6 +98,7 @@ public class AnimationSettings
     public LoopType loopType = LoopType.Yoyo;
 }
 
+// -------------------------------------------------------------------------------------------
 [System.Serializable]
 public enum EndAction
 {
@@ -99,7 +107,7 @@ public enum EndAction
 }
 
 // -------------------------------------------------------------------------------------------
-[System.SerializableAttribute]
+[System.Serializable]
 public enum GameState
 {
     NULL,
@@ -109,7 +117,9 @@ public enum GameState
     LevelComplete,
 }
 
-public enum SceneNames
+// -------------------------------------------------------------------------------------------
+[System.Serializable]
+public enum SceneName
 {
     MAIN_MENU = 0,
     LEVEL_SELECT = 1,

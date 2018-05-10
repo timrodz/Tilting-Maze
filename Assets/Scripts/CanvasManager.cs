@@ -6,29 +6,12 @@ using UnityEngine;
 
 public class CanvasManager : MonoBehaviour
 {
-    public static CanvasManager Instance { get; private set; }
 
     [Header ("Total moves")]
-    [SerializeField] private GameObject TotalMovesPanel;
-    [SerializeField] public CanvasGroup TotalMovesPanelTransparency;
-    [SerializeField] private TextMeshProUGUI totalMovesText;
-    [SerializeField] private Vector3 totalMovesPosition;
-
-    /// <summary>
-    /// Awake is called when the script instance is being loaded.
-    /// </summary>
-    void Awake ()
-    {
-        // Check if there is another instance of the same type and destroy it
-        if (Instance != null & Instance != this)
-        {
-            Destroy (gameObject);
-        }
-
-        Instance = this;
-
-        DontDestroyOnLoad (gameObject);
-    }
+    [SerializeField] private GameObject m_TotalMovesPanel;
+    [SerializeField] public CanvasGroup m_TotalMovesPanelTransparency;
+    [SerializeField] private TextMeshProUGUI m_TotalMovesText;
+    [SerializeField] private Vector3 m_TotalMovesPosition;
 
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
@@ -36,37 +19,27 @@ public class CanvasManager : MonoBehaviour
     /// </summary>
     void Start ()
     {
-        if (!TotalMovesPanelTransparency)
+        if (!m_TotalMovesPanelTransparency)
         {
-            TotalMovesPanelTransparency = TotalMovesPanel.GetComponent<CanvasGroup> ();
+            m_TotalMovesPanelTransparency = m_TotalMovesPanel.GetComponent<CanvasGroup> ();
         }
 
-        totalMovesPosition = totalMovesText.rectTransform.localPosition;
+        m_TotalMovesPosition = m_TotalMovesText.rectTransform.localPosition;
 
-        Utils.Fade (TotalMovesPanelTransparency, false, 0);
+        Utils.Fade (m_TotalMovesPanelTransparency, false, 0);
     }
 
-    public static void ResetTotalMovesPanelPosition ()
+    public void ResetTotalMovesPanelPosition ()
     {
-        if (null == CanvasManager.Instance)
-        {
-            return;
-        }
+        Utils.Fade (m_TotalMovesPanelTransparency, false, 0);
 
-        Utils.Fade (CanvasManager.Instance.TotalMovesPanelTransparency, false, 0);
-
-        CanvasManager.Instance.totalMovesText.rectTransform.DOLocalMove (CanvasManager.Instance.totalMovesPosition, 0);
+        m_TotalMovesText.rectTransform.DOLocalMove (m_TotalMovesPosition, 0);
 
     }
 
-    public static void SetTotalMovesText (string _text)
+    public void SetTotalMovesText (string _text)
     {
-        if (null == CanvasManager.Instance)
-        {
-            return;
-        }
-
-        CanvasManager.Instance.totalMovesText.text = _text;
+        m_TotalMovesText.text = _text;
     }
 
 }

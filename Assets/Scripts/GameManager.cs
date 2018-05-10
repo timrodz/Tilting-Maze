@@ -12,11 +12,31 @@ using UnityEditor;
 
 public class GameManager : MonoBehaviourSingleton<GameManager>
 {
-    public bool USE_CANVAS_MANAGER;
+    // -- Public variables
+    public int LevelID
+    {
+        get { return m_LevelID; }
+    }
 
+    public GameState State
+    {
+        get { return m_State; }
+    }
+
+    public GameState LastState
+    {
+        get { return m_LastState; }
+    }
+
+    public bool IsLevelComplete
+    {
+        get { return m_IsLevelComplete; }
+    }
+
+    // -- Private variables
     // Game state
     [SerializeField] private int m_LevelID = 0;
-    [SerializeField] private float m_ElapsedLevelTime = 0.0f;
+    private float m_ElapsedLevelTime = 0.0f;
 
     [SerializeField] private GameState m_State = GameState.LoadingLevel;
     [SerializeField] private GameState m_LastState = GameState.LoadingLevel;
@@ -32,29 +52,21 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
     /// </summary>
     void Start ()
     {
-        StartLevel ();
+        InitializeLevelVariables ();
+    }
+
+    public void InitializeLevelVariables ()
+    {
+        m_MoveCount = 0;
+        m_IsLevelComplete = false;
     }
 
     void LateUpdate ()
     {
-        if (m_State == GameState.Play)
+        if (State == GameState.Play)
         {
             m_ElapsedLevelTime += Time.deltaTime;
         }
-
-#if UNITY_EDITOR
-        if (Input.GetKeyDown (KeyCode.Alpha2))
-        {
-            SetState (GameState.LoadingLevel);
-            LoadNextLevel ();
-        }
-        if (Input.GetKeyDown (KeyCode.Alpha1) || Input.GetKeyDown (KeyCode.R))
-        {
-            Print.Log ("==== RELOADING SCENE ====");
-            SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
-        }
-#endif
-
     }
 
     /// <summary>
@@ -62,10 +74,10 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
     /// </summary>
     public void TogglePause ()
     {
+        Print.Log ("Toggling Pause");
         // Pause the game if it's not
-        if (GetState () != GameState.Paused)
+        if (State != GameState.Paused)
         {
-            m_LastState = GetState ();
             SetState (GameState.Paused);
         }
         // Unpause the game
@@ -73,17 +85,6 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
         {
             SetState (m_LastState);
         }
-    }
-
-    public void StartLevel ()
-    {
-        m_MoveCount = 0;
-        m_IsLevelComplete = false;
-
-        CanvasManager.ResetTotalMovesPanelPosition ();
-
-        // IMPORTANT
-        // Sets the state to "Play" in the camera controller script
     }
 
     /// <summary>
@@ -123,35 +124,33 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
         // Find the level prefab by loading the resources directly
         Object nextLevelPrefab = Resources.Load (nextLevelName);
 
-        StartCoroutine (DestroyCurrentLevelAndInstantiateNextLevelPrefab (currentLevel, nextLevelPrefab, nextLevelName));
-
         // If there's a next level, create it
         if (nextLevelPrefab)
         {
-            int levelID = 0;
-            if (System.Int32.TryParse (stringLevelNumber, out levelID))
+            int nextLevelID = -1;
+            if (System.Int32.TryParse (stringLevelNumber, out nextLevelID))
             {
-                SetLevelID (levelID);
+                m_LevelID = nextLevelID;
+                StartCoroutine (DestroyCurrentLevelAndInstantiateNextLevelPrefab (currentLevel, nextLevelPrefab, nextLevelName));
             }
             else
             {
                 Print.LogError (">>>> ERROR - Could not set level ID");
+                GameManager.LoadScene(SceneName.MAIN_MENU);
             }
-
-            GameEvents.Instance.Event_LevelComplete (levelID);
-            // FindObjectOfType<NextLevelAnimator>().ChangeLevelText(stringLevelNumber);
-
         }
         // Otherwise, go back to the menu
         else
         {
-            GameEvents.Instance.Event_LevelComplete (-1);
             FindObjectOfType<NextLevelAnimator> ().ChangeLevelText ("<size=100>More levels to come!");
         }
+
+        GameEvents.Instance.Event_LevelComplete (LevelID);
     }
 
     private IEnumerator DestroyCurrentLevelAndInstantiateNextLevelPrefab (GameObject currentLevel, Object nextLevelPrefab, string nextLevelName)
     {
+        // Zoom out
         currentLevel.transform.DOScale (1.25f, 1.25f).SetEase (Ease.InOutBack);
         yield return new WaitForSeconds (1.5f);
 
@@ -160,9 +159,11 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
 
         yield return new WaitForSeconds (1.45f);
 
-        // Fade out and destroy current room
+        // Fade out and destroy current level
         currentLevel.transform.DOScale (0, 1).SetEase (Ease.OutExpo);
+        
         yield return new WaitForSeconds (1);
+
         Destroy (currentLevel);
 
         if (nextLevelPrefab != null)
@@ -181,18 +182,17 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
 
             yield return new WaitForSeconds (3f);
 
-            // Reset the camera's position and reset the total movement position
-            CameraController.ResetPosition ();
-            CanvasManager.ResetTotalMovesPanelPosition ();
+            GameEvents.Instance.Event_LevelLoaded();
 
-            StartLevel ();
+            InitializeLevelVariables ();
 
-            SetState (GameState.Play);
+            SetState(GameState.Play);
         }
         else
         {
+            Print.LogError(">>>> nextLevelPrefab is NULL");
             yield return new WaitForSeconds (4.5f);
-            SceneManager.LoadScene ("Level Selection");
+            LoadScene (SceneName.LEVEL_SELECT);
         }
 
     }
@@ -200,19 +200,6 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
     public void IncrementMoveCount ()
     {
         m_MoveCount++;
-
-        if (USE_CANVAS_MANAGER)
-        {
-            CanvasManager.SetTotalMovesText ("Moves: " + m_MoveCount.ToString ());
-        }
-
-        if (m_MoveCount == 1)
-        {
-            if (USE_CANVAS_MANAGER)
-            {
-                Utils.Fade (CanvasManager.Instance.TotalMovesPanelTransparency, true, 1);
-            }
-        }
 
         if (m_MoveCount % 2 == 0)
         {
@@ -224,50 +211,29 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
         }
     }
 
-    // -- Static variables
+    // -- Static metohds
 
-    public static void LoadScene (SceneNames _name = SceneNames.MAIN_MENU, LoadSceneMode _mode = LoadSceneMode.Single)
+    /// <summary>
+    /// Loads a new scene
+    /// </summary>
+    /// <param name="_name"></param>
+    /// <param name="_mode"></param>
+    public static void LoadScene (SceneName _name = SceneName.MAIN_MENU, LoadSceneMode _mode = LoadSceneMode.Single)
     {
         SetState (GameState.LoadingLevel);
         SceneManager.LoadScene ((int) _name, LoadSceneMode.Single);
     }
 
     /// <summary>
-    /// Sets the game state
+    /// Sets the current game state to a variable, and stores the last state as the current
     /// </summary>
     /// <param name="state"></param>
     public static void SetState (GameState state)
     {
+        Print.LogFormat(">>>> Set State to {0}", state);
         GameManager.Instance.m_LastState = GameManager.Instance.m_State;
         GameManager.Instance.m_State = state;
     }
-
-    public static GameState GetState ()
-    {
-        return (GameManager.Instance.m_State);
-    }
-
-    public static GameState GetLastState ()
-    {
-        return (GameManager.Instance.m_LastState);
-    }
-
-    public void SetLevelID (int levelID)
-    {
-        Print.LogFormat ("Set level ID: {0}", levelID);
-        this.m_LevelID = levelID;
-    }
-
-    public int GetLevelID ()
-    {
-        return m_LevelID;
-    }
-
-    public bool IsLevelComplete ()
-    {
-        return m_IsLevelComplete;
-    }
-
 }
 
 #if UNITY_EDITOR

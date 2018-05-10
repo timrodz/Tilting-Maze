@@ -18,7 +18,7 @@ public class NextLevelAnimator : MonoBehaviour
 
     void Awake ()
     {
-        GameEvents.Instance.OnLevelComplete += OnLevelComplete;
+        GameEvents.Instance.LevelComplete += OnLevelComplete;
 
         if (null == m_Transparency)
         {
@@ -40,7 +40,7 @@ public class NextLevelAnimator : MonoBehaviour
     {
         m_Transparency.alpha = 1;
         m_RectTransform.localScale = Vector3.zero;
-        m_Text.text = (GameManager.Instance.GetLevelID () + 1).ToString ();
+        m_Text.text = (GameManager.Instance.LevelID + 1).ToString ();
     }
 
     public void ChangeLevelText (string value)
@@ -50,7 +50,7 @@ public class NextLevelAnimator : MonoBehaviour
 
     private IEnumerator Animate (string value)
     {
-        Print.Log ("Animating new level text: #" + value.ToString ());
+        Print.Log (">>>> Animating new level text: #" + value.ToString ());
 
         m_RectTransform.localScale = Vector3.one;
         m_RectTransform.DOAnchorPosY (MAX_VERTICAL_OFFSET, 0);

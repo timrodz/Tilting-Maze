@@ -11,7 +11,7 @@ public class LevelGoal : Interactable
     /// <param name="other">The other Collider2D involved in this collision.</param>
     protected override void OnTriggerEnter2D (Collider2D other)
     {
-        if (GameManager.GetState () != GameState.Play)
+        if (GameManager.Instance.State != GameState.Play)
         {
             return;
         }

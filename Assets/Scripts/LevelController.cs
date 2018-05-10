@@ -34,8 +34,8 @@ public class LevelController : MonoBehaviour
     protected virtual void OnEnable ()
     {
         // Initialize values on start because this object can be spawned dynamically
-        GameEvents.Instance.OnPlayerTriggerButtonEnter += OnPlayerTriggerButtonEnter;
-        GameEvents.Instance.OnPlayerTriggerButtonExit += OnPlayerTriggerButtonExit;
+        GameEvents.Instance.PlayerTriggerButtonEnter += OnPlayerTriggerButtonEnter;
+        GameEvents.Instance.PlayerTriggerButtonExit += OnPlayerTriggerButtonExit;
         GameEvents.Instance.TriggerButtonAnimationFinished += TriggerButtonAnimationFinished;
 
         // Lean Touch
@@ -85,7 +85,7 @@ public class LevelController : MonoBehaviour
 
     void Update ()
     {
-        if (GameManager.GetState () != GameState.Play || !m_Player || !m_CanRegisterInput)
+        if (GameManager.Instance.State != GameState.Play || !m_Player || !m_CanRegisterInput)
         {
             return;
         }
@@ -341,7 +341,7 @@ public class LevelController : MonoBehaviour
 
     public void OnFingerDown (LeanFinger _finger)
     {
-        if (GameManager.GetState () != GameState.Play || !m_Player || !m_CanRegisterInput)
+        if (GameManager.Instance.State != GameState.Play || !m_Player || !m_CanRegisterInput)
         {
             return;
         }
@@ -367,7 +367,7 @@ public class LevelController : MonoBehaviour
 
     public void OnFingerUp (LeanFinger _finger)
     {
-        if (GameManager.GetState () != GameState.Play || !m_Player || !m_CanRegisterInput)
+        if (GameManager.Instance.State != GameState.Play || !m_Player || !m_CanRegisterInput)
         {
             return;
         }

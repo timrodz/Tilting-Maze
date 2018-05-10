@@ -391,7 +391,7 @@ GameObject:
   - component: {fileID: 114487045658559332}
   - component: {fileID: 65252645592456334}
   m_Layer: 0
-  m_Name: Level-4
+  m_Name: Level-1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3355,7 +3355,8 @@ MonoBehaviour:
     TextAbove: 
     TextBelow: 
     Duration: 3
-    Delay: 0
+    DelayAbove: 0
+    DelayBelow: 0
 --- !u!114 &114674374076826806
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3374,7 +3375,7 @@ MonoBehaviour:
   m_VerticalRayCount: 4
   m_HorizontalRaySpacing: 0
   m_VerticalRaySpacing: 0
-  m_BoxCollider2D: {fileID: 0}
+  m_BoxCollider2D: {fileID: 61755721888052184}
   m_RaycastOrigins:
     topLeft: {x: 0, y: 0}
     topRight: {x: 0, y: 0}
@@ -3398,7 +3399,6 @@ MonoBehaviour:
   m_IsProcessingCollision: 0
   firstCollision: 1
   m_CanProcessCollisions: 1
-  button: 0
 --- !u!114 &114692169611539738
 MonoBehaviour:
   m_ObjectHideFlags: 1

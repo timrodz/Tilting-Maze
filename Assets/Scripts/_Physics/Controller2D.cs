@@ -24,10 +24,8 @@ public class Controller2D : MonoBehaviour
     [SerializeField] protected bool m_CanMove = true;
     [SerializeField] protected bool m_IsMoving = false;
 
-    // Use this for initialization
-    void Start ()
+    void Awake ()
     {
-        m_BoxCollider2D = GetComponent<BoxCollider2D> ();
         CalculateRaySpacing ();
     }
 

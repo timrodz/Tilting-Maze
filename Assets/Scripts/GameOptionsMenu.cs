@@ -41,7 +41,7 @@ public class GameOptionsMenu : MonoBehaviour
 		}
 		else
 		{
-			GameManager.SetState (GameManager.GetLastState ());
+			GameManager.SetState (GameManager.Instance.LastState);
 			Utils.Fade (m_CanvasGroup, false, 0.35f);
 		}
 
@@ -55,6 +55,6 @@ public class GameOptionsMenu : MonoBehaviour
 
 	private void HeadBackToMenu ()
 	{
-		GameManager.LoadScene (SceneNames.MAIN_MENU);
+		GameManager.LoadScene (SceneName.MAIN_MENU);
 	}
 }

@@ -1489,7 +1489,7 @@ MonoBehaviour:
   m_VerticalRayCount: 4
   m_HorizontalRaySpacing: 0
   m_VerticalRaySpacing: 0
-  m_BoxCollider2D: {fileID: 0}
+  m_BoxCollider2D: {fileID: 61259942952727000}
   m_RaycastOrigins:
     topLeft: {x: 0, y: 0}
     topRight: {x: 0, y: 0}
@@ -1513,7 +1513,6 @@ MonoBehaviour:
   m_IsProcessingCollision: 0
   firstCollision: 1
   m_CanProcessCollisions: 1
-  button: 0
 --- !u!114 &114869171842984764
 MonoBehaviour:
   m_ObjectHideFlags: 1

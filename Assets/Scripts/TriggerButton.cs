@@ -54,7 +54,7 @@ public class TriggerButton : Interactable
     /// <param name="other">The other Collider2D involved in this collision.</param>
     protected override void OnTriggerEnter2D (Collider2D other)
     {
-        if (GameManager.GetState () != GameState.Play)
+        if (GameManager.Instance.State != GameState.Play)
         {
             return;
         }
@@ -66,7 +66,7 @@ public class TriggerButton : Interactable
 
         base.OnTriggerEnter2D (other);
 
-        GameEvents.Instance.Event_PlayerTriggerEnter (transform.position);
+        GameEvents.Instance.Event_PlayerTriggerButtonEnter (transform.position);
 
         AudioManager.PlayEffect (ClipType.Trigger_Button);
 
