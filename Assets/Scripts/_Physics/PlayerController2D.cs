@@ -31,19 +31,23 @@ public class PlayerController2D : Controller2D
     [SerializeField] private bool firstCollision = true;
     [SerializeField] private bool m_CanProcessCollisions = true;
 
+    [Header ("State")]
+    [SerializeField] private PlayerState m_State = PlayerState.Idle;
+
     /// <summary>
     /// Awake is called when the script instance is being loaded.
     /// </summary>
     void Awake ()
     {
         InitializePhysics ();
+        m_State = PlayerState.Idle;
         CanMove = true;
     }
 
     /// <summary>
     /// This function is called when the object becomes enabled and active.
     /// </summary>
-    void OnEnable()
+    void OnEnable ()
     {
         GameEvents.Instance.PlayerTriggerButtonEnter += OnPlayerTriggerButtonEnter;
         GameEvents.Instance.PlayerTriggerButtonExit += OnPlayerTriggerButtonExit;
@@ -54,7 +58,7 @@ public class PlayerController2D : Controller2D
     /// <summary>
     /// This function is called when the behaviour becomes disabled or inactive.
     /// </summary>
-    void OnDisable()
+    void OnDisable ()
     {
         GameEvents.Instance.PlayerTriggerButtonEnter -= OnPlayerTriggerButtonEnter;
         GameEvents.Instance.PlayerTriggerButtonExit -= OnPlayerTriggerButtonExit;
@@ -96,6 +100,7 @@ public class PlayerController2D : Controller2D
         // Player just started moving
         if (m_Velocity.y < -2.0f && !m_HasPlayedMovementParticles)
         {
+            m_State = PlayerState.Moving;
             m_CanProcessCollisions = true;
             m_IsCollidingBelow = false;
             m_HasPlayedMovementParticles = true;
@@ -136,7 +141,10 @@ public class PlayerController2D : Controller2D
 
     private void AnimateCollision ()
     {
+        m_State = PlayerState.Colliding;
+
         CanMove = true;
+
         StopCoroutine ("AnimateDrop");
 
         AudioManager.PlayEffect (ClipType.Collision);
@@ -185,6 +193,8 @@ public class PlayerController2D : Controller2D
         }
 
         m_AirTime = 0;
+
+        m_State = PlayerState.Idle;
     }
 
     public void OnPlayerTriggerButtonEnter (Vector3 _position)
@@ -267,4 +277,13 @@ public class PlayerController2D : Controller2D
     {
         InitializePhysics ();
     }
+}
+
+// -------------------------------------------------------------------------------------------
+[System.Serializable]
+public enum PlayerState
+{
+    Idle = 0,
+    Moving,
+    Colliding
 }

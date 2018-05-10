@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
+	[SerializeField] private RectTransform m_MainPanel;
+
 	[SerializeField] private Button m_ButtonPlay;
 	[SerializeField] private Button m_ButtonSettings;
 	[SerializeField] private Button m_ButtonAbout;

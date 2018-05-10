@@ -84,14 +84,14 @@ public class CameraController : MonoBehaviour
 
     public void OnPlayerToggleDrag (bool _state)
     {
-        if (_state)
-        {
-            m_Camera.DOFieldOfView (m_FieldOfView + m_FieldOfViewOffset, 0.5f);
-        }
-        else
-        {
-            m_Camera.DOFieldOfView (m_FieldOfView, 0.25f);
-        }
+        // if (_state)
+        // {
+        //     m_Camera.DOFieldOfView (m_FieldOfView + m_FieldOfViewOffset, 0.5f);
+        // }
+        // else
+        // {
+        //     m_Camera.DOFieldOfView (m_FieldOfView, 0.25f);
+        // }
     }
 
 }
