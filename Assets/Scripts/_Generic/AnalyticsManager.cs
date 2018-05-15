@@ -35,10 +35,10 @@ public class AnalyticsManager
     public void RegisterCustomEventLevelComplete (int moveCount, float levelTime)
     {
 #if !UNITY_EDITOR && UNITY_ANDROID || UNITY_IOS
-        Print.Log ("==== Analytics - Registering level complete - Level ID: " + GameManager.Instance.GetLevelID ().ToString () + " - Moves: " + moveCount.ToString () + " - time: " + levelTime.ToString ());
+        Print.Log ("==== Analytics - Registering level complete - Level ID: " + GameManager.Instance.LevelID.ToString () + " - Moves: " + moveCount.ToString () + " - time: " + levelTime.ToString ());
 
         Analytics.CustomEvent ("Level complete", new Dictionary<string, object>
-        { { "Level", GameManager.Instance.GetLevelID () },
+        { { "Level", GameManager.Instance.LevelID },
             { "Moves", moveCount },
             { "Time", levelTime }
         });
@@ -56,7 +56,7 @@ public class AnalyticsManager
             case CustomEvent.SwipeRight:
                 {
                     Analytics.CustomEvent ("Input", new Dictionary<string, object>
-                    { { "Level", GameManager.Instance.GetLevelID () },
+                    { { "Level", GameManager.Instance.LevelID },
                         { "Swipe", customEvent }
                     });
                 }
@@ -71,7 +71,7 @@ public class AnalyticsManager
         Print.Log ("==== Analytics - Registering Trigger enter: " + gameObject);
 
         Analytics.CustomEvent ("Trigger Enter", new Dictionary<string, object>
-        { { "Level", GameManager.Instance.GetLevelID () },
+        { { "Level", GameManager.Instance.LevelID },
             { "Name", gameObject }
         });
 #endif
@@ -84,7 +84,7 @@ public class AnalyticsManager
 
         Analytics.CustomEvent ("Trigger Exit", new Dictionary<string, object>
         { { "Name", gameObject },
-            { "Level", GameManager.Instance.GetLevelID () }
+            { "Level", GameManager.Instance.LevelID }
         });
 #endif
     }
