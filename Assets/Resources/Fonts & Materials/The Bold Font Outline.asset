@@ -9,9 +9,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -667331979, guid: 89f0137620f6af44b9ba852b4190e64e, type: 3}
-  m_Name: The Bold Font Shadows
+  m_Name: The Bold Font Outline
   m_EditorClassIdentifier: 
-  hashCode: -680927174
+  hashCode: -1141514193
   material: {fileID: 21638469829887906}
   materialHashCode: -449970940
   fontAssetType: 1
@@ -949,7 +949,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: The Bold Font Material
   m_Shader: {fileID: 4800000, guid: cafd18099dfc0114896e0a8b277b81b6, type: 3}
-  m_ShaderKeywords: OUTLINE_ON UNDERLAY_ON
+  m_ShaderKeywords: OUTLINE_ON
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -1004,7 +1004,7 @@ Material:
     - _OutlineSoftness: 0
     - _OutlineUVSpeedX: 0
     - _OutlineUVSpeedY: 0
-    - _OutlineWidth: 0.118
+    - _OutlineWidth: 0.251
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
     - _ScaleRatioA: 0.8333333
