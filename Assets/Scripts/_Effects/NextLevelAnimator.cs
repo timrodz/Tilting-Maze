@@ -10,11 +10,13 @@ public class NextLevelAnimator : MonoBehaviour
     [SerializeField] private TextMeshProUGUI m_Text;
     [SerializeField] private RectTransform m_RectTransform;
 
-    public float duration = 0.5f;
+    [SerializeField] private float m_Duration = 0.5f;
 
-    public Ease EaseType;
+    [SerializeField] private Ease m_EaseType = Ease.InOutSine;
 
-    [SerializeField] private int MAX_VERTICAL_OFFSET = 2500;
+    [SerializeField] private bool m_NoMoreLevels = false;
+
+    private const int MAX_VERTICAL_OFFSET = 800;
 
     void Awake ()
     {
@@ -56,39 +58,46 @@ public class NextLevelAnimator : MonoBehaviour
         m_RectTransform.DOAnchorPosY (MAX_VERTICAL_OFFSET, 0);
 
         yield return new WaitForSeconds (2.75f);
+        
+        // -- Current Level text
 
         // Show the text
-        m_RectTransform.DOAnchorPosY (0, duration).SetEase (EaseType);
+        m_RectTransform.DOAnchorPosY (0, m_Duration).SetEase (m_EaseType);
 
-        yield return new WaitForSeconds (duration * 2);
+        yield return new WaitForSeconds (m_Duration * 2);
 
         // Move it downwards
-        m_RectTransform.DOAnchorPosY (-MAX_VERTICAL_OFFSET, duration).SetEase (EaseType).OnComplete (() =>
+        m_RectTransform.DOAnchorPosY (-MAX_VERTICAL_OFFSET, m_Duration).SetEase (m_EaseType).OnComplete (() =>
         {
             // Move it upwards and change the value
             m_RectTransform.anchoredPosition = new Vector2 (0, MAX_VERTICAL_OFFSET);
         });
 
-        yield return new WaitForSeconds (duration * 2);
+        yield return new WaitForSeconds (m_Duration * 2);
 
-        Print.Log ("Animating new level text: #" + value.ToString ());
+        // -- New Level text
 
-        Print.Log ("Position: " + m_RectTransform.anchoredPosition.y);
+        if (m_NoMoreLevels)
+        {
+            m_Duration = 3.25f;
+        }
+
         m_Text.text = value;
 
         // Move the new text to the center
-        m_RectTransform.DOAnchorPosY (0, duration).SetEase (EaseType);
+        m_RectTransform.DOAnchorPosY (0, m_Duration).SetEase (m_EaseType);
 
-        yield return new WaitForSeconds (duration * 2f);
+        yield return new WaitForSeconds (m_Duration * 2f);
 
         // Move it downwards
-        m_RectTransform.DOAnchorPosY (-MAX_VERTICAL_OFFSET, duration).SetEase (EaseType);
+        m_RectTransform.DOAnchorPosY (-MAX_VERTICAL_OFFSET, m_Duration).SetEase (m_EaseType);
     }
 
     public void OnLevelComplete (int _levelID)
     {
-        string result = (_levelID == -1) ? ("<size=40>Thank you for playing squared cycles. more levels are to come!\n\n<size=24>Follow @timrodz and @squaredcycles to learn more.") : ((_levelID + 1).ToString ());
+        string result = (_levelID == -1) ? ("<size=40>Thank you for playing squared cycles. more levels are to come!\n\n<size=28>Follow @timrodz and @squaredcycles to learn more.") : ((_levelID + 1).ToString ());
 
+        m_NoMoreLevels = true;
         StartCoroutine (Animate (result));
     }
 
