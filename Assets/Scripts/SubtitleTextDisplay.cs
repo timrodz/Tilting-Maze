@@ -85,13 +85,13 @@ public class SubtitleTextDisplay : MonoBehaviour
 	private void ShowAbove ()
 	{
 		m_TextAbove.text = m_Options.TextAbove;
-		m_TextAbove.DOFade (0, 0.5f).From ().SetDelay (m_Options.DelayAbove);
+		m_TextAbove.DOFade (1, 0.5f).SetDelay (m_Options.DelayAbove);
 	}
 
 	private void ShowBelow ()
 	{
 		m_TextBelow.text = m_Options.TextBelow;
-		m_TextBelow.DOFade (0, 0.5f).From ().SetDelay (m_Options.DelayBelow);
+		m_TextBelow.DOFade (1, 0.5f).SetDelay (m_Options.DelayBelow);
 	}
 
 	private void OnFingerDown (LeanFinger _finger)
