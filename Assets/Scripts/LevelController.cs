@@ -14,6 +14,7 @@ public class LevelController : MonoBehaviour
 {
     private Camera m_Camera;
     [HideInInspector][SerializeField] public PlayerController2D m_Player;
+    [HideInInspector][SerializeField] private MovingObjectController2D[] m_Obstacles;
 
     [Header ("Rotation variables")]
     [SerializeField] private Ease m_RotationEaseType = Ease.OutQuad;
@@ -81,6 +82,8 @@ public class LevelController : MonoBehaviour
         }
 
         GameEvents.Instance.Event_DisplaySubtitles (m_SubtitlesToShowAtStart);
+
+        m_Obstacles = FindObjectsOfType<MovingObjectController2D>();
     }
 
     void Update ()
@@ -131,6 +134,12 @@ public class LevelController : MonoBehaviour
         m_Player.CanMove = false;
 
         m_Player.ProcessCollisions ();
+
+        foreach (MovingObjectController2D obstacle in m_Obstacles)
+        {
+            obstacle.CanMove = false;
+            obstacle.ProcessCollisions();
+        }
 
         m_CanRotate = false;
 
@@ -316,6 +325,12 @@ public class LevelController : MonoBehaviour
     private void ResetStates ()
     {
         m_Player.CanMove = true;
+
+        foreach (MovingObjectController2D obstacle in m_Obstacles)
+        {
+            obstacle.CanMove = true;
+        }
+
         m_CanDrag = true;
         m_IsDragging = false;
     }

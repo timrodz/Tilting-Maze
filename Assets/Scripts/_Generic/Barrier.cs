@@ -5,7 +5,7 @@ public class MovableBarrier
 {
     [SerializeField] private GameObject m_GameObject;
     [SerializeField] private Direction m_MovementDirection;
-    [RangeAttribute (1, 12)][SerializeField] private int m_MovementDistance = 1;
+    [RangeAttribute (0, 12)][SerializeField] private int m_MovementDistance = 1;
     [SerializeField] private bool m_ShouldDeleteFromList = false;
     [SerializeField] private AnimationSettings m_AnimationSettings;
 
@@ -178,9 +178,9 @@ public class MovableBarrier
     /// </summary>
     void OnValidate ()
     {
-        if (m_MovementDistance < 1)
+        if (m_MovementDistance < 0)
         {
-            m_MovementDistance = 1;
+            m_MovementDistance = 0;
         }
     }
 

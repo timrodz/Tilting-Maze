@@ -123,28 +123,28 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
 
         // Find the level prefab by loading the resources directly
         Object nextLevelPrefab = Resources.Load (nextLevelName);
+        
+        int nextLevelID = -1;
 
         // If there's a next level, create it
         if (nextLevelPrefab)
         {
-            int nextLevelID = -1;
             if (System.Int32.TryParse (stringLevelNumber, out nextLevelID))
             {
                 m_LevelID = nextLevelID;
-                StartCoroutine (DestroyCurrentLevelAndInstantiateNextLevelPrefab (currentLevel, nextLevelPrefab, nextLevelName));
             }
             else
             {
                 Print.LogError (">>>> ERROR - Could not set level ID");
-                GameManager.LoadScene(SceneName.MAIN_MENU);
+                GameManager.LoadScene (SceneName.MAIN_MENU);
             }
         }
-        // Otherwise, go back to the menu
         else
         {
-            FindObjectOfType<NextLevelAnimator> ().ChangeLevelText ("<size=100>More levels to come!");
+            m_LevelID = nextLevelID;
         }
 
+        StartCoroutine (DestroyCurrentLevelAndInstantiateNextLevelPrefab (currentLevel, nextLevelPrefab, nextLevelName));
         GameEvents.Instance.Event_LevelComplete (LevelID);
     }
 
@@ -161,7 +161,7 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
 
         // Fade out and destroy current level
         currentLevel.transform.DOScale (0, 1).SetEase (Ease.OutExpo);
-        
+
         yield return new WaitForSeconds (1);
 
         Destroy (currentLevel);
@@ -171,28 +171,32 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
             // Create the new room and fade it to 0
             GameObject nextLevel = (GameObject) Instantiate (nextLevelPrefab, new Vector3 (0, 0, 1000), Quaternion.identity);
             nextLevel.name = nextLevelName;
-            // nextLevel.transform.localScale = Vector3.zero;
 
             yield return new WaitForSeconds (3f);
 
             // Scale it up and rotate it 360 degrees clockwise
             nextLevel.transform.DOLocalMoveZ (0, 3f).SetEase (Ease.InOutSine);
+
             // nextLevel.transform.DOScale(Vector3.one, 3f).SetEase(Ease.InOutSine);
             nextLevel.transform.DOLocalRotate (Vector3.forward * -360, 3f, RotateMode.LocalAxisAdd).SetEase (Ease.InOutSine);
 
             yield return new WaitForSeconds (3f);
 
-            GameEvents.Instance.Event_LevelLoaded();
+            GameEvents.Instance.Event_LevelLoaded ();
 
             InitializeLevelVariables ();
 
-            SetState(GameState.Play);
+            SetState (GameState.Play);
         }
+        // No more levels, prints out special text.
         else
         {
-            Print.LogError(">>>> nextLevelPrefab is NULL");
-            yield return new WaitForSeconds (4.5f);
-            LoadScene (SceneName.LEVEL_SELECT);
+            Print.Log (">>>> nextLevelPrefab is NULL");
+            // HACK: These values are forced as of now.
+
+            yield return new WaitForSeconds (5f);
+            yield return new WaitForSeconds (5f);
+            LoadScene (SceneName.MAIN_MENU);
         }
 
     }
@@ -230,7 +234,7 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
     /// <param name="state"></param>
     public static void SetState (GameState state)
     {
-        Print.LogFormat(">>>> Set State to {0}", state);
+        Print.LogFormat (">>>> Set State to {0}", state);
         GameManager.Instance.m_LastState = GameManager.Instance.m_State;
         GameManager.Instance.m_State = state;
     }
