@@ -312,7 +312,7 @@ MonoBehaviour:
   m_VerticalRayCount: 4
   m_HorizontalRaySpacing: 0
   m_VerticalRaySpacing: 0
-  m_BoxCollider2D: {fileID: 0}
+  m_BoxCollider2D: {fileID: 61131760118247146}
   m_RaycastOrigins:
     topLeft: {x: 0, y: 0}
     topRight: {x: 0, y: 0}
@@ -325,9 +325,10 @@ MonoBehaviour:
     right: 0
   m_CanMove: 1
   m_IsMoving: 0
-  m_JumpUnitHeight: 3.5
-  m_JumpPeakTime: 0.4
-  m_Gravity: -43.749996
+  m_JumpUnitHeight: 4
+  m_JumpPeakTime: 0.5
+  m_HasJustCollided: 0
+  m_Gravity: -32
   m_AirTime: 0
   m_Velocity: {x: 0, y: 0, z: 0}
   m_HasPlayedMovementParticles: 0
@@ -336,7 +337,7 @@ MonoBehaviour:
   m_IsProcessingCollision: 0
   firstCollision: 1
   m_CanProcessCollisions: 1
-  button: 0
+  m_State: 0
 --- !u!198 &198220516442794238
 ParticleSystem:
   m_ObjectHideFlags: 1
