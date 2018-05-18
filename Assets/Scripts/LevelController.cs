@@ -38,6 +38,7 @@ public class LevelController : MonoBehaviour
         GameEvents.Instance.PlayerTriggerButtonEnter += OnPlayerTriggerButtonEnter;
         GameEvents.Instance.PlayerTriggerButtonExit += OnPlayerTriggerButtonExit;
         GameEvents.Instance.TriggerButtonAnimationFinished += TriggerButtonAnimationFinished;
+        GameEvents.Instance.RotateLevel += AccessibilityRotateRequest;
 
         // Lean Touch
         LeanTouch.OnFingerDown += OnFingerDown;
@@ -83,11 +84,16 @@ public class LevelController : MonoBehaviour
 
         GameEvents.Instance.Event_DisplaySubtitles (m_SubtitlesToShowAtStart);
 
-        m_Obstacles = FindObjectsOfType<MovingObjectController2D>();
+        m_Obstacles = FindObjectsOfType<MovingObjectController2D> ();
     }
 
     void Update ()
     {
+        if (Utils.ACCESSIBILITY_ON)
+        {
+            return;
+        }
+
         if (GameManager.Instance.State != GameState.Play || !m_Player || !m_CanRegisterInput)
         {
             return;
@@ -119,7 +125,6 @@ public class LevelController : MonoBehaviour
             float ang = Mathf.Atan2 (pos.y, pos.x) * Mathf.Rad2Deg - m_BaseAngle;
             transform.rotation = Quaternion.AngleAxis (ang, Vector3.forward);
         }
-
     }
 
     /// <summary>
@@ -138,7 +143,7 @@ public class LevelController : MonoBehaviour
         foreach (MovingObjectController2D obstacle in m_Obstacles)
         {
             obstacle.CanMove = false;
-            obstacle.ProcessCollisions();
+            obstacle.ProcessCollisions ();
         }
 
         m_CanRotate = false;
@@ -309,13 +314,6 @@ public class LevelController : MonoBehaviour
         if (check)
         {
             _multiplier = _multiplier + (1 * _direction);
-            // if (_multiplier >= 0 && !_isMultiplierNegative)
-            // {
-            // }
-            // else if (_multiplier <= 0 && _isMultiplierNegative)
-            // {
-            //     _multiplier = _multiplier - (1 * _direction);
-            // }
         }
 
         res += string.Format ("Multiplier:{0}/Direction:{1}/IsNegative:{2}]", _multiplier, _direction, _isMultiplierNegative);
@@ -324,6 +322,7 @@ public class LevelController : MonoBehaviour
 
     private void ResetStates ()
     {
+        Print.Log ("Reset States");
         m_Player.CanMove = true;
 
         foreach (MovingObjectController2D obstacle in m_Obstacles)
@@ -342,10 +341,7 @@ public class LevelController : MonoBehaviour
         m_CanDrag = false;
     }
 
-    public void OnPlayerTriggerButtonExit ()
-    {
-
-    }
+    public void OnPlayerTriggerButtonExit () { }
 
     public void TriggerButtonAnimationFinished ()
     {
@@ -356,6 +352,11 @@ public class LevelController : MonoBehaviour
 
     public void OnFingerDown (LeanFinger _finger)
     {
+        if (Utils.ACCESSIBILITY_ON)
+        {
+            return;
+        }
+
         if (GameManager.Instance.State != GameState.Play || !m_Player || !m_CanRegisterInput)
         {
             return;
@@ -382,17 +383,17 @@ public class LevelController : MonoBehaviour
 
     public void OnFingerUp (LeanFinger _finger)
     {
+        if (Utils.ACCESSIBILITY_ON)
+        {
+            return;
+        }
+
         if (GameManager.Instance.State != GameState.Play || !m_Player || !m_CanRegisterInput)
         {
             return;
         }
 
-        if (!m_StartedDragging)
-        {
-            return;
-        }
-
-        if (m_Player.IsMoving)
+        if (!m_StartedDragging || m_Player.IsMoving)
         {
             return;
         }
@@ -420,12 +421,32 @@ public class LevelController : MonoBehaviour
         m_DragTime = 0.0f;
     }
 
-    public void OnFingerTap (LeanFinger _finger)
-    {
-    }
+    public void OnFingerTap (LeanFinger _finger) { }
 
-    public void OnFingerSwipe (LeanFinger _finger)
+    public void OnFingerSwipe (LeanFinger _finger) { }
+
+    public void AccessibilityRotateRequest (bool _rotateRight)
     {
+        if (GameManager.Instance.State != GameState.Play || !m_Player || !m_CanRegisterInput)
+        {
+            return;
+        }
+
+        if (!m_StartedDragging)
+        {
+            return;
+        }
+
+        if (m_Player.IsMoving)
+        {
+            return;
+        }
+
+        GameEvents.Instance.Event_ToggleDragging (true);
+
+        float angle = transform.eulerAngles.z;
+
+        StartCoroutine (Rotate (_rotateRight ? (angle - 90) : (angle + 90)));
     }
 
 }

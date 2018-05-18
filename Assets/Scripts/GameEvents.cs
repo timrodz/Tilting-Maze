@@ -38,6 +38,7 @@ public class GameEvents : MonoBehaviour
 
     // Input
     public event ToggleDraggingDelegate ToggleDragging;
+    public event RotateLevelDelegate RotateLevel;
 
     // UI
     public event DisplaySubtitlesDelegate DisplaySubtitles;
@@ -56,6 +57,7 @@ public class GameEvents : MonoBehaviour
 
     // Input
     public delegate void ToggleDraggingDelegate (bool _state);
+    public delegate void RotateLevelDelegate(bool _rotateRight);
 
     // UI
     public delegate void DisplaySubtitlesDelegate (SubtitleTextOptions _options);
@@ -97,6 +99,11 @@ public class GameEvents : MonoBehaviour
     public void Event_ToggleDragging (bool _state)
     {
         ToggleDragging (_state);
+    }
+
+    public void Event_RotateLevel (bool _rotateRight)
+    {
+        RotateLevel (_rotateRight);
     }
 
     // UI
