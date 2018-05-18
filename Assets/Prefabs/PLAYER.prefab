@@ -307,7 +307,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CollisionMask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 5376
   m_HorizontalRayCount: 4
   m_VerticalRayCount: 4
   m_HorizontalRaySpacing: 0
@@ -327,7 +327,7 @@ MonoBehaviour:
   m_IsMoving: 0
   m_JumpUnitHeight: 4
   m_JumpPeakTime: 0.5
-  m_HasJustCollided: 0
+  m_HasTriggeredButton: 0
   m_Gravity: -32
   m_AirTime: 0
   m_Velocity: {x: 0, y: 0, z: 0}

@@ -143,7 +143,7 @@ GameObject:
   - component: {fileID: 114869171842984764}
   m_Layer: 12
   m_Name: GOAL
-  m_TagString: Untagged
+  m_TagString: Finish
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1484,7 +1484,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CollisionMask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 5376
   m_HorizontalRayCount: 4
   m_VerticalRayCount: 4
   m_HorizontalRaySpacing: 0
@@ -1504,6 +1504,7 @@ MonoBehaviour:
   m_IsMoving: 0
   m_JumpUnitHeight: 3.5
   m_JumpPeakTime: 0.4
+  m_HasTriggeredButton: 0
   m_Gravity: -43.749996
   m_AirTime: 0
   m_Velocity: {x: 0, y: 0, z: 0}
@@ -1513,6 +1514,7 @@ MonoBehaviour:
   m_IsProcessingCollision: 0
   firstCollision: 1
   m_CanProcessCollisions: 1
+  m_State: 0
 --- !u!114 &114869171842984764
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1540,6 +1542,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Player: {fileID: 114749077932263162}
+  m_Obstacles: []
   m_RotationEaseType: 9
   m_RotationLength: 0.4
   m_CanRegisterInput: 1
