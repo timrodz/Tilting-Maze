@@ -22,7 +22,11 @@ public class LevelGoal : Interactable
         }
 
         base.OnTriggerEnter2D (other);
-
+        
         GameManager.CompleteLevel ();
+        
+        Vector3 pos = transform.position;
+        pos.y += 1;
+        GameEvents.Instance.Event_PlayerTriggerButtonEnter(pos);
     }
 }
