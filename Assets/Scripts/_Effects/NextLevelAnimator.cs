@@ -91,6 +91,12 @@ public class NextLevelAnimator : MonoBehaviour
 
         // Move it downwards
         m_RectTransform.DOAnchorPosY (-MAX_VERTICAL_OFFSET, m_Duration).SetEase (m_EaseType);
+        
+        if (m_NoMoreLevels)
+        {
+            m_Duration = 0.5f;
+            m_NoMoreLevels = false;
+        }
     }
 
     public void OnLevelComplete (int _levelID)
