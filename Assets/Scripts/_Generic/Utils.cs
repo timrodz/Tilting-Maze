@@ -12,6 +12,8 @@ using UnityEngine;
 
 public static class Utils
 {
+    public static bool ACCESSIBILITY_ON = false;
+
     /// <summary>
     /// Finds numbers in a string (Level-1) and increments it (Level-2)
     /// </summary>

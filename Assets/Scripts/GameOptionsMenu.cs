@@ -16,11 +16,17 @@ public class GameOptionsMenu : MonoBehaviour
 	[SerializeField] private Button m_ButtonOptionYes;
 	[SerializeField] private Button m_ButtonOptionNo;
 
+	[Header("Accesibility menu")]
+	[SerializeField] private Button m_ButtonOptionAccessibility;
+	[SerializeField] private CanvasGroup m_AccessibilityCanvasGroup;
+
 	private Sequence m_Sequence;
 
 	void Start ()
 	{
 		Utils.Fade (m_CanvasGroup, false, 0);
+
+		Utils.Fade (m_AccessibilityCanvasGroup, Utils.ACCESSIBILITY_ON ? true : false, 0);
 	}
 
 	void OnEnable ()
@@ -29,12 +35,14 @@ public class GameOptionsMenu : MonoBehaviour
 		m_ButtonBackground.onClick.AddListener (TogglePause);
 		m_ButtonOptionNo.onClick.AddListener (TogglePause);
 		m_ButtonOptionYes.onClick.AddListener (HeadBackToMenu);
+		m_ButtonOptionAccessibility.onClick.AddListener(ToggleAccessibility);
 	}
 
 	public void TogglePause ()
 	{
 		m_IsPaused = !m_IsPaused;
 		Print.LogFormat ("Pause state: {0}", m_IsPaused);
+
 		if (m_IsPaused)
 		{
 			Pause ();
@@ -56,5 +64,21 @@ public class GameOptionsMenu : MonoBehaviour
 	private void HeadBackToMenu ()
 	{
 		GameManager.LoadScene (SceneName.MAIN_MENU);
+	}
+
+	private void ToggleAccessibility()
+	{
+		Utils.ACCESSIBILITY_ON = !Utils.ACCESSIBILITY_ON;
+
+		if (Utils.ACCESSIBILITY_ON)
+		{
+			Utils.Fade (m_AccessibilityCanvasGroup, true, 0.35f);
+		}
+		else
+		{
+			Utils.Fade (m_AccessibilityCanvasGroup, false, 0.35f);
+		}
+
+		TogglePause();
 	}
 }
