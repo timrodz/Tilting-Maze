@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-public class    MovingObjectController2D : Controller2D
+public class MovingObjectController2D : Controller2D
 {
     [Header ("Movement")]
     [SerializeField] private float m_JumpUnitHeight = 4;
@@ -143,8 +143,6 @@ public class    MovingObjectController2D : Controller2D
 
     protected void AnimateCollision ()
     {
-        Print.Log("COL");
-
         m_State = MovementState.Colliding;
 
         CanMove = true;
@@ -162,6 +160,8 @@ public class    MovingObjectController2D : Controller2D
 
     private IEnumerator AnimateDrop ()
     {
+        GameEvents.Instance.Event_PlayerCollision ();
+
         CanMove = false;
 
         m_IsProcessingCollision = false;
@@ -170,16 +170,10 @@ public class    MovingObjectController2D : Controller2D
         cpm.startSpeed = 3 * m_AirTime;
         m_CollisionParticles.Play ();
 
-        GameEvents.Instance.Event_PlayerCollision ();
+        transform.DOScaleX (0.25f, 0.2f);
+        transform.DOScaleY (0.65f, 0.2f);
 
-        float length = 0.2f;
-        float randomX = Random.Range (0.2f, 0.3f);
-        float randomY = Random.Range (0.6f, 0.7f);
-
-        transform.DOScaleX (randomX, length);
-        transform.DOScaleY (randomY, length);
-
-        yield return new WaitForSeconds (length);
+        yield return new WaitForSeconds (0.2f);
 
         transform.DOScaleX (1, 0.2f);
         transform.DOScaleY (1, 0.2f);
@@ -229,9 +223,10 @@ public class    MovingObjectController2D : Controller2D
 
     private void OnDrawGizmos ()
     {
+#if UNITY_EDITOR
         Gizmos.color = Color.red;
-        Ray r = new Ray (transform.position + Vector3.back, DownDirection + Vector3.back);
-        Gizmos.DrawRay (r);
+        Gizmos.DrawRay (new Ray (transform.position + Vector3.back, DownDirection + Vector3.back));
+#endif
     }
 
     protected Vector3 DownDirection
