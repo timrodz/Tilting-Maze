@@ -62,7 +62,7 @@ public class TriggerButton : Interactable
     /// <param name="other">The other Collider2D involved in this collision.</param>
     protected override void OnTriggerEnter2D (Collider2D other)
     {
-        if ((int)transform.localPosition.y != 0)
+        if ((int)transform.localPosition.z != 0)
         {
             return;
         }
@@ -93,7 +93,7 @@ public class TriggerButton : Interactable
     /// <param name="other">The other Collider2D involved in this collision.</param>
     protected override void OnTriggerExit2D (Collider2D other)
     {
-        if ((int)transform.localPosition.y != 0)
+        if ((int)transform.localPosition.z != 0)
         {
             return;
         }
