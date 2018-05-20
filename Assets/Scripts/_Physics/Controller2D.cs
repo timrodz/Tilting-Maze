@@ -14,8 +14,8 @@ public class Controller2D : MonoBehaviour
     [Range (2, 8)]
     [SerializeField] private int m_VerticalRayCount = 4;
 
-    [SerializeField] private float m_HorizontalRaySpacing;
-    [SerializeField] private float m_VerticalRaySpacing;
+    private float m_HorizontalRaySpacing;
+    private float m_VerticalRaySpacing;
 
     [SerializeField] private BoxCollider2D m_BoxCollider2D;
     [SerializeField] private RaycastOrigins m_RaycastOrigins;
@@ -67,7 +67,7 @@ public class Controller2D : MonoBehaviour
 
             RaycastHit2D hit = Physics2D.Raycast (rayOrigin, Vector2.up * directionY, rayLength, m_CollisionMask);
 
-            Debug.DrawRay (rayOrigin, Vector2.up * directionY * rayLength, Color.red);
+            Debug.DrawRay (rayOrigin, Vector2.up * directionY * rayLength, Color.magenta);
 
             if (hit)
             {
@@ -77,9 +77,7 @@ public class Controller2D : MonoBehaviour
                 m_CollisionInfo.below = (directionY == -1);
                 m_CollisionInfo.above = (directionY == 1);
             }
-
         }
-
     }
 
     /// <summary>
