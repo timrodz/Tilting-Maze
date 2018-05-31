@@ -68,6 +68,7 @@ public class GameOptionsMenu : MonoBehaviour
 
 	private void ToggleAccessibility()
 	{
+		// TODO: Change to PlayerPrefs
 		Utils.ACCESSIBILITY_ON = !Utils.ACCESSIBILITY_ON;
 
 		if (Utils.ACCESSIBILITY_ON)

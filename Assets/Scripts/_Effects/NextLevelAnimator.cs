@@ -14,7 +14,7 @@ public class NextLevelAnimator : MonoBehaviour
 
     [SerializeField] private Ease m_EaseType = Ease.InOutSine;
 
-    [SerializeField] private bool m_NoMoreLevels = false;
+    private bool m_NoMoreLevels = false;
 
     private const int MAX_VERTICAL_OFFSET = 800;
 
@@ -43,6 +43,8 @@ public class NextLevelAnimator : MonoBehaviour
         m_Transparency.alpha = 1;
         m_RectTransform.localScale = Vector3.zero;
         m_Text.text = (GameManager.Instance.LevelID + 1).ToString ();
+        m_NoMoreLevels = false;
+        m_Duration = 0.5f;
     }
 
     public void ChangeLevelText (string value)
@@ -58,7 +60,7 @@ public class NextLevelAnimator : MonoBehaviour
         m_RectTransform.DOAnchorPosY (MAX_VERTICAL_OFFSET, 0);
 
         yield return new WaitForSeconds (2.75f);
-        
+
         // -- Current Level text
 
         // Show the text
@@ -77,33 +79,36 @@ public class NextLevelAnimator : MonoBehaviour
 
         // -- New Level text
 
-        if (m_NoMoreLevels)
-        {
-            m_Duration = 3.25f;
-        }
-
         m_Text.text = value;
 
         // Move the new text to the center
         m_RectTransform.DOAnchorPosY (0, m_Duration).SetEase (m_EaseType);
 
+        if (m_NoMoreLevels)
+        {
+            m_Duration = 3.25f;
+        }
+
         yield return new WaitForSeconds (m_Duration * 2f);
 
-        // Move it downwards
-        m_RectTransform.DOAnchorPosY (-MAX_VERTICAL_OFFSET, m_Duration).SetEase (m_EaseType);
-        
         if (m_NoMoreLevels)
         {
             m_Duration = 0.5f;
             m_NoMoreLevels = false;
         }
+
+        // Move it downwards
+        m_RectTransform.DOAnchorPosY (-MAX_VERTICAL_OFFSET, m_Duration).SetEase (m_EaseType);
     }
 
     public void OnLevelComplete (int _levelID)
     {
         string result = (_levelID == -1) ? ("<size=40>Thank you for playing squared cycles. more levels are to come!\n\n<size=28>Follow @timrodz and @squaredcycles to learn more.") : ((_levelID + 1).ToString ());
 
-        m_NoMoreLevels = true;
+        if (_levelID == -1)
+        {
+            m_NoMoreLevels = true;
+        }
         StartCoroutine (Animate (result));
     }
 
