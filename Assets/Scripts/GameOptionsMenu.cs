@@ -25,8 +25,8 @@ public class GameOptionsMenu : MonoBehaviour
 	void Start ()
 	{
 		Utils.Fade (m_CanvasGroup, false, 0);
-
 		Utils.Fade (m_AccessibilityCanvasGroup, Utils.ACCESSIBILITY_ON ? true : false, 0);
+		m_IsPaused = false;
 	}
 
 	void OnEnable ()
