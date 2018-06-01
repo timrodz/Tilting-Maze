@@ -70,24 +70,6 @@ public class GameManager : MonoBehaviourSingleton<GameManager>
     }
 
     /// <summary>
-    /// Pauses the game.
-    /// </summary>
-    public void TogglePause ()
-    {
-        Print.Log ("Toggling Pause");
-        // Pause the game if it's not
-        if (State != GameState.Paused)
-        {
-            SetState (GameState.Paused);
-        }
-        // Unpause the game
-        else
-        {
-            SetState (m_LastState);
-        }
-    }
-
-    /// <summary>
     /// Finish the current level
     /// Show the moves it took to complete
     /// And the prompt for loading the next level
